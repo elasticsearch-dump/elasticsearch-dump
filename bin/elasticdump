@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Example: ./bin/elasticdump --reader_index=v3_search_test --writer_index=output
+// Example: ./bin/elasticdump --reader=http://127.0.0.1:9200/metrics_events_test --writer=http://127.0.0.1:9200/output --limit=1000
 
 var argv        = require('optimist').argv;
 var util        = require('util');
@@ -9,22 +9,8 @@ var defaults = {
   limit: 100,
   offset: 0,
   debug: false,
-
-  reader: {
-    type:      'elasticsearch',
-    host:      '127.0.0.1',
-    port:      '9200',
-    transport: 'http',
-    index:     'sourceIndex',
-  },
-
-  writer: {
-    type:      'elasticsearch',
-    host:      '127.0.0.1',
-    port:      '9200',
-    transport: 'http',
-    index:     'destinationIndex',
-  }
+  reader: 'http://127.0.0.1:9200/sourceIndex',
+  writer: 'http://127.0.0.1:9200/destinationIndex',
 }
 
 var options = {
@@ -35,22 +21,20 @@ var options = {
   writer: {}
 };
 
-if(argv['limit'] != null){  options.limit = argv['limit']; }
-if(argv['offset'] != null){ options.limit = argv['offset']; }
-if(argv['degug'] != null){ options.degug = argv['degug']; }
-
-for(var direction in defaults){
-  for(var i in defaults[direction]){
-    options[direction][i] = defaults[direction][i];
-    if(argv[direction + "_" + i] != null){ 
-      options[direction][i] = argv[direction + "_" + i];
-    }
+for(var i in defaults){
+  options[i] = defaults[i];
+  if(argv[i] != null){ 
+    options[i] = argv[i];
   }
 }
 
 var log = function(type, message){
-  if(type === 'debug' && options.degug === true){
-    message = "[debug] | " + message;
+  if(type === 'debug'){
+    if(options.degug === true){
+      message = "[debug] | " + message;
+    }else{
+      return false;
+    }
   }else{
     message = (new Date().toUTCString()) + " | " + message;
   }

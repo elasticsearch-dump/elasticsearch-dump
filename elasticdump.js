@@ -8,8 +8,14 @@ var elasticdump = function(reader, writer, options){
 
   this.validateOptions();
 
-  var readerProto = require(__dirname + "/lib/transports/" + this.options.reader.type)[this.options.reader.type];
-  var writerProto = require(__dirname + "/lib/transports/" + this.options.writer.type)[this.options.writer.type];
+  this.readerType = 'file';
+  this.writerType = 'file';
+
+  if(this.options.reader.indexOf(":") >= 0){ this.readerType = 'elasticsearch'; }
+  if(this.options.writer.indexOf(":") >= 0){ this.writerType = 'elasticsearch'; }
+
+  var readerProto = require(__dirname + "/lib/transports/" + this.readerType)[this.readerType];
+  var writerProto = require(__dirname + "/lib/transports/" + this.writerType)[this.writerType];
 
   this.reader = (new readerProto(this, this.options.reader));
   this.writer = (new writerProto(this, this.options.writer));
@@ -43,11 +49,11 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset){
   self.reader.get(limit, offset, function(err, data){
     if(err){ self.emit('error', err);
     }else if(data.length > 0){
-      self.log("got " + data.length + " objects from source " + self.options.reader.type);
-      self.writer.set(data, limit, offset, function(err){
+      self.log("got " + data.length + " objects from source " + self.readerType + " (offset: "+offset+")");
+      self.writer.set(data, limit, offset, function(err, writes){
         if(err){ self.emit('error', err);
         }else{
-          self.log("set " + data.length + " objects to destination " + self.options.writer.type);
+          self.log("sent " + data.length + " objects to destination " + self.writerType + ", wrote " + writes);
           offset = offset + limit;
         }
         self.dump(callback, true, limit, offset);
