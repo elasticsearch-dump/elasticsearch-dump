@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// Example: ./bin/elasticdump --reader=http://127.0.0.1:9200/metrics_events_test --writer=http://127.0.0.1:9200/output --limit=1000
 
 var argv        = require('optimist').argv;
 var util        = require('util');
@@ -17,8 +16,8 @@ var options = {
   limit:  defaults.limit,
   offset: defaults.offset,
   debug:  defaults.debug,
-  input: {}, 
-  output: {}
+  input:  '', 
+  output: ''
 };
 
 for(var i in defaults){
