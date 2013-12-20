@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+// Example: ./bin/elasticdump --reader_index=v3_search_test --writer_index=output
+
+var argv        = require('optimist').argv;
+var util        = require('util');
+var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
+
+var defaults = {
+  limit: 100,
+  offset: 0,
+  debug: false,
+
+  reader: {
+    type:      'elasticsearch',
+    host:      '127.0.0.1',
+    port:      '9200',
+    transport: 'http',
+    index:     'sourceIndex',
+  },
+
+  writer: {
+    type:      'elasticsearch',
+    host:      '127.0.0.1',
+    port:      '9200',
+    transport: 'http',
+    index:     'destinationIndex',
+  }
+}
+
+var options = {
+  limit:  defaults.limit,
+  offset: defaults.offset,
+  debug:  defaults.debug,
+  reader: {}, 
+  writer: {}
+};
+
+if(argv['limit'] != null){  options.limit = argv['limit']; }
+if(argv['offset'] != null){ options.limit = argv['offset']; }
+if(argv['degug'] != null){ options.degug = argv['degug']; }
+
+for(var direction in defaults){
+  for(var i in defaults[direction]){
+    options[direction][i] = defaults[direction][i];
+    if(argv[direction + "_" + i] != null){ 
+      options[direction][i] = argv[direction + "_" + i];
+    }
+  }
+}
+
+var log = function(type, message){
+  if(type === 'debug' && options.degug === true){
+    message = "[debug] | " + message;
+  }else{
+    message = (new Date().toUTCString()) + " | " + message;
+  }
+  console.log(message); 
+}
+
+var dumper = new elasticdump(options.reader, options.writer, options);
+
+dumper.on('log',   function(message){ log('log',   message) })
+dumper.on('debug', function(message){ log('debug', message) })
+dumper.on('done',  function(error){ console.log("compete!") })
+dumper.on('error', function(error){ console.log(error) })
+  
+dumper.dump();

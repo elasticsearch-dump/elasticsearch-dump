@@ -1,0 +1,22 @@
+{
+  "author": "Evan Tahler <evan@taskrabbit.com>",
+  "name": "elasticdump",
+  "description": "import and expot tools for elasticsearch",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
+  },
+  "main": "elasticsearch-dump.js",
+  "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export"],
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "dependencies": {
+    "optimist": "latest",
+    "request": "2.x.x"
+  },
+  "bin": {
+    "elasticdump": "./bin/elasticdump"
+  }
+}
