@@ -47,22 +47,22 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset){
   }
 
   self.reader.get(limit, offset, function(err, data){
-    if(err){ self.emit('error', err);
-    }else if(data.length > 0){
-      self.log("got " + data.length + " objects from source " + self.readerType + " (offset: "+offset+")");
-      self.writer.set(data, limit, offset, function(err, writes){
-        if(err){ self.emit('error', err);
-        }else{
-          self.log("sent " + data.length + " objects to destination " + self.writerType + ", wrote " + writes);
-          offset = offset + limit;
-        }
+    if(err){  self.emit('error', err); }
+    self.log("got " + data.length + " objects from source " + self.readerType + " (offset: "+offset+")");
+    self.writer.set(data, limit, offset, function(err, writes){
+      if(err){ self.emit('error', err);
+      }else{
+        self.log("sent " + data.length + " objects to destination " + self.writerType + ", wrote " + writes);
+        offset = offset + limit;
+      }
+      if(data.length > 0){
         self.dump(callback, true, limit, offset);
-      });
-    }else{
-      self.emit('log', 'dump complete');
-      self.emit('done');
-      if(typeof callback === 'function'){ callback(); }
-    }
+      }else{
+        self.emit('log', 'dump complete');
+        self.emit('done');
+        if(typeof callback === 'function'){ callback(); }
+      }
+    });
   });
 }
 
