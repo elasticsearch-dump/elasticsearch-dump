@@ -6,19 +6,19 @@ var util        = require('util');
 var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
 
 var defaults = {
-  limit: 100,
+  limit:  100,
   offset: 0,
-  debug: false,
-  reader: 'http://127.0.0.1:9200/sourceIndex',
-  writer: 'http://127.0.0.1:9200/destinationIndex',
+  debug:  false,
+  input:  'http://127.0.0.1:9200/sourceIndex',
+  output: 'http://127.0.0.1:9200/destinationIndex',
 }
 
 var options = {
   limit:  defaults.limit,
   offset: defaults.offset,
   debug:  defaults.debug,
-  reader: {}, 
-  writer: {}
+  input: {}, 
+  output: {}
 };
 
 for(var i in defaults){
@@ -30,7 +30,7 @@ for(var i in defaults){
 
 var log = function(type, message){
   if(type === 'debug'){
-    if(options.degug === true){
+    if(options.debug === true || options.debug === 'true'){
       message = "[debug] | " + message;
     }else{
       return false;
@@ -41,7 +41,7 @@ var log = function(type, message){
   console.log(message); 
 }
 
-var dumper = new elasticdump(options.reader, options.writer, options);
+var dumper = new elasticdump(options.input, options.output, options);
 
 dumper.on('log',   function(message){ log('log',   message) })
 dumper.on('debug', function(message){ log('debug', message) })

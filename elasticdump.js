@@ -1,24 +1,24 @@
 var util = require("util");
 var EventEmitter = require('events').EventEmitter;
 
-var elasticdump = function(reader, writer, options){
-  this.reader  = reader;
-  this.writer  = writer;
+var elasticdump = function(input, output, options){
+  this.input   = input;
+  this.output  = output;
   this.options = options;
 
   this.validateOptions();
 
-  this.readerType = 'file';
-  this.writerType = 'file';
+  this.inputType  = 'file';
+  this.outputType = 'file';
 
-  if(this.options.reader.indexOf(":") >= 0){ this.readerType = 'elasticsearch'; }
-  if(this.options.writer.indexOf(":") >= 0){ this.writerType = 'elasticsearch'; }
+  if(this.options.input.indexOf(":") >= 0){  this.inputType = 'elasticsearch'; }
+  if(this.options.output.indexOf(":") >= 0){ this.outputType = 'elasticsearch'; }
 
-  var readerProto = require(__dirname + "/lib/transports/" + this.readerType)[this.readerType];
-  var writerProto = require(__dirname + "/lib/transports/" + this.writerType)[this.writerType];
+  var inputProto  = require(__dirname + "/lib/transports/" + this.inputType)[this.inputType];
+  var outputProto = require(__dirname + "/lib/transports/" + this.outputType)[this.outputType];
 
-  this.reader = (new readerProto(this, this.options.reader));
-  this.writer = (new writerProto(this, this.options.writer));
+  this.input  = (new inputProto(this, this.options.input));
+  this.output = (new outputProto(this, this.options.output));
 }
 
 util.inherits(elasticdump, EventEmitter);
@@ -38,21 +38,21 @@ elasticdump.prototype.validateOptions = function(){
 }
 
 elasticdump.prototype.dump = function(callback, continuing, limit, offset){
-  var self = this;
-  if(limit == null){  limit = self.options.limit   }
+  var self  = this;
+  if(limit  == null){ limit = self.options.limit   }
   if(offset == null){ offset = self.options.offset }
 
   if(continuing !== true){
     self.emit('log', 'starting dump');
   }
 
-  self.reader.get(limit, offset, function(err, data){
+  self.input.get(limit, offset, function(err, data){
     if(err){  self.emit('error', err); }
-    self.log("got " + data.length + " objects from source " + self.readerType + " (offset: "+offset+")");
-    self.writer.set(data, limit, offset, function(err, writes){
+    self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
+    self.output.set(data, limit, offset, function(err, writes){
       if(err){ self.emit('error', err);
       }else{
-        self.log("sent " + data.length + " objects to destination " + self.writerType + ", wrote " + writes);
+        self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
         offset = offset + limit;
       }
       if(data.length > 0){
