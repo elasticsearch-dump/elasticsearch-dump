@@ -46,7 +46,7 @@ var clear = function(callback){
 describe("ELASTICDUMP", function(){
 
   beforeEach(function(done){
-    this.timeout = 10 * 1000;
+    this.timeout(10 * 1000);
     clear(function(){
       console.log("CLEAR")
       seed(function(){
@@ -59,7 +59,7 @@ describe("ELASTICDUMP", function(){
   });
 
   it('can connect', function(done){
-    this.timeout = 10 * 1000;
+    this.timeout(10 * 1000)
     request(baseUrl, function(err, response, body){
       should.not.exist(err);
       body = JSON.parse(body);
@@ -70,7 +70,7 @@ describe("ELASTICDUMP", function(){
 
   describe("es to es", function(){
     it('works', function(done){
-      this.timeout = 10 * 1000;
+      this.timeout(10 * 1000)
       var options = {
         limit:  100,
         offset: 0,
@@ -95,7 +95,7 @@ describe("ELASTICDUMP", function(){
 
   describe("es to file", function(){
     it('works', function(done){
-      this.timeout = 10 * 1000;
+      this.timeout(10 * 1000)
       var options = {
         limit:  100,
         offset: 0,
@@ -117,7 +117,7 @@ describe("ELASTICDUMP", function(){
 
   describe("file to es", function(){
     it('works', function(done){
-      this.timeout = 10 * 1000;
+      this.timeout(10 * 1000)
       var options = {
         limit:  100,
         offset: 0,
