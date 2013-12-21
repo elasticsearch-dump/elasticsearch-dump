@@ -48,7 +48,9 @@ describe("ELASTICDUMP", function(){
   beforeEach(function(done){
     this.timeout = 10 * 1000;
     clear(function(){
+      console.log("CLEAR")
       seed(function(){
+        console.log("SEET")
         setTimeout(function(){
           done();
         }, 500);
