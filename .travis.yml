@@ -1,0 +1,15 @@
+notifications:
+  email:
+    - evantahler@gmail.com
+language: node_js
+node_js:
+  - "0.8"
+  - "0.10"
+  # - "0.11"
+branches:
+  only:
+    - master
+    - develop
+services:
+  - redis-server
+  - elasticsearch
