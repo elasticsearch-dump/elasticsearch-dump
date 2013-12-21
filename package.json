@@ -16,7 +16,14 @@
     "optimist": "latest",
     "request": "2.x.x"
   },
+  "devDependencies": {
+    "mocha": "latest",
+    "should": "latest"
+  },
   "bin": {
     "elasticdump": "./bin/elasticdump"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test --reporter=spec"
   }
 }
