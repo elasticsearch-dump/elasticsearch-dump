@@ -56,3 +56,5 @@ You can then do things like:
 - If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index`
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
+
+Built at [TaskRabbit](https://www.taskrabbit.com)
