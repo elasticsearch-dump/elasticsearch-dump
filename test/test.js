@@ -6,7 +6,7 @@ var baseUrl     = "http://127.0.0.1:9200";
 
 var seeds       = {};
 var seedSize    = 500;
-var testTimeout = seedSize * 10;
+var testTimeout = seedSize * 100;
 var i           = 0;
 while(i < seedSize){
   seeds[i] = { key: ("key" + i) };
