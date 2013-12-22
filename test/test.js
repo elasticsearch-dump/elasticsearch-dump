@@ -136,7 +136,7 @@ describe("ELASTICDUMP", function(){
                 source_body.hits.total.should.equal(0);
                 done();
               });
-            }, 1 * seedSize);
+            }, 5 * seedSize);
           });
         });
       });
