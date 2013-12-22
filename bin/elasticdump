@@ -5,11 +5,12 @@ var util        = require('util');
 var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
 
 var defaults = {
-  limit:  100,
-  offset: 0,
-  debug:  false,
-  input:  'http://127.0.0.1:9200/sourceIndex',
-  output: 'http://127.0.0.1:9200/destinationIndex',
+  limit:   100,
+  offset:  0,
+  debug:   false,
+  delete:  false,
+  input:   'http://127.0.0.1:9200/sourceIndex',
+  output:  'http://127.0.0.1:9200/destinationIndex',
 }
 
 var options = {
@@ -25,11 +26,13 @@ for(var i in defaults){
   if(argv[i] != null){ 
     options[i] = argv[i];
   }
+  if(options[i] === 'true' ){ options[i] = true; }
+  if(options[i] === 'false'){ options[i] = false; }
 }
 
 var log = function(type, message){
   if(type === 'debug'){
-    if(options.debug === true || options.debug === 'true'){
+    if(options.debug === true){
       message = "[debug] | " + message;
     }else{
       return false;
