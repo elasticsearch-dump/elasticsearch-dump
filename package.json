@@ -8,7 +8,7 @@
     "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
   },
   "main": "elasticsearch-dump.js",
-  "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export"],
+  "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export", "transfer", "migrate", "migartion"],
   "engines": {
     "node": ">=0.8.0"
   },
@@ -24,6 +24,6 @@
     "elasticdump": "./bin/elasticdump"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha test --reporter=spec"
+    "test": "mocha"
   }
 }
