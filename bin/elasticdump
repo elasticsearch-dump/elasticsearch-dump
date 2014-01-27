@@ -10,6 +10,7 @@ var defaults = {
   debug:   false,
   delete:  false,
   head:    false,
+  bulk:    false,
   input:   'http://127.0.0.1:9200/sourceIndex',
   output:  'http://127.0.0.1:9200/destinationIndex',
 }
