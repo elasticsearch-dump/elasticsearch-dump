@@ -9,6 +9,7 @@ var defaults = {
   offset:  0,
   debug:   false,
   delete:  false,
+  head:    false,
   input:   'http://127.0.0.1:9200/sourceIndex',
   output:  'http://127.0.0.1:9200/destinationIndex',
 }
