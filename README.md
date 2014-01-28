@@ -39,6 +39,9 @@ You can then do things like:
   - `elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index`
 - Backup an index to a file: 
   - `elasticdump --input=http://production.es.com:9200/my_index --output=/var/dat/es.json`
+- Backup ALL indices, then use Bulk API to load populate another ES cluster:
+  - `elasticdump --all=true --input=http://staging.es.com:9200/ --output=/var/dat/es.json`
+  - `elasticdump --all=true --input=/var/dat/es.json --output=http://production.es.com:9200/ --bulk=true`
 
 ## Options
 
@@ -47,6 +50,8 @@ You can then do things like:
 - `--limit` how many ojbects to move in bulk per operation (default: 100)
 - `--debug` display the elasticsearch commands being used (default: false)
 - `--delete` delete documents one-by-one from the input as they are moved (default: false)
+- `--all` load/store documents from ALL indices (default: false)
+- `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
 
 ## Notes
 

@@ -13,17 +13,17 @@ while(i < seedSize){
   i++;
 }
 
-var seed = function(callback){
+var seed = function(index, callback){
   var started = 0;
   for(var key in seeds){
     started++;
     var seed = seeds[key];
     seed['_uuid'] = key;
-    var url = baseUrl + "/source_index/seeds/" + key;
+    var url = baseUrl + "/" + index + "/seeds/" + key;
     request.put(url, {body: JSON.stringify(seed)}, function(err, response, body){
       started--;
       if(started == 0){
-        request.post(baseUrl + "/source_index/_refresh", function(err, response){
+        request.post(baseUrl + "/" + index + "/_refresh", function(err, response){
           callback();
         });
       }
@@ -34,7 +34,9 @@ var seed = function(callback){
 var clear = function(callback){
   request.del(baseUrl + '/destination_index', function(err, response, body){
     request.del(baseUrl + '/source_index', function(err, response, body){
-      callback();
+      request.del(baseUrl + '/another_index', function(err, response, body){
+        callback();
+      });
     });
   });
 }
@@ -44,10 +46,12 @@ describe("ELASTICDUMP", function(){
   beforeEach(function(done){
     this.timeout(testTimeout);
     clear(function(){
-      seed(function(){
-        setTimeout(function(){
-          done();
-        }, 500);
+      seed("source_index", function(){
+        seed("another_index", function(){
+          setTimeout(function(){
+            done();
+          }, 500);
+        });
       });
     });
   });
@@ -187,7 +191,53 @@ describe("ELASTICDUMP", function(){
           done();
         });
       });
+    });
+  });
 
+  describe("all es to file", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        input:  baseUrl,
+        output: '/tmp/out.json',
+        all:    true,
+      }
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var raw = fs.readFileSync('/tmp/out.json');
+        var output = JSON.parse( raw );
+        output.length.should.equal(seedSize * 2);
+        done();
+      });
+    });
+  });
+
+  describe("file to bulk es", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        input:  baseUrl,
+        output: '/tmp/out.json',
+        all:    true,
+        bulk:   true
+      }
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var raw = fs.readFileSync('/tmp/out.json');
+        var output = JSON.parse( raw );
+        output.length.should.equal(seedSize * 2);
+        done();
+      });
     });
   });
 
