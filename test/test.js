@@ -231,26 +231,26 @@ describe("ELASTICDUMP", function(){
         limit:  100,
         offset: 0,
         debug:  false,
-        input:  baseUrl,
-        output: '/tmp/out.json',
+        output:  baseUrl,
+        input: __dirname + '/seeds.json',
         all:    true,
         bulk:   true
       }
 
       var dumper = new elasticdump(options.input, options.output, options);
 
-      dumper.dump(function(){
-        var raw = fs.readFileSync('/tmp/out.json');
-        var output = JSON.parse( raw );
-        count = 0;
-        for(var i in output){
-          var elem = output[i];
-          if(elem['_index'] === 'source_index' || elem['_index'] === 'another_index'){
-            count++;
-          }
-        }
-        count.should.equal(seedSize * 2);
-        done();
+      clear(function(){
+        dumper.dump(function(){
+          request.get(baseUrl + "/source_index/_search", function(err, response, body1){
+            request.get(baseUrl + "/another_index/_search", function(err, response, body2){
+              body1 = JSON.parse(body1);
+              body2 = JSON.parse(body2);
+              body1.hits.total.should.equal(5);
+              body2.hits.total.should.equal(5);
+              done();
+            });
+          });
+        });
       });
     });
   });
