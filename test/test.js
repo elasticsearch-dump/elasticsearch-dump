@@ -211,7 +211,14 @@ describe("ELASTICDUMP", function(){
       dumper.dump(function(){
         var raw = fs.readFileSync('/tmp/out.json');
         var output = JSON.parse( raw );
-        output.length.should.equal(seedSize * 2);
+        count = 0;
+        for(var i in output){
+          var elem = output[i];
+          if(elem['_index'] === 'source_index' || elem['_index'] === 'another_index'){
+            count++;
+          }
+        }
+        count.should.equal(seedSize * 2);
         done();
       });
     });
@@ -235,7 +242,14 @@ describe("ELASTICDUMP", function(){
       dumper.dump(function(){
         var raw = fs.readFileSync('/tmp/out.json');
         var output = JSON.parse( raw );
-        output.length.should.equal(seedSize * 2);
+        count = 0;
+        for(var i in output){
+          var elem = output[i];
+          if(elem['_index'] === 'source_index' || elem['_index'] === 'another_index'){
+            count++;
+          }
+        }
+        count.should.equal(seedSize * 2);
         done();
       });
     });
