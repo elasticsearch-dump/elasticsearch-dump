@@ -255,4 +255,12 @@ describe("ELASTICDUMP", function(){
     });
   });
 
+  describe("es to stdout", function(){
+    it('works');
+  });
+
+  describe("stdin to es", function(){
+    it('works');
+  });
+
 });
