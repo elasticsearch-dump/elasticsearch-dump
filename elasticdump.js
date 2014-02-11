@@ -6,13 +6,25 @@ var elasticdump = function(input, output, options){
   this.output  = output;
   this.options = options;
 
-  this.validateOptions();
+  this.validateOptions();  
+  this.toLog = true;
 
-  this.inputType  = 'file';
-  this.outputType = 'file';
+  if(this.options.input == "$"){
+    this.inputType = 'stdio'; 
+  }else if(this.options.input.indexOf(":") >= 0){ 
+    this.inputType = 'elasticsearch'; 
+  }else{
+    this.inputType  = 'file';
+  }
 
-  if(this.options.input.indexOf(":") >= 0){  this.inputType = 'elasticsearch'; }
-  if(this.options.output.indexOf(":") >= 0){ this.outputType = 'elasticsearch'; }
+  if(this.options.output == "$"){
+    this.outputType = 'stdio'; 
+    this.toLog = false;
+  }else if(this.options.output.indexOf(":") >= 0){ 
+    this.outputType = 'elasticsearch'; 
+  }else{
+    this.outputType = 'file';
+  }
 
   var inputProto  = require(__dirname + "/lib/transports/" + this.inputType)[this.inputType];
   var outputProto = require(__dirname + "/lib/transports/" + this.outputType)[this.outputType];
@@ -27,7 +39,7 @@ elasticdump.prototype.log = function(message){
   var self = this;
   if(typeof self.options.logger === 'function'){
     self.options.logger(message);
-  }else{
+  }else if(self.toLog === true){
     self.emit("log", message);
   }
 }
@@ -43,7 +55,7 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset){
   if(offset == null){ offset = self.options.offset }
 
   if(continuing !== true){
-    self.emit('log', 'starting dump');
+    self.log('starting dump');
   }
 
   self.input.get(limit, offset, function(err, data){
@@ -58,8 +70,7 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset){
       if(data.length > 0){
         self.dump(callback, true, limit, offset);
       }else{
-        self.emit('log', 'dump complete');
-        self.emit('done');
+        self.log('dump complete');
         if(typeof callback === 'function'){ callback(); }
       }
     });
