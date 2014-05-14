@@ -28,7 +28,7 @@ elasticdump
 elasticdump works by sending an `input` to an `output`.  Both can be either an elasticsearch URL or a File. 
 
 Elasticsearch:
-- format:  `{proticol}://{host}:{port}/{index}`
+- format:  `{protocol}://{host}:{port}/{index}`
 - example: `http://127.0.0.1:9200/my_index`
 
 File:
