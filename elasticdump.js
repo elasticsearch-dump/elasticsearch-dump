@@ -49,10 +49,11 @@ elasticdump.prototype.validateOptions = function(){
   // TODO
 }
 
-elasticdump.prototype.dump = function(callback, continuing, limit, offset){
+elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes){
   var self  = this;
-  if(limit  == null){ limit = self.options.limit   }
-  if(offset == null){ offset = self.options.offset }
+  if(limit  == null){ limit = self.options.limit;  }
+  if(offset == null){ offset = self.options.offset; }
+  if(total_writes == null){ total_writes = 0; }
 
   if(continuing !== true){
     self.log('starting dump');
@@ -64,14 +65,15 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset){
     self.output.set(data, limit, offset, function(err, writes){
       if(err){ self.emit('error', err);
       }else{
+        total_writes += writes;
         self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
         offset = offset + limit;
       }
       if(data.length > 0){
-        self.dump(callback, true, limit, offset);
+        self.dump(callback, true, limit, offset, total_writes);
       }else{
         self.log('dump complete');
-        if(typeof callback === 'function'){ callback(); }
+        if(typeof callback === 'function'){ callback(total_writes); }
       }
     });
   });
