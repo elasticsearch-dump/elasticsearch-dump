@@ -110,6 +110,42 @@ describe("ELASTICDUMP", function(){
       });
     });
 
+    it('counts updates as writes', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+      }
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(total_writes){
+        var url = baseUrl + "/destination_index/_search"
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(seedSize);
+          total_writes.should.equal(seedSize);
+
+          dumper.dump(function(total_writes){
+            var url = baseUrl + "/destination_index/_search"
+            request.get(url, function(err, response, body){
+              should.not.exist(err);
+              body = JSON.parse(body);
+              body.hits.total.should.equal(seedSize);
+              total_writes.should.equal(seedSize);
+              done();
+            });
+          });
+
+        });
+      });
+
+    });
+
     it('can also delete documents from the source index', function(done){
       this.timeout(testTimeout);
       var options = {
