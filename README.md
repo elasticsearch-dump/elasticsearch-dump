@@ -60,6 +60,7 @@ You can then do things like:
 - `--delete` delete documents one-by-one from the input as they are moved (default: false)
 - `--all` load/store documents from ALL indices (default: false)
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
+- `--ignore-errors` will continue the read/write loop on write error (default: false)
 - `--scrollTime` Time the nodes will hold the requested search in order. (default: 10m)
 
 ## Elasticsearch's scan and scroll method
