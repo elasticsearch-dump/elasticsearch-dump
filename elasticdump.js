@@ -11,8 +11,8 @@ var elasticdump = function(input, output, options){
 
   if(this.options.input == "$"){
     this.inputType = 'stdio'; 
-  }else if(this.options.input.indexOf(":") >= 0){ 
-    this.inputType = 'elasticsearch'; 
+  }else if(this.options.input.indexOf(":") >= 0){
+    this.inputType = 'elasticsearch';
   }else{
     this.inputType  = 'file';
   }
@@ -20,8 +20,8 @@ var elasticdump = function(input, output, options){
   if(this.options.output == "$"){
     this.outputType = 'stdio'; 
     this.toLog = false;
-  }else if(this.options.output.indexOf(":") >= 0){ 
-    this.outputType = 'elasticsearch'; 
+  }else if(this.options.output.indexOf(":") >= 0){
+    this.outputType = 'elasticsearch';
   }else{
     this.outputType = 'file';
   }

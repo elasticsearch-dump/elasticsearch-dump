@@ -60,6 +60,15 @@ You can then do things like:
 - `--delete` delete documents one-by-one from the input as they are moved (default: false)
 - `--all` load/store documents from ALL indices (default: false)
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
+- `--scrollTime` Time the nodes will hold the requested search in order. (default: 10m)
+
+## Elasticsearch's scan and scroll method
+Elasticsearch provides a scan and scroll method to fetch all documents of an index. This method is much safer to use since
+it will maintain the result set in cache for the given period of time. This means it will be a lot faster to export the data
+and more important it will keep the result set in order. While dumping the result set in batches it won't export duplicate
+documents in the export. All documents in the export will unique and therefore no missing documents.
+
+NOTE: only works for output
 
 ## Notes
 

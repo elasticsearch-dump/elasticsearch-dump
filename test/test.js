@@ -95,12 +95,13 @@ describe("ELASTICDUMP", function(){
         debug:  false,
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
-      }
+        scrollTime: '10m'
+      };
 
       var dumper = new elasticdump(options.input, options.output, options);
 
       dumper.dump(function(){
-        var url = baseUrl + "/destination_index/_search"
+        var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
@@ -118,12 +119,13 @@ describe("ELASTICDUMP", function(){
         debug:  false,
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
-      }
+        scrollTime: '10m'
+      };
 
       var dumper = new elasticdump(options.input, options.output, options);
 
       dumper.dump(function(total_writes){
-        var url = baseUrl + "/destination_index/_search"
+        var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
@@ -131,7 +133,7 @@ describe("ELASTICDUMP", function(){
           total_writes.should.equal(seedSize);
 
           dumper.dump(function(total_writes){
-            var url = baseUrl + "/destination_index/_search"
+            var url = baseUrl + "/destination_index/_search";
             request.get(url, function(err, response, body){
               should.not.exist(err);
               body = JSON.parse(body);
@@ -143,7 +145,6 @@ describe("ELASTICDUMP", function(){
 
         });
       });
-
     });
 
     it('can also delete documents from the source index', function(done){
@@ -155,6 +156,7 @@ describe("ELASTICDUMP", function(){
         delete: true,
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
+        scrollTime: '10m'
       }
 
       var dumper = new elasticdump(options.input, options.output, options);
@@ -192,7 +194,8 @@ describe("ELASTICDUMP", function(){
         debug:  false,
         input:  baseUrl + '/source_index',
         output: '/tmp/out.json',
-      }
+        scrollTime: '10m'
+      };
 
       var dumper = new elasticdump(options.input, options.output, options);
 
@@ -214,12 +217,13 @@ describe("ELASTICDUMP", function(){
         debug:  false,
         input: '/tmp/out.json',
         output: baseUrl + '/destination_index',
-      }
+        scrollTime: '10m'
+      };
 
       var dumper = new elasticdump(options.input, options.output, options);
 
       dumper.dump(function(){
-        var url = baseUrl + "/destination_index/_search"
+        var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
@@ -239,8 +243,9 @@ describe("ELASTICDUMP", function(){
         debug:  false,
         input:  baseUrl,
         output: '/tmp/out.json',
-        all:    true,
-      }
+        scrollTime: '10m',
+        all:    true
+      };
 
       var dumper = new elasticdump(options.input, options.output, options);
 
@@ -270,8 +275,9 @@ describe("ELASTICDUMP", function(){
         output:  baseUrl,
         input: __dirname + '/seeds.json',
         all:    true,
-        bulk:   true
-      }
+        bulk:   true,
+        scrollTime: '10m'
+      };
 
       var dumper = new elasticdump(options.input, options.output, options);
 
