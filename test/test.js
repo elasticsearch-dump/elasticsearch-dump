@@ -76,15 +76,15 @@ describe("ELASTICDUMP", function(){
     });
   });
 
-//  it('destination_index starts non-existant', function(done){
-//    this.timeout(testTimeout);
-//    var url = baseUrl + "/destination_index/_search"
-//    request.get(url, function(err, response, body){
-//      body = JSON.parse(body);
-//      body.status.should.equal(404);
-//      done();
-//    });
-//  });
+  it('destination_index starts non-existant', function(done){
+    this.timeout(testTimeout);
+    var url = baseUrl + "/destination_index/_search"
+    request.get(url, function(err, response, body){
+      body = JSON.parse(body);
+      body.status.should.equal(404);
+      done();
+    });
+  });
 
   describe("es to es", function(){
     it('works', function(done){
@@ -119,12 +119,13 @@ describe("ELASTICDUMP", function(){
         debug:  false,
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
-      }
+        scrollTime: '10m'
+      };
 
       var dumper = new elasticdump(options.input, options.output, options);
 
       dumper.dump(function(total_writes){
-        var url = baseUrl + "/destination_index/_search"
+        var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
@@ -132,7 +133,7 @@ describe("ELASTICDUMP", function(){
           total_writes.should.equal(seedSize);
 
           dumper.dump(function(total_writes){
-            var url = baseUrl + "/destination_index/_search"
+            var url = baseUrl + "/destination_index/_search";
             request.get(url, function(err, response, body){
               should.not.exist(err);
               body = JSON.parse(body);
@@ -144,7 +145,6 @@ describe("ELASTICDUMP", function(){
 
         });
       });
-
     });
 
     it('can also delete documents from the source index', function(done){
@@ -156,6 +156,7 @@ describe("ELASTICDUMP", function(){
         delete: true,
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
+        scrollTime: '10m'
       }
 
       var dumper = new elasticdump(options.input, options.output, options);
@@ -184,124 +185,124 @@ describe("ELASTICDUMP", function(){
     });
   });
 
-//  describe("es to file", function(){
-//    it('works', function(done){
-//      this.timeout(testTimeout);
-//      var options = {
-//        limit:  100,
-//        offset: 0,
-//        debug:  false,
-//        input:  baseUrl + '/source_index',
-//        output: '/tmp/out.json',
-//        scrollTime: '10m'
-//      };
-//
-//      var dumper = new elasticdump(options.input, options.output, options);
-//
-//      dumper.dump(function(){
-//        var raw = fs.readFileSync('/tmp/out.json');
-//        var output = JSON.parse( raw );
-//        output.length.should.equal(seedSize);
-//        done();
-//      });
-//    });
-//  });
-//
-//  describe("file to es", function(){
-//    it('works', function(done){
-//      this.timeout(testTimeout);
-//      var options = {
-//        limit:  100,
-//        offset: 0,
-//        debug:  false,
-//        input: '/tmp/out.json',
-//        output: baseUrl + '/destination_index',
-//        scrollTime: '10m'
-//      };
-//
-//      var dumper = new elasticdump(options.input, options.output, options);
-//
-//      dumper.dump(function(){
-//        var url = baseUrl + "/destination_index/_search";
-//        request.get(url, function(err, response, body){
-//          should.not.exist(err);
-//          body = JSON.parse(body);
-//          body.hits.total.should.equal(seedSize);
-//          done();
-//        });
-//      });
-//    });
-//  });
-//
-//  describe("all es to file", function(){
-//    it('works', function(done){
-//      this.timeout(testTimeout);
-//      var options = {
-//        limit:  100,
-//        offset: 0,
-//        debug:  false,
-//        input:  baseUrl,
-//        output: '/tmp/out.json',
-//        scrollTime: '10m',
-//        all:    true
-//      };
-//
-//      var dumper = new elasticdump(options.input, options.output, options);
-//
-//      dumper.dump(function(){
-//        var raw = fs.readFileSync('/tmp/out.json');
-//        var output = JSON.parse( raw );
-//        count = 0;
-//        for(var i in output){
-//          var elem = output[i];
-//          if(elem['_index'] === 'source_index' || elem['_index'] === 'another_index'){
-//            count++;
-//          }
-//        }
-//        count.should.equal(seedSize * 2);
-//        done();
-//      });
-//    });
-//  });
-//
-//  describe("file to bulk es", function(){
-//    it('works', function(done){
-//      this.timeout(testTimeout);
-//      var options = {
-//        limit:  100,
-//        offset: 0,
-//        debug:  false,
-//        output:  baseUrl,
-//        input: __dirname + '/seeds.json',
-//        all:    true,
-//        bulk:   true,
-//        scrollTime: '10m'
-//      };
-//
-//      var dumper = new elasticdump(options.input, options.output, options);
-//
-//      clear(function(){
-//        dumper.dump(function(){
-//          request.get(baseUrl + "/source_index/_search", function(err, response, body1){
-//            request.get(baseUrl + "/another_index/_search", function(err, response, body2){
-//              body1 = JSON.parse(body1);
-//              body2 = JSON.parse(body2);
-//              body1.hits.total.should.equal(5);
-//              body2.hits.total.should.equal(5);
-//              done();
-//            });
-//          });
-//        });
-//      });
-//    });
-//  });
-//
-//  describe("es to stdout", function(){
-//    it('works');
-//  });
-//
-//  describe("stdin to es", function(){
-//    it('works');
-//  });
+  describe("es to file", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        input:  baseUrl + '/source_index',
+        output: '/tmp/out.json',
+        scrollTime: '10m'
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var raw = fs.readFileSync('/tmp/out.json');
+        var output = JSON.parse( raw );
+        output.length.should.equal(seedSize);
+        done();
+      });
+    });
+  });
+
+  describe("file to es", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        input: '/tmp/out.json',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(seedSize);
+          done();
+        });
+      });
+    });
+  });
+
+  describe("all es to file", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        input:  baseUrl,
+        output: '/tmp/out.json',
+        scrollTime: '10m',
+        all:    true
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var raw = fs.readFileSync('/tmp/out.json');
+        var output = JSON.parse( raw );
+        count = 0;
+        for(var i in output){
+          var elem = output[i];
+          if(elem['_index'] === 'source_index' || elem['_index'] === 'another_index'){
+            count++;
+          }
+        }
+        count.should.equal(seedSize * 2);
+        done();
+      });
+    });
+  });
+
+  describe("file to bulk es", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        output:  baseUrl,
+        input: __dirname + '/seeds.json',
+        all:    true,
+        bulk:   true,
+        scrollTime: '10m'
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      clear(function(){
+        dumper.dump(function(){
+          request.get(baseUrl + "/source_index/_search", function(err, response, body1){
+            request.get(baseUrl + "/another_index/_search", function(err, response, body2){
+              body1 = JSON.parse(body1);
+              body2 = JSON.parse(body2);
+              body1.hits.total.should.equal(5);
+              body2.hits.total.should.equal(5);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe("es to stdout", function(){
+    it('works');
+  });
+
+  describe("stdin to es", function(){
+    it('works');
+  });
 
 });
