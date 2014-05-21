@@ -5,25 +5,27 @@ var util        = require('util');
 var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
 
 var defaults = {
-  limit:     100,
-  offset:    0,
-  debug:     false,
-  delete:    false,
-  all:       false,
-  bulk:      false,
-  input:     'http://127.0.0.1:9200/sourceIndex',
-  output:    'http://127.0.0.1:9200/destinationIndex',
-  format:    '',
-  scrollTime: '10m'
+  limit:           100,
+  offset:          0,
+  debug:           false,
+  delete:          false,
+  all:             false,
+  bulk:            false,
+  input:           'http://127.0.0.1:9200/sourceIndex',
+  output:          'http://127.0.0.1:9200/destinationIndex',
+  format:          '',
+  'ignore-errors': false,
+  scrollTime:      '10m'
 }
 
 var options = {
-  limit:        defaults.limit,
-  offset:       defaults.offset,
-  debug:        defaults.debug,
-  scrollTime:   defaults.scrollTime,
-  input:        '',
-  output:       ''
+  limit:           defaults.limit,
+  offset:          defaults.offset,
+  debug:           defaults.debug,
+  scrollTime:      defaults.scrollTime,
+  'ignore-errors': defaults['ignore-errors'],
+  input:           '',
+  output:          ''
 };
 
 for(var i in defaults){
@@ -52,6 +54,6 @@ var dumper = new elasticdump(options.input, options.output, options);
 
 dumper.on('log',   function(message){ log('log',   message) })
 dumper.on('debug', function(message){ log('debug', message) })
-dumper.on('error', function(error){ console.log(error) })
+dumper.on('error', function(error){   log('log',   JSON.stringify(error)) })
   
 dumper.dump();

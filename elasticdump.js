@@ -63,16 +63,26 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
     if(err){  self.emit('error', err); }
     self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
     self.output.set(data, limit, offset, function(err, writes){
-      if(err){ self.emit('error', err);
+      var toContinue = true;
+      if(err){ 
+        self.emit('error', err);
+        if( self.options['ignore-errors'] == true || self.options['ignore-errors'] == 'true' ){
+          toContinue = true;
+        }else{
+          toContinue = false;
+        }
       }else{
         total_writes += writes;
         self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
         offset = offset + limit;
       }
-      if(data.length > 0){
+      if(data.length > 0 && toContinue){
         self.dump(callback, true, limit, offset, total_writes);
-      }else{
+      }else if(toContinue){
         self.log('dump complete');
+        if(typeof callback === 'function'){ callback(total_writes); }
+      }else if(toContinue == false){
+        self.log('dump ended with error');
         if(typeof callback === 'function'){ callback(total_writes); }
       }
     });
