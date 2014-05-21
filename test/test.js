@@ -111,43 +111,77 @@ describe("ELASTICDUMP", function(){
       });
     });
 
-//    it('can also delete documents from the source index', function(done){
-//      this.timeout(testTimeout);
-//      var options = {
-//        limit:  100,
-//        offset: 0,
-//        debug:  false,
-//        delete: true,
-//        input:  baseUrl + '/source_index',
-//        output: baseUrl + '/destination_index',
-//        scrollTime: '10m'
-//      };
-//
-//      var dumper = new elasticdump(options.input, options.output, options);
-//
-//      dumper.dump(function(){
-//        var url = baseUrl + "/destination_index/_search";
-//        request.get(url, function(err, response, destination_body){
-//          destination_body = JSON.parse(destination_body);
-//                    
-//          destination_body.hits.total.should.equal(seedSize);
-//          dumper.input.reindex(function(){
-//            // Note: Depending on the speed of your ES server
-//            // all the elements might not be deleted when the HTTP response returns
-//            // sleeping is required, but the duration is based on your CPU, disk, etc.
-//            // lets guess 1ms per entry in the index
-//            setTimeout(function(){
-//              var url = baseUrl + "/source_index/_search";
-//              request.get(url, function(err, response, source_body){
-//                source_body = JSON.parse(source_body);
-//                source_body.hits.total.should.equal(0);
-//                done();
-//              });
-//            }, 5 * seedSize);
-//          });
-//        });
-//      });
-//    });
+    it('counts updates as writes', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+      }
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(total_writes){
+        var url = baseUrl + "/destination_index/_search"
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(seedSize);
+          total_writes.should.equal(seedSize);
+
+          dumper.dump(function(total_writes){
+            var url = baseUrl + "/destination_index/_search"
+            request.get(url, function(err, response, body){
+              should.not.exist(err);
+              body = JSON.parse(body);
+              body.hits.total.should.equal(seedSize);
+              total_writes.should.equal(seedSize);
+              done();
+            });
+          });
+
+        });
+      });
+
+    });
+
+    it('can also delete documents from the source index', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        delete: true,
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+      }
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search"
+        request.get(url, function(err, response, destination_body){
+          destination_body = JSON.parse(destination_body);
+          destination_body.hits.total.should.equal(seedSize);
+          dumper.input.reindex(function(){
+            // Note: Depending on the speed of your ES server
+            // all the elements might not be deleted when the HTTP response returns
+            // sleeping is required, but the duration is based on your CPU, disk, etc.
+            // lets guess 1ms per entry in the index
+            setTimeout(function(){
+              var url = baseUrl + "/source_index/_search"
+              request.get(url, function(err, response, source_body){
+                source_body = JSON.parse(source_body);
+                source_body.hits.total.should.equal(0);
+                done();
+              });
+            }, 5 * seedSize);
+          });
+        });
+      });
+    });
   });
 
 //  describe("es to file", function(){
