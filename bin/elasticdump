@@ -14,8 +14,6 @@ var defaults = {
   input:     'http://127.0.0.1:9200/sourceIndex',
   output:    'http://127.0.0.1:9200/destinationIndex',
   format:    '',
-  scan:      false,
-  searchUrl: '',
   scrollTime: '10m'
 }
 
@@ -23,9 +21,7 @@ var options = {
   limit:        defaults.limit,
   offset:       defaults.offset,
   debug:        defaults.debug,
-  scan:         defaults.scan,
-  searchUrl:    defaults.searchUrl,
-  scrollTime:    defaults.scrollTime,
+  scrollTime:   defaults.scrollTime,
   input:        '',
   output:       ''
 };
@@ -50,11 +46,6 @@ var log = function(type, message){
     message = (new Date().toUTCString()) + " | " + message;
   }
   console.log(message); 
-}
-
-if (options.scan && options.searchUrl == '') {
-    log("log", "When using the scan method you need to provide the searchUrl. Aborting dump");
-    process.exit(1);
 }
 
 var dumper = new elasticdump(options.input, options.output, options);

@@ -12,11 +12,7 @@ var elasticdump = function(input, output, options){
   if(this.options.input == "$"){
     this.inputType = 'stdio'; 
   }else if(this.options.input.indexOf(":") >= 0){
-    if(this.options.scan) {
-      this.inputType = 'elasticsearchScan';
-    } else {
-      this.inputType = 'elasticsearch';
-    }
+    this.inputType = 'elasticsearch';
   }else{
     this.inputType  = 'file';
   }

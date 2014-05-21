@@ -45,8 +45,6 @@ You can then do things like:
   - `elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index`
 - Backup an index to a file: 
   - `elasticdump --input=http://production.es.com:9200/my_index --output=/var/data/es.json`
-- Backup an index to a file (using scan method):
-  - `elasticdump --input=http://production.es.com:9200/my_index --output=/var/data/es.json --scan=true --searchUrl=http://production.es.com:9200/_search`
 - Backup and index to a gzip using stdout:
   - `elasticdump --input=http://production.es.com:9200/my_index --output=$ | gzip > /var/data/es.gz`
 - Backup ALL indices, then use Bulk API to load populate another ES cluster:
@@ -62,14 +60,12 @@ You can then do things like:
 - `--delete` delete documents one-by-one from the input as they are moved (default: false)
 - `--all` load/store documents from ALL indices (default: false)
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
-- `--scan` use the scan/scroll method for dumping documents. This will ensure there are only unique documents in the dump. NOTE: only works for output (default: false)
-- `--searchUrl` mandatory option when `--scan` is used. Points to the search API endpoint. (default: '')
-- `--scrollTime` optional option when `--scan` is used. Time the nodes will hold the requested search in order. (default: 10m)
+- `--scrollTime` Time the nodes will hold the requested search in order. (default: 10m)
 
 ## Elasticsearch's scan and scroll method
 Elasticsearch provides a scan and scroll method to fetch all documents of an index. This method is much safer to use since
-it will maintain the resultset in cache for the given period of time. This means it will be a lot faster to export the data
-and more important it will keep the resultset in order. While dumping the resultset in batches it won't export duplicate
+it will maintain the result set in cache for the given period of time. This means it will be a lot faster to export the data
+and more important it will keep the result set in order. While dumping the result set in batches it won't export duplicate
 documents in the export. All documents in the export will unique and therefore no missing documents.
 
 NOTE: only works for output
