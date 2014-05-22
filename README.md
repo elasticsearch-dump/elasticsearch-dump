@@ -41,15 +41,23 @@ Stdio:
 
 You can then do things like:
 
-- Copy an index from production to staging: 
-  - `elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index`
-- Backup an index to a file: 
-  - `elasticdump --input=http://production.es.com:9200/my_index --output=/var/data/es.json`
-- Backup and index to a gzip using stdout:
-  - `elasticdump --input=http://production.es.com:9200/my_index --output=$ | gzip > /var/data/es.gz`
-- Backup ALL indices, then use Bulk API to populate another ES cluster:
-  - `elasticdump --all=true --input=http://staging.es.com:9200/ --output=/var/dat/es.json`
-  - `elasticdump --all=true --input=/var/dat/es.json --output=http://production.es.com:9200/ --bulk=true`
+Copy an index from production to staging: 
+```bash
+elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index
+```
+Backup an index to a file: 
+```bash
+elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index.json
+```
+Backup and index to a gzip using stdout:
+```bash
+elasticdump --input=http://production.es.com:9200/my_index --output=$ | gzip > /data/my_index.gz
+```
+Backup ALL indices, then use Bulk API to populate another ES cluster:
+```bash
+elasticdump --all=true --input=http://production-a.es.com:9200/ --output=/data/production.json
+elasticdump --bulk=true --input=/data/production.json --output=http://production-b.es.com:9200/
+```
 
 ## Options
 
