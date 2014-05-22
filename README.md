@@ -49,7 +49,7 @@ elasticdump --input=http://production.es.com:9200/my_index --output=http://stagi
 elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index.json
 
 # Backup and index to a gzip using stdout:
-elasticdump --input=http://production.es.com:9200/my_index --output=$ | gzip > /data/my_index.gz
+elasticdump --input=http://production.es.com:9200/my_index --output=$ | gzip > /data/my_index.json.gz
 
 # Backup ALL indices, then use Bulk API to populate another ES cluster:
 elasticdump --all=true --input=http://production-a.es.com:9200/ --output=/data/production.json
