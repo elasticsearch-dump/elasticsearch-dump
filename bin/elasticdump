@@ -11,6 +11,7 @@ var defaults = {
   delete:          false,
   all:             false,
   bulk:            false,
+  maxSockets:      null,
   input:           'http://127.0.0.1:9200/sourceIndex',
   output:          'http://127.0.0.1:9200/destinationIndex',
   format:          '',
@@ -24,6 +25,7 @@ var options = {
   debug:           defaults.debug,
   scrollTime:      defaults.scrollTime,
   'ignore-errors': defaults['ignore-errors'],
+  maxSockets:      defaults.maxSockets,
   input:           '',
   output:          ''
 };

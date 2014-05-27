@@ -1,3 +1,6 @@
+var http = require('http');
+http.globalAgent.maxSockets = 10; 
+
 var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
 var request     = require('request');
 var should      = require('should');
