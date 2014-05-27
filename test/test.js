@@ -111,6 +111,54 @@ describe("ELASTICDUMP", function(){
       });
     });
 
+    it('works with a small limit', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  10,
+        offset: 0,
+        debug:  false,
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(seedSize);
+          done();
+        });
+      });
+    });
+
+    it('works with a large limit', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  9999999,
+        offset: 0,
+        debug:  false,
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(seedSize);
+          done();
+        });
+      });
+    });
+
     it('counts updates as writes', function(done){
       this.timeout(testTimeout);
       var options = {
@@ -122,9 +170,10 @@ describe("ELASTICDUMP", function(){
         scrollTime: '10m'
       };
 
-      var dumper = new elasticdump(options.input, options.output, options);
+      var dumper_a = new elasticdump(options.input, options.output, options);
+      var dumper_b = new elasticdump(options.input, options.output, options);
 
-      dumper.dump(function(total_writes){
+      dumper_a.dump(function(total_writes){
         var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, body){
           should.not.exist(err);
@@ -132,7 +181,7 @@ describe("ELASTICDUMP", function(){
           body.hits.total.should.equal(seedSize);
           total_writes.should.equal(seedSize);
 
-          dumper.dump(function(total_writes){
+          dumper_b.dump(function(total_writes){
             var url = baseUrl + "/destination_index/_search";
             request.get(url, function(err, response, body){
               should.not.exist(err);
