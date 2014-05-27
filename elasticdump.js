@@ -1,4 +1,6 @@
-var util = require("util");
+var util  = require("util");
+var http  = require("http");
+var https = require("https");
 var EventEmitter = require('events').EventEmitter;
 
 var elasticdump = function(input, output, options){
@@ -24,6 +26,12 @@ var elasticdump = function(input, output, options){
     this.outputType = 'elasticsearch';
   }else{
     this.outputType = 'file';
+  }
+
+  if(options.maxSockets != null){
+    self.log('globally setting maxSockets=' + options.maxSockets);
+    http.globalAgent.maxSockets  = options.maxSockets;
+    https.globalAgent.maxSockets = options.maxSockets;
   }
 
   var inputProto  = require(__dirname + "/lib/transports/" + this.inputType)[this.inputType];
