@@ -67,6 +67,7 @@ elasticdump --bulk=true --input=/data/production.json --output=http://production
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
 - `--ignore-errors` will continue the read/write loop on write error (default: false)
 - `--scrollTime` Time the nodes will hold the requested search in order. (default: 10m)
+- `--maxSockets` How many simultanius HTTP requests can this process make? (default: 5 [node <= v0.10.x] / Infinity [node >= v0.11.x] )
 
 ## Elasticsearch's scan and scroll method
 Elasticsearch provides a scan and scroll method to fetch all documents of an index. This method is much safer to use since
