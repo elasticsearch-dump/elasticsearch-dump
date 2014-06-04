@@ -42,11 +42,13 @@ Stdio:
 You can then do things like:
 
 ```bash
-# Copy an index from production to staging: 
-elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index
+# Copy an index from production to staging with mappings: 
+elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index --type=mapping
+elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index --type=data
 
-# Backup an index to a file: 
-elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index.json
+# Backup an index's data to a file: 
+elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index_mapping.json --type=mapping
+elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index.json --type=data
 
 # Backup and index to a gzip using stdout:
 elasticdump --input=http://production.es.com:9200/my_index --output=$ | gzip > /data/my_index.json.gz
@@ -62,6 +64,7 @@ elasticdump --bulk=true --input=/data/production.json --output=http://production
 - `--output` (required) (see above)
 - `--limit` how many ojbects to move in bulk per operation (default: 100)
 - `--debug` display the elasticsearch commands being used (default: false)
+- `--type` what are we exporing? (default: data, options: [data, mapping])
 - `--delete` delete documents one-by-one from the input as they are moved (default: false)
 - `--all` load/store documents from ALL indices (default: false)
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)

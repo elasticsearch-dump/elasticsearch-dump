@@ -8,6 +8,7 @@ var defaults = {
   limit:           100,
   offset:          0,
   debug:           false,
+  type:            'data',
   delete:          false,
   all:             false,
   bulk:            false,
@@ -19,16 +20,7 @@ var defaults = {
   scrollTime:      '10m'
 }
 
-var options = {
-  limit:           defaults.limit,
-  offset:          defaults.offset,
-  debug:           defaults.debug,
-  scrollTime:      defaults.scrollTime,
-  'ignore-errors': defaults['ignore-errors'],
-  maxSockets:      defaults.maxSockets,
-  input:           '',
-  output:          ''
-};
+var options = {};
 
 for(var i in defaults){
   options[i] = defaults[i];
