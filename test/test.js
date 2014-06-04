@@ -96,6 +96,7 @@ describe("ELASTICDUMP", function(){
         limit:  100,
         offset: 0,
         debug:  false,
+        type:   'data',
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
@@ -120,6 +121,7 @@ describe("ELASTICDUMP", function(){
         limit:  10,
         offset: 0,
         debug:  false,
+        type:   'data',
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
@@ -144,6 +146,7 @@ describe("ELASTICDUMP", function(){
         limit:  9999999,
         offset: 0,
         debug:  false,
+        type:   'data',
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
@@ -168,6 +171,7 @@ describe("ELASTICDUMP", function(){
         limit:  100,
         offset: 0,
         debug:  false,
+        type:   'data',
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
@@ -205,6 +209,7 @@ describe("ELASTICDUMP", function(){
         limit:  100,
         offset: 0,
         debug:  false,
+        type:   'data',
         delete: true,
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
@@ -244,6 +249,7 @@ describe("ELASTICDUMP", function(){
         limit:  100,
         offset: 0,
         debug:  false,
+        type:   'data',
         input:  baseUrl + '/source_index',
         output: '/tmp/out.json',
         scrollTime: '10m'
@@ -267,6 +273,7 @@ describe("ELASTICDUMP", function(){
         limit:  100,
         offset: 0,
         debug:  false,
+        type:   'data',
         input: '/tmp/out.json',
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
@@ -293,6 +300,7 @@ describe("ELASTICDUMP", function(){
         limit:  100,
         offset: 0,
         debug:  false,
+        type:   'data',
         input:  baseUrl,
         output: '/tmp/out.json',
         scrollTime: '10m',
@@ -324,6 +332,7 @@ describe("ELASTICDUMP", function(){
         limit:  100,
         offset: 0,
         debug:  false,
+        type:   'data',
         output:  baseUrl,
         input: __dirname + '/seeds.json',
         all:    true,
