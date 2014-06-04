@@ -115,6 +115,36 @@ describe("ELASTICDUMP", function(){
       });
     });
 
+    it('can get and set mapping', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'mapping',
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(0);
+          var url = baseUrl + "/destination_index/_mapping";
+          request.get(url, function(err, response, body){
+            body = JSON.parse(body); 
+            body.destination_index.mappings.seeds.properties.key.type.should.equal('string');
+            done();
+          });
+        });
+      });
+    });
+
     it('works with a small limit', function(done){
       this.timeout(testTimeout);
       var options = {
