@@ -64,7 +64,7 @@ elasticdump --bulk=true --input=/data/production.json --output=http://production
 - `--output` (required) (see above)
 - `--limit` how many ojbects to move in bulk per operation (default: 100)
 - `--debug` display the elasticsearch commands being used (default: false)
-- `--type` what are we exporing? (default: data, options: [data, mapping])
+- `--type` what are we exporting? (default: data, options: [data, mapping])
 - `--delete` delete documents one-by-one from the input as they are moved (default: false)
 - `--all` load/store documents from ALL indices (default: false)
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
