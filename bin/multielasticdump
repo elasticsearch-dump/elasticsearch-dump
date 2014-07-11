@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // I am a wrapper around basic elastcidump
-// I will source all indices from your elasticserach server and dump them out to .json.gz files
+// I will source all indices from your elasticserach server and dump them out to .json and .mapping.json files
 // I probably only work on *nix hosts
 
 var argv        = require('optimist').argv;
