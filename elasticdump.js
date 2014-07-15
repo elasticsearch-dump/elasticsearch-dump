@@ -4,28 +4,30 @@ var https = require("https");
 var EventEmitter = require('events').EventEmitter;
 
 var elasticdump = function(input, output, options){
-  this.input   = input;
-  this.output  = output;
-  this.options = options;
+  var self  = this;
 
-  this.validateOptions();  
-  this.toLog = true;
+  self.input   = input;
+  self.output  = output;
+  self.options = options;
 
-  if(this.options.input == "$"){
-    this.inputType = 'stdio'; 
-  }else if(this.options.input.indexOf(":") >= 0){
-    this.inputType = 'elasticsearch';
+  self.validateOptions();  
+  self.toLog = true;
+
+  if(self.options.input == "$"){
+    self.inputType = 'stdio'; 
+  }else if(self.options.input.indexOf(":") >= 0){
+    self.inputType = 'elasticsearch';
   }else{
-    this.inputType  = 'file';
+    self.inputType  = 'file';
   }
 
-  if(this.options.output == "$"){
-    this.outputType = 'stdio'; 
-    this.toLog = false;
-  }else if(this.options.output.indexOf(":") >= 0){
-    this.outputType = 'elasticsearch';
+  if(self.options.output == "$"){
+    self.outputType = 'stdio'; 
+    self.toLog = false;
+  }else if(self.options.output.indexOf(":") >= 0){
+    self.outputType = 'elasticsearch';
   }else{
-    this.outputType = 'file';
+    self.outputType = 'file';
   }
 
   if(options.maxSockets != null){
@@ -34,17 +36,18 @@ var elasticdump = function(input, output, options){
     https.globalAgent.maxSockets = options.maxSockets;
   }
 
-  var inputProto  = require(__dirname + "/lib/transports/" + this.inputType)[this.inputType];
-  var outputProto = require(__dirname + "/lib/transports/" + this.outputType)[this.outputType];
+  var inputProto  = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
+  var outputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
 
-  this.input  = (new inputProto(this, this.options.input));
-  this.output = (new outputProto(this, this.options.output));
+  self.input  = (new inputProto(self, self.options.input));
+  self.output = (new outputProto(self, self.options.output));
 }
 
 util.inherits(elasticdump, EventEmitter);
 
 elasticdump.prototype.log = function(message){
   var self = this;
+
   if(typeof self.options.logger === 'function'){
     self.options.logger(message);
   }else if(self.toLog === true){
@@ -59,6 +62,7 @@ elasticdump.prototype.validateOptions = function(){
 
 elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes){
   var self  = this;
+  
   if(limit  == null){ limit = self.options.limit;  }
   if(offset == null){ offset = self.options.offset; }
   if(total_writes == null){ total_writes = 0; }
