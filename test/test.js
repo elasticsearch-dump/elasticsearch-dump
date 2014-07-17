@@ -16,14 +16,14 @@ while(i < seedSize){
   i++;
 }
 
-var seed = function(index, callback){
+var seed = function(index, type, callback){
   var started = 0;
   for(var key in seeds){
     started++;
-    var seed = seeds[key];
-    seed['_uuid'] = key;
-    var url = baseUrl + "/" + index + "/seeds/" + key;
-    request.put(url, {body: JSON.stringify(seed)}, function(err, response, body){
+    var s = seeds[key];
+    s['_uuid'] = key;
+    var url = baseUrl + "/" + index + "/" + type + "/" + key;
+    request.put(url, {body: JSON.stringify(s)}, function(err, response, body){
       started--;
       if(started == 0){
         request.post(baseUrl + "/" + index + "/_refresh", function(err, response){
@@ -49,8 +49,8 @@ describe("ELASTICDUMP", function(){
   beforeEach(function(done){
     this.timeout(testTimeout);
     clear(function(){
-      seed("source_index", function(){
-        seed("another_index", function(){
+      seed("source_index", 'seeds', function(){
+        seed("another_index", 'seeds', function(){
           setTimeout(function(){
             done();
           }, 500);
@@ -90,7 +90,7 @@ describe("ELASTICDUMP", function(){
   });
 
   describe("es to es", function(){
-    it('works', function(done){
+    it('works for a whole index', function(done){
       this.timeout(testTimeout);
       var options = {
         limit:  100,
@@ -98,6 +98,31 @@ describe("ELASTICDUMP", function(){
         debug:  false,
         type:   'data',
         input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(seedSize);
+          done();
+        });
+      });
+    });
+
+    it('works for index/types', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        input:  baseUrl + '/source_index/seeds',
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
       };
