@@ -29,6 +29,19 @@ var indexCounter = 0;
 var sleepTime = 1000;
 var workTimeout;
 
+var log = function(type, message){
+  if(type === 'debug'){
+    if(options.debug === true){
+      message = "[debug] | " + message;
+    }else{
+      return false;
+    }
+  }else{
+    message = (new Date().toUTCString()) + " | " + message;
+  }
+  console.log(message); 
+}
+
 for(var i in defaults){
   options[i] = defaults[i];
   if(argv[i] != null){ 
@@ -41,6 +54,7 @@ for(var i in defaults){
 request.get(options.input + '/_aliases', function(err, response){
   if(err){ log('err', err); process.exit(); }
   response = JSON.parse(response.body);
+  console.log("****************")
   for(var index in response){
     var matches = index.match(new RegExp(options.match, "i"));
     if(matches != null){
@@ -70,6 +84,12 @@ var work = function(){
 var dump = function(){
   working++;
   var index = matchedIndexes[indexCounter];
+  
+  if(index == null){
+    working--;
+    return;
+  }
+
   indexCounter++;
 
   try{
@@ -105,17 +125,4 @@ var dump = function(){
     complete++;
   });
   
-}
-
-var log = function(type, message){
-  if(type === 'debug'){
-    if(options.debug === true){
-      message = "[debug] | " + message;
-    }else{
-      return false;
-    }
-  }else{
-    message = (new Date().toUTCString()) + " | " + message;
-  }
-  console.log(message); 
 }
