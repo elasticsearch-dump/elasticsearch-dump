@@ -54,7 +54,6 @@ for(var i in defaults){
 request.get(options.input + '/_aliases', function(err, response){
   if(err){ log('err', err); process.exit(); }
   response = JSON.parse(response.body);
-  console.log("****************")
   for(var index in response){
     var matches = index.match(new RegExp(options.match, "i"));
     if(matches != null){
