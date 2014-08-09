@@ -1,5 +1,5 @@
 var http = require('http');
-http.globalAgent.maxSockets = 10; 
+http.globalAgent.maxSockets = 10;
 
 var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
 var request     = require('request');
@@ -67,7 +67,7 @@ describe("ELASTICDUMP", function(){
       body.tagline.should.equal('You Know, for Search');
       done();
     })
-  }); 
+  });
 
   it('source_index starts filled', function(done){
     this.timeout(testTimeout);
@@ -162,7 +162,7 @@ describe("ELASTICDUMP", function(){
           body.hits.total.should.equal(0);
           var url = baseUrl + "/destination_index/_mapping";
           request.get(url, function(err, response, body){
-            body = JSON.parse(body); 
+            body = JSON.parse(body);
             body.destination_index.mappings.seeds.properties.key.type.should.equal('string');
             done();
           });
@@ -407,6 +407,36 @@ describe("ELASTICDUMP", function(){
               body2.hits.total.should.equal(5);
               done();
             });
+          });
+        });
+      });
+    });
+  });
+
+  describe("file to bulk es, respecting output name", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        output: baseUrl + '/destination_index',
+        input: __dirname + '/seeds.json',
+        all:    true,
+        bulk:   true,
+        scrollTime: '10m',
+        'bulk-use-output-index-name': true
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      clear(function(){
+        dumper.dump(function(){
+          request.get(baseUrl + "/destination_index/_search", function(err, response, body){
+            body = JSON.parse(body);
+            body.hits.total.should.equal(10);
+            done();
           });
         });
       });

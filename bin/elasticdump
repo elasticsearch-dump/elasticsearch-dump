@@ -17,14 +17,15 @@ var defaults = {
   output:          'http://127.0.0.1:9200/destinationIndex',
   format:          '',
   'ignore-errors': false,
-  scrollTime:      '10m'
+  scrollTime:      '10m',
+  'bulk-use-output-index-name': false
 }
 
 var options = {};
 
 for(var i in defaults){
   options[i] = defaults[i];
-  if(argv[i] != null){ 
+  if(argv[i] != null){
     options[i] = argv[i];
   }
   if(options[i] === 'true' ){ options[i] = true; }
@@ -41,7 +42,7 @@ var log = function(type, message){
   }else{
     message = (new Date().toUTCString()) + " | " + message;
   }
-  console.log(message); 
+  console.log(message);
 }
 
 var dumper = new elasticdump(options.input, options.output, options);
@@ -49,5 +50,5 @@ var dumper = new elasticdump(options.input, options.output, options);
 dumper.on('log',   function(message){ log('log',   message) })
 dumper.on('debug', function(message){ log('debug', message) })
 dumper.on('error', function(error){   log('log',   JSON.stringify(error)) })
-  
+
 dumper.dump();
