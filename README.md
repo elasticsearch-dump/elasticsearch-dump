@@ -25,7 +25,7 @@ elasticdump
 
 ## Use
 
-elasticdump works by sending an `input` to an `output`.  Both can be either an elasticsearch URL or a File. 
+elasticdump works by sending an `input` to an `output`.  Both can be either an elasticsearch URL or a File.
 
 Elasticsearch:
 - format:  `{protocol}://{host}:{port}/{index}`
@@ -42,11 +42,11 @@ Stdio:
 You can then do things like:
 
 ```bash
-# Copy an index from production to staging with mappings: 
+# Copy an index from production to staging with mappings:
 elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index --type=mapping
 elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index --type=data
 
-# Backup an index's data to a file: 
+# Backup an index's data to a file:
 elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index_mapping.json --type=mapping
 elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index.json --type=data
 
@@ -71,6 +71,7 @@ elasticdump --bulk=true --input=/data/production.json --output=http://production
 - `--ignore-errors` will continue the read/write loop on write error (default: false)
 - `--scrollTime` Time the nodes will hold the requested search in order. (default: 10m)
 - `--maxSockets` How many simultanius HTTP requests can this process make? (default: 5 [node <= v0.10.x] / Infinity [node >= v0.11.x] )
+- `--bulk-use-output-index-name` Force use of destination index name (actually the actual output URL) as destination while bulk writing to ES. Allows leveraging  Bulk API copying data inside the same elasticsearch instance. (default: false)
 
 ## Elasticsearch's scan and scroll method
 Elasticsearch provides a scan and scroll method to fetch all documents of an index. This method is much safer to use since
