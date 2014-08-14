@@ -18,7 +18,8 @@ var defaults = {
   format:          '',
   'ignore-errors': false,
   scrollTime:      '10m',
-  'bulk-use-output-index-name': false
+  'bulk-use-output-index-name': false,
+  searchBody: 	   '{"query": { "match_all": {} } }'
 }
 
 var options = {};
@@ -30,6 +31,10 @@ for(var i in defaults){
   }
   if(options[i] === 'true' ){ options[i] = true; }
   if(options[i] === 'false'){ options[i] = false; }
+  // searchBody needs to go from JSON to object in order for size to be added later during elasticsearch query
+  if(i == "searchBody") {
+    options[i] = JSON.parse(options[i]);
+  }
 }
 
 var log = function(type, message){
