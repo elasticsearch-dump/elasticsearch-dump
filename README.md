@@ -66,6 +66,7 @@ elasticdump --bulk=true --input=/data/production.json --output=http://production
 - `--debug` display the elasticsearch commands being used (default: false)
 - `--type` what are we exporting? (default: data, options: [data, mapping])
 - `--delete` delete documents one-by-one from the input as they are moved (default: false)
+- `--seachQuery` preform a partial extract based on search results (when ES is the `input`, default: '{"query": { "match_all": {} } }')
 - `--all` load/store documents from ALL indices (default: false)
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
 - `--ignore-errors` will continue the read/write loop on write error (default: false)
