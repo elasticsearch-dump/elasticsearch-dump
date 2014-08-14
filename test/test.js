@@ -140,6 +140,59 @@ describe("ELASTICDUMP", function(){
       });
     });
 
+    it('works with searchBody', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        input:  baseUrl + '/source_index/seeds',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m',
+        searchBody: {"query": { "term": { "key": "key1"} } }
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(1);
+          done();
+        });
+      });
+    });
+
+    it('works with searchBody range', function(done){
+      // Test Note: Since UUID is ordered as string, lte: 2 should return _uuids 0,1,2,    10-19,  100-199 for a total of 113
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        input:  baseUrl + '/source_index/seeds',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m',
+        searchBody: {"query": {"range": { "_uuid": { "lte": "2"} } }}
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(113);
+          done();
+        });
+      });
+    });
+
     it('can get and set mapping', function(done){
       this.timeout(testTimeout);
       var options = {
