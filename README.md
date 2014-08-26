@@ -56,6 +56,9 @@ elasticdump --input=http://production.es.com:9200/my_index --output=$ | gzip > /
 # Backup ALL indices, then use Bulk API to populate another ES cluster:
 elasticdump --all=true --input=http://production-a.es.com:9200/ --output=/data/production.json
 elasticdump --bulk=true --input=/data/production.json --output=http://production-b.es.com:9200/
+
+# Backup the results of a query to a file
+elasticdump --input=http://production.es.com:9200/my_index --output=query.json --searchBody '{"query":{"term":{"username": "admin"}}}'
 ```
 
 ## Options
@@ -66,7 +69,7 @@ elasticdump --bulk=true --input=/data/production.json --output=http://production
 - `--debug` display the elasticsearch commands being used (default: false)
 - `--type` what are we exporting? (default: data, options: [data, mapping])
 - `--delete` delete documents one-by-one from the input as they are moved (default: false)
-- `--seachQuery` preform a partial extract based on search results (when ES is the `input`, default: '{"query": { "match_all": {} } }')
+- `--searchBody` preform a partial extract based on search results (when ES is the `input`, default: '{"query": { "match_all": {} } }')
 - `--all` load/store documents from ALL indices (default: false)
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
 - `--ignore-errors` will continue the read/write loop on write error (default: false)
