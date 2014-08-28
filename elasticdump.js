@@ -13,11 +13,11 @@ var elasticdump = function(input, output, options){
       self.options.searchBody = {"query": { "match_all": {} } };
   }
 
-  self.validateOptions();  
+  self.validateOptions();
   self.toLog = true;
 
   if(self.options.input == "$"){
-    self.inputType = 'stdio'; 
+    self.inputType = 'stdio';
   }else if(self.options.input.indexOf(":") >= 0){
     self.inputType = 'elasticsearch';
   }else{
@@ -25,7 +25,7 @@ var elasticdump = function(input, output, options){
   }
 
   if(self.options.output == "$"){
-    self.outputType = 'stdio'; 
+    self.outputType = 'stdio';
     self.toLog = false;
   }else if(self.options.output.indexOf(":") >= 0){
     self.outputType = 'elasticsearch';
@@ -65,7 +65,7 @@ elasticdump.prototype.validateOptions = function(){
 
 elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes){
   var self  = this;
-  
+
   if(limit  == null){ limit = self.options.limit;  }
   if(offset == null){ offset = self.options.offset; }
   if(total_writes == null){ total_writes = 0; }
@@ -79,7 +79,7 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
     self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
     self.output.set(data, limit, offset, function(err, writes){
       var toContinue = true;
-      if(err){ 
+      if(err){
         self.emit('error', err);
         if( self.options['ignore-errors'] == true || self.options['ignore-errors'] == 'true' ){
           toContinue = true;
@@ -89,7 +89,7 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
       }else{
         total_writes += writes;
         self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
-        offset = offset + limit;
+        offset = offset + data.length;
       }
       if(data.length > 0 && toContinue){
         self.dump(callback, true, limit, offset, total_writes);
