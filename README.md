@@ -46,7 +46,7 @@ You can then do things like:
 elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index --type=mapping
 elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index --type=data
 
-# Backup an index's data to a file:
+# Backup index data to a file:
 elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index_mapping.json --type=mapping
 elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index.json --type=data
 
