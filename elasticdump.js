@@ -9,14 +9,14 @@ var elasticdump = function(input, output, options){
   self.input   = input;
   self.output  = output;
   self.options = options;
-  if (self.options.searchBody == null)  {
+  if (!self.options.searchBody)  {
       self.options.searchBody = {"query": { "match_all": {} } };
   }
 
   self.validateOptions();
   self.toLog = true;
 
-  if(self.options.input == "$"){
+  if(self.options.input === "$"){
     self.inputType = 'stdio';
   }else if(self.options.input.indexOf(":") >= 0){
     self.inputType = 'elasticsearch';
@@ -24,7 +24,7 @@ var elasticdump = function(input, output, options){
     self.inputType  = 'file';
   }
 
-  if(self.options.output == "$"){
+  if(self.options.output === "$"){
     self.outputType = 'stdio';
     self.toLog = false;
   }else if(self.options.output.indexOf(":") >= 0){
@@ -33,17 +33,17 @@ var elasticdump = function(input, output, options){
     self.outputType = 'file';
   }
 
-  if(options.maxSockets != null){
+  if(options.maxSockets){
     self.log('globally setting maxSockets=' + options.maxSockets);
     http.globalAgent.maxSockets  = options.maxSockets;
     https.globalAgent.maxSockets = options.maxSockets;
   }
 
-  var inputProto  = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
-  var outputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
+  var InputProto  = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
+  var OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
 
-  self.input  = (new inputProto(self, self.options.input));
-  self.output = (new outputProto(self, self.options.output));
+  self.input  = (new InputProto(self, self.options.input));
+  self.output = (new OutputProto(self, self.options.output));
 }
 
 util.inherits(elasticdump, EventEmitter);
@@ -56,19 +56,19 @@ elasticdump.prototype.log = function(message){
   }else if(self.toLog === true){
     self.emit("log", message);
   }
-}
+};
 
 elasticdump.prototype.validateOptions = function(){
-  var self = this;
+  // var self = this;
   // TODO
-}
+};
 
 elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes){
   var self  = this;
 
-  if(limit  == null){ limit = self.options.limit;  }
-  if(offset == null){ offset = self.options.offset; }
-  if(total_writes == null){ total_writes = 0; }
+  if(!limit){ limit = self.options.limit;  }
+  if(!offset){ offset = self.options.offset; }
+  if(!total_writes){ total_writes = 0; }
 
   if(continuing !== true){
     self.log('starting dump');
@@ -81,7 +81,7 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
       var toContinue = true;
       if(err){
         self.emit('error', err);
-        if( self.options['ignore-errors'] == true || self.options['ignore-errors'] == 'true' ){
+        if( self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true' ){
           toContinue = true;
         }else{
           toContinue = false;
@@ -96,12 +96,12 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
       }else if(toContinue){
         self.log('dump complete');
         if(typeof callback === 'function'){ callback(total_writes); }
-      }else if(toContinue == false){
+      }else if(toContinue === false){
         self.log('dump ended with error');
         if(typeof callback === 'function'){ callback(total_writes); }
       }
     });
   });
-}
+};
 
 exports.elasticdump = elasticdump;
