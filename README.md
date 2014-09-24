@@ -68,7 +68,7 @@ elasticdump --input=http://production.es.com:9200/my_index --output=query.json -
 - `--limit` how many ojbects to move in bulk per operation (default: 100)
 - `--debug` display the elasticsearch commands being used (default: false)
 - `--type` what are we exporting? (default: data, options: [data, mapping])
-- `--delete` delete documents one-by-one from the input as they are moved (default: false)
+- `--delete` delete documents one-by-one from the input as they are moved (will not delete the source index) (default: false)
 - `--searchBody` preform a partial extract based on search results (when ES is the `input`, default: '{"query": { "match_all": {} } }')
 - `--all` load/store documents from ALL indices (default: false)
 - `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
