@@ -54,6 +54,6 @@ var dumper = new elasticdump(options.input, options.output, options);
 
 dumper.on('log',   function(message){ log('log',   message) })
 dumper.on('debug', function(message){ log('debug', message) })
-dumper.on('error', function(error){   log('log',   JSON.stringify(error)) })
+dumper.on('error', function(error){   log('log',   error.message || JSON.stringify(error)) })
 
 dumper.dump();
