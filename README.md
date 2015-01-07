@@ -37,7 +37,7 @@ File:
 
 Stdio:
 - format: stdin / stdout
-- format: $
+- format: `$`
 
 You can then do things like:
 
