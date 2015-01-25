@@ -1,16 +1,18 @@
 var http = require('http');
 http.globalAgent.maxSockets = 10;
 
-var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
-var request     = require('request');
-var should      = require('should');
-var fs          = require('fs');
-var baseUrl     = "http://127.0.0.1:9200";
+var elasticdump                = require( __dirname + "/../elasticdump.js" ).elasticdump;
+var request                    = require('request');
+var should                     = require('should');
+var fs                         = require('fs');
+var baseUrl                    = "http://127.0.0.1:9200";
 
-var seeds       = {};
-var seedSize    = 500;
-var testTimeout = seedSize * 100;
-var i           = 0;
+var seeds                      = {};
+var seedSize                   = 500;
+var testTimeout                = seedSize * 100;
+var i                          = 0;
+var indexesExistingBeforeSuite = 0;
+
 while(i < seedSize){
   seeds[i] = { key: ("key" + i) };
   i++;
@@ -32,7 +34,7 @@ var seed = function(index, type, callback){
       }
     });
   }
-}
+};
 
 var clear = function(callback){
   request.del(baseUrl + '/destination_index', function(err, response, body){
@@ -42,9 +44,23 @@ var clear = function(callback){
       });
     });
   });
-}
+};
 
 describe("ELASTICDUMP", function(){
+
+  before(function(done){
+    request(baseUrl + '/_cat/indices', function(err, response, body){
+      lines = body.split("\n");
+      lines.forEach(function(line){
+        words = line.split(' ');
+        index = words[2];
+        if(line.length > 0 && ['source_index', 'another_index', 'destination_index'].indexOf(index) < 0){ 
+          indexesExistingBeforeSuite++; 
+        }
+      });
+      done();
+    });
+  });
 
   beforeEach(function(done){
     this.timeout(testTimeout);
@@ -66,12 +82,12 @@ describe("ELASTICDUMP", function(){
       body = JSON.parse(body);
       body.tagline.should.equal('You Know, for Search');
       done();
-    })
+    });
   });
 
   it('source_index starts filled', function(done){
     this.timeout(testTimeout);
-    var url = baseUrl + "/source_index/_search"
+    var url = baseUrl + "/source_index/_search";
     request.get(url, function(err, response, body){
       body = JSON.parse(body);
       body.hits.total.should.equal(seedSize);
@@ -81,7 +97,7 @@ describe("ELASTICDUMP", function(){
 
   it('destination_index starts non-existant', function(done){
     this.timeout(testTimeout);
-    var url = baseUrl + "/destination_index/_search"
+    var url = baseUrl + "/destination_index/_search";
     request.get(url, function(err, response, body){
       body = JSON.parse(body);
       body.status.should.equal(404);
@@ -322,12 +338,12 @@ describe("ELASTICDUMP", function(){
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
-      }
+      };
 
       var dumper = new elasticdump(options.input, options.output, options);
 
       dumper.dump(function(){
-        var url = baseUrl + "/destination_index/_search"
+        var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, destination_body){
           destination_body = JSON.parse(destination_body);
           destination_body.hits.total.should.equal(seedSize);
@@ -337,7 +353,7 @@ describe("ELASTICDUMP", function(){
             // sleeping is required, but the duration is based on your CPU, disk, etc.
             // lets guess 1ms per entry in the index
             setTimeout(function(){
-              var url = baseUrl + "/source_index/_search"
+              var url = baseUrl + "/source_index/_search";
               request.get(url, function(err, response, source_body){
                 source_body = JSON.parse(source_body);
                 source_body.hits.total.should.equal(0);
@@ -402,34 +418,45 @@ describe("ELASTICDUMP", function(){
   });
 
   describe("all es to file", function(){
+
     it('works', function(done){
-      this.timeout(testTimeout);
-      var options = {
-        limit:  100,
-        offset: 0,
-        debug:  false,
-        type:   'data',
-        input:  baseUrl,
-        output: '/tmp/out.json',
-        scrollTime: '10m',
-        all:    true
-      };
-
-      var dumper = new elasticdump(options.input, options.output, options);
-
-      dumper.dump(function(){
-        var raw = fs.readFileSync('/tmp/out.json');
-        var output = JSON.parse( raw );
-        count = 0;
-        for(var i in output){
-          var elem = output[i];
-          if(elem['_index'] === 'source_index' || elem['_index'] === 'another_index'){
-            count++;
-          }
-        }
-        count.should.equal(seedSize * 2);
+      if(indexesExistingBeforeSuite > 0){
+        console.log('');
+        console.log('! ' + indexesExistingBeforeSuite + ' ES indeses detected');
+        console.log('! Skipping this test as your ES cluster has more indexes than just the test indexes');
+        console.log('! Please empty your local elasticsearch and retry this test');
+        console.log('');
         done();
-      });
+      }else{
+        this.timeout(testTimeout);
+        var options = {
+          limit:  100,
+          offset: 0,
+          debug:  false,
+          type:   'data',
+          input:  baseUrl,
+          output: '/tmp/out.json',
+          scrollTime: '10m',
+          all:    true
+        };
+
+        var dumper = new elasticdump(options.input, options.output, options);
+
+        dumper.dump(function(){
+          var raw = fs.readFileSync('/tmp/out.json');
+          var output = JSON.parse( raw );
+          count = 0;
+          for(var i in output){
+            var elem = output[i];
+            if(elem['_index'] === 'source_index' || elem['_index'] === 'another_index'){
+              count++;
+            }
+          }
+
+          count.should.equal(seedSize * 2);
+          done();
+        });
+      }
     });
   });
 
