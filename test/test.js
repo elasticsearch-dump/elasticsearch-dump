@@ -585,4 +585,3 @@ describe("ELASTICDUMP", function(){
   });
 
 });
-
