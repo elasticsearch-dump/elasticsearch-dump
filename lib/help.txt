@@ -1,6 +1,6 @@
 elasticdump: Import and export tools for elasticsearch
 
-Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
+Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 
 --input                       
                     Source location (required)
