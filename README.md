@@ -141,6 +141,8 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
                     it will result in the entire batch not being written. 
                     Mostly used when you don't care too much if you lose some
                     data when importing but rather have speed.
+--help
+                    This page
 ```
 
 ## Elasticsearch's scan and scroll method
