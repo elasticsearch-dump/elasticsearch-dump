@@ -13,21 +13,21 @@ var defaults = {
   all:             false,
   bulk:            false,
   maxSockets:      null,
-  input:           'http://127.0.0.1:9200/sourceIndex',
-  output:          'http://127.0.0.1:9200/destinationIndex',
+  input:           null,
+  output:          null,
   format:          '',
   'ignore-errors': false,
   scrollTime:      '10m',
   'bulk-use-output-index-name': false,
   searchBody: 	   '{"query": { "match_all": {} } }',
   timeout:         null,
-}
+};
 
 var options = {};
 
 for(var i in defaults){
   options[i] = defaults[i];
-  if(argv[i] != null){
+  if(argv[i]){
     options[i] = argv[i];
   }
   if(options[i] === 'true' ){ options[i] = true; }
@@ -49,12 +49,17 @@ var log = function(type, message){
     message = (new Date().toUTCString()) + " | " + message;
   }
   console.log(message);
+};
+
+if(argv.help === true){
+  var helpText = require('fs').readFileSync( __dirname + '/../lib/help.txt');
+  console.log(String(helpText));
+}else{
+  var dumper = new elasticdump(options.input, options.output, options);
+
+  dumper.on('log',   function(message){ log('log',   message); });
+  dumper.on('debug', function(message){ log('debug', message); });
+  dumper.on('error', function(error){   log('log',   error.message || JSON.stringify(error)); });
+
+  dumper.dump();
 }
-
-var dumper = new elasticdump(options.input, options.output, options);
-
-dumper.on('log',   function(message){ log('log',   message) })
-dumper.on('debug', function(message){ log('debug', message) })
-dumper.on('error', function(error){   log('log',   error.message || JSON.stringify(error)) })
-
-dumper.dump();

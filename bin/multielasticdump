@@ -14,12 +14,12 @@ var defaults = {
   debug:      true,
   parallel:   1,
   match:      '^.*$',
-  input:      'http://127.0.0.1:9200',
-  output:     '/tmp/elasticdump',
+  input:      null,
+  output:     null,
   scrollTime: '10m',
   limit:      100,
   offset:     100,
-}
+};
 
 var options = {};
 var matchedIndexes = [];
@@ -40,11 +40,11 @@ var log = function(type, message){
     message = (new Date().toUTCString()) + " | " + message;
   }
   console.log(message); 
-}
+};
 
 for(var i in defaults){
   options[i] = defaults[i];
-  if(argv[i] != null){ 
+  if(argv[i]){ 
     options[i] = argv[i];
   }
   if(options[i] === 'true' ){ options[i] = true; }
@@ -56,7 +56,7 @@ request.get(options.input + '/_aliases', function(err, response){
   response = JSON.parse(response.body);
   for(var index in response){
     var matches = index.match(new RegExp(options.match, "i"));
-    if(matches != null){
+    if(matches){
       matchedIndexes.push(index);
     }
   }
@@ -71,20 +71,20 @@ var work = function(){
   if(complete == matchedIndexes.length){
     log('debug', ' all done ');
     log('debug', ' bye ');
-    process.exit()
+    process.exit();
   }else if(working == options.parallel){
     setTimeout(work, sleepTime);
   }else{
     dump();
     setTimeout(work, sleepTime);
   }
-}
+};
 
 var dump = function(){
   working++;
   var index = matchedIndexes[indexCounter];
   
-  if(index == null){
+  if(!index){
     working--;
     return;
   }
@@ -124,4 +124,4 @@ var dump = function(){
     complete++;
   });
   
-}
+};

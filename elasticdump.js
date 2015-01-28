@@ -13,25 +13,8 @@ var elasticdump = function(input, output, options){
       self.options.searchBody = {"query": { "match_all": {} } };
   }
 
-  self.validateOptions();
+  self.validationErrors = self.validateOptions();
   self.toLog = true;
-
-  if(self.options.input === "$"){
-    self.inputType = 'stdio';
-  }else if(self.options.input.indexOf(":") >= 0){
-    self.inputType = 'elasticsearch';
-  }else{
-    self.inputType  = 'file';
-  }
-
-  if(self.options.output === "$"){
-    self.outputType = 'stdio';
-    self.toLog = false;
-  }else if(self.options.output.indexOf(":") >= 0){
-    self.outputType = 'elasticsearch';
-  }else{
-    self.outputType = 'file';
-  }
 
   if(options.maxSockets){
     self.log('globally setting maxSockets=' + options.maxSockets);
@@ -39,12 +22,33 @@ var elasticdump = function(input, output, options){
     https.globalAgent.maxSockets = options.maxSockets;
   }
 
-  var InputProto  = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
-  var OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
+  if(self.options.input){
+    if(self.options.input === "$"){
+      self.inputType = 'stdio';
+    }else if(self.options.input.indexOf(":") >= 0){
+      self.inputType = 'elasticsearch';
+    }else{
+      self.inputType  = 'file';
+    }
 
-  self.input  = (new InputProto(self, self.options.input));
-  self.output = (new OutputProto(self, self.options.output));
-}
+    var InputProto  = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
+    self.input  = (new InputProto(self, self.options.input));
+  }
+
+  if(self.options.output){
+    if(self.options.output === "$"){
+      self.outputType = 'stdio';
+      self.toLog = false;
+    }else if(self.options.output.indexOf(":") >= 0){
+      self.outputType = 'elasticsearch';
+    }else{
+      self.outputType = 'file';
+    }
+
+    var OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
+    self.output = (new OutputProto(self, self.options.output));
+  }
+};
 
 util.inherits(elasticdump, EventEmitter);
 
@@ -59,49 +63,63 @@ elasticdump.prototype.log = function(message){
 };
 
 elasticdump.prototype.validateOptions = function(){
-  // var self = this;
-  // TODO
+  var self = this;
+  var validationErrors = [];
+
+  var required = ['input', 'output'];
+  required.forEach(function(v){
+    if(!self.options[v]){
+      validationErrors.push('`' + v + '` is a required input');
+    }
+  });
+
+  return validationErrors;
 };
 
 elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes){
   var self  = this;
 
-  if(!limit){ limit = self.options.limit;  }
-  if(!offset){ offset = self.options.offset; }
-  if(!total_writes){ total_writes = 0; }
+  if(self.validationErrors.length > 0){
+    self.emit('error', {errors: self.validationErrors});
+  }else{
 
-  if(continuing !== true){
-    self.log('starting dump');
-  }
+    if(!limit){ limit = self.options.limit;  }
+    if(!offset){ offset = self.options.offset; }
+    if(!total_writes){ total_writes = 0; }
 
-  self.input.get(limit, offset, function(err, data){
-    if(err){  self.emit('error', err); }
-    self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
-    self.output.set(data, limit, offset, function(err, writes){
-      var toContinue = true;
-      if(err){
-        self.emit('error', err);
-        if( self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true' ){
-          toContinue = true;
+    if(continuing !== true){
+      self.log('starting dump');
+    }
+
+    self.input.get(limit, offset, function(err, data){
+      if(err){  self.emit('error', err); }
+      self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
+      self.output.set(data, limit, offset, function(err, writes){
+        var toContinue = true;
+        if(err){
+          self.emit('error', err);
+          if( self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true' ){
+            toContinue = true;
+          }else{
+            toContinue = false;
+          }
         }else{
-          toContinue = false;
+          total_writes += writes;
+          self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
+          offset = offset + data.length;
         }
-      }else{
-        total_writes += writes;
-        self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
-        offset = offset + data.length;
-      }
-      if(data.length > 0 && toContinue){
-        self.dump(callback, true, limit, offset, total_writes);
-      }else if(toContinue){
-        self.log('dump complete');
-        if(typeof callback === 'function'){ callback(total_writes); }
-      }else if(toContinue === false){
-        self.log('dump ended with error');
-        if(typeof callback === 'function'){ callback(total_writes); }
-      }
+        if(data.length > 0 && toContinue){
+          self.dump(callback, true, limit, offset, total_writes);
+        }else if(toContinue){
+          self.log('dump complete');
+          if(typeof callback === 'function'){ callback(total_writes); }
+        }else if(toContinue === false){
+          self.log('dump ended with error');
+          if(typeof callback === 'function'){ callback(total_writes); }
+        }
+      });
     });
-  });
+  }
 };
 
 exports.elasticdump = elasticdump;

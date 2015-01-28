@@ -43,40 +43,107 @@ You can then do things like:
 
 ```bash
 # Copy an index from production to staging with mappings:
-elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index --type=mapping
-elasticdump --input=http://production.es.com:9200/my_index --output=http://staging.es.com:9200/my_index --type=data
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=mapping
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=data
 
 # Backup index data to a file:
-elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index_mapping.json --type=mapping
-elasticdump --input=http://production.es.com:9200/my_index --output=/data/my_index.json --type=data
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=/data/my_index_mapping.json \
+  --type=mapping
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=/data/my_index.json \
+  --type=data
 
 # Backup and index to a gzip using stdout:
-elasticdump --input=http://production.es.com:9200/my_index --output=$ | gzip > /data/my_index.json.gz
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=$ \
+  | gzip > /data/my_index.json.gz
 
 # Backup ALL indices, then use Bulk API to populate another ES cluster:
-elasticdump --all=true --input=http://production-a.es.com:9200/ --output=/data/production.json
-elasticdump --bulk=true --input=/data/production.json --output=http://production-b.es.com:9200/
+elasticdump \
+  --all=true \
+  --input=http://production-a.es.com:9200/ \
+  --output=/data/production.json
+elasticdump \
+  --bulk=true \
+  --input=/data/production.json \
+  --output=http://production-b.es.com:9200/
 
 # Backup the results of a query to a file
-elasticdump --input=http://production.es.com:9200/my_index --output=query.json --searchBody '{"query":{"term":{"username": "admin"}}}'
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=query.json \
+  --searchBody '{"query":{"term":{"username": "admin"}}}'
 ```
 
 ## Options
 
-- `--input` (required) (see above)
-- `--output` (required) (see above)
-- `--limit` how many ojbects to move in bulk per operation (default: 100)
-- `--debug` display the elasticsearch commands being used (default: false)
-- `--type` what are we exporting? (default: data, options: [data, mapping])
-- `--delete` delete documents one-by-one from the input as they are moved (will not delete the source index) (default: false)
-- `--searchBody` preform a partial extract based on search results (when ES is the `input`, default: '{"query": { "match_all": {} } }')
-- `--all` load/store documents from ALL indices (default: false)
-- `--bulk` leverage elasticsearch Bulk API when writing documents (default: false)
-- `--ignore-errors` will continue the read/write loop on write error (default: false)
-- `--scrollTime` Time the nodes will hold the requested search in order. (default: 10m)
-- `--maxSockets` How many simultanius HTTP requests can this process make? (default: 5 [node <= v0.10.x] / Infinity [node >= v0.11.x] )
-- `--bulk-use-output-index-name` Force use of destination index name (actually the actual output URL) as destination while bulk writing to ES. Allows leveraging  Bulk API copying data inside the same elasticsearch instance. (default: false)
-- `--timeout` Integer containing the number of milliseconds to wait for a request to respond before aborting the request.  Passed directly to the `request` library.  If used in bulk writing, it will result in the entire batch not being written.  Mostly used when you don't care too much if you lose some data when importing but rather have speed.
+```
+Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
+
+--input                       
+                    Source location (required)
+--output                      
+                    Destination location (required)
+--limit                       
+                    How many objects to move in bulk per operation 
+                    (default: 100)
+--debug                       
+                    Display the elasticsearch commands being used 
+                    (default: false)
+--type                        
+                    What are we exporting? 
+                    (default: data, options: [data, mapping])
+--delete                      
+                    Delete documents one-by-one from the input as they are 
+                    moved.  Will not delete the source index
+                    (default: false)
+--searchBody                  
+                    Preform a partial extract based on search results 
+                    (when ES is the input, 
+                      default: '{"query": { "match_all": {} } }')
+--all                         
+                    Load/store documents from ALL indexes 
+                    (default: false)
+--bulk                        
+                    Leverage elasticsearch Bulk API when writing documents 
+                    (default: false)
+--ignore-errors               
+                    Will continue the read/write loop on write error 
+                    (default: false)
+--scrollTime                  
+                    Time the nodes will hold the requested search in order. 
+                    (default: 10m)
+--maxSockets                  
+                    How many simultaneous HTTP requests can we process make? 
+                    (default: 
+                      5 [node <= v0.10.x] / 
+                      Infinity [node >= v0.11.x] )
+--bulk-use-output-index-name  
+                    Force use of destination index name (the actual output URL)
+                    as destination while bulk writing to ES. Allows 
+                    leveraging Bulk API copying data inside the same 
+                    elasticsearch instance. 
+                    (default: false)
+--timeout                     
+                    Integer containing the number of milliseconds to wait for 
+                    a request to respond before aborting the request. Passed 
+                    directly to the request library. If used in bulk writing, 
+                    it will result in the entire batch not being written. 
+                    Mostly used when you don't care too much if you lose some
+                    data when importing but rather have speed.
+--help
+                    This page
+```
 
 ## Elasticsearch's scan and scroll method
 Elasticsearch provides a scan and scroll method to fetch all documents of an index. This method is much safer to use since
