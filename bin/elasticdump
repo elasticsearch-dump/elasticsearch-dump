@@ -21,7 +21,8 @@ var defaults = {
   'bulk-use-output-index-name': false,
   searchBody: 	   '{"query": { "match_all": {} } }',
   timeout:         null,
-};
+  skip:            null,
+}
 
 var options = {};
 

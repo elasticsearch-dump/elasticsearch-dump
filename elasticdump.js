@@ -89,6 +89,11 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
 
     if(continuing !== true){
       self.log('starting dump');
+
+      if(self.options.skip){
+        self.log('Warning: skipping ' + self.options.skip + ' rows.');
+        self.log("  * skipping doesn't guarantee that the skipped rows have already been written, please refer to the README.");
+      }
     }
 
     self.input.get(limit, offset, function(err, data){

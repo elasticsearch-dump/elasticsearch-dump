@@ -131,6 +131,32 @@ describe("ELASTICDUMP", function(){
       });
     });
 
+    it('can skip', function(done) {
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m',
+        skip: 250
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(seedSize - 250);
+          done();
+        });
+      });
+    });
+
     it('works for index/types', function(done){
       this.timeout(testTimeout);
       var options = {
@@ -411,6 +437,33 @@ describe("ELASTICDUMP", function(){
           should.not.exist(err);
           body = JSON.parse(body);
           body.hits.total.should.equal(seedSize);
+          done();
+        });
+      });
+    });
+
+    it('can skip', function(done) {
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        input: '/tmp/out.json',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m',
+        skip: 250
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          // skips 250 so 250 less in there
+          body.hits.total.should.equal(seedSize - 250);
           done();
         });
       });

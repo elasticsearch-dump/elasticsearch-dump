@@ -141,6 +141,8 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
                     it will result in the entire batch not being written. 
                     Mostly used when you don't care too much if you lose some
                     data when importing but rather have speed.
+--skip
+                    Integer containing the number of rows you wish to skip ahead from the input transport.  When importing a large index, things can go wrong, be it connectivity, crashes, someone forgetting to `screen`, etc.  This allows you to start the dump again from the last known line written (as logged by the `offset` in the output).  Please be advised that since no sorting is specified when the dump is initially created, there's no real way to guarantee that the skipped rows have already been written/parsed.  This is more of an option for when you want to get most data as possible in the index without concern for losing some rows in the process, similar to the `timeout` option.
 --help
                     This page
 ```
