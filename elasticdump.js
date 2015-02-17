@@ -99,30 +99,35 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
     self.input.get(limit, offset, function(err, data){
       if(err){  self.emit('error', err); }
       self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
-      self.output.set(data, limit, offset, function(err, writes){
-        var toContinue = true;
-        if(err){
-          self.emit('error', err);
-          if( self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true' ){
-            toContinue = true;
+      if(!err || (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true') ){
+        self.output.set(data, limit, offset, function(err, writes){
+          var toContinue = true;
+          if(err){
+            self.emit('error', err);
+            if( self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true' ){
+              toContinue = true;
+            }else{
+              toContinue = false;
+            }
           }else{
-            toContinue = false;
+            total_writes += writes;
+            self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
+            offset = offset + data.length;
           }
-        }else{
-          total_writes += writes;
-          self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
-          offset = offset + data.length;
-        }
-        if(data.length > 0 && toContinue){
-          self.dump(callback, true, limit, offset, total_writes);
-        }else if(toContinue){
-          self.log('dump complete');
-          if(typeof callback === 'function'){ callback(total_writes); }
-        }else if(toContinue === false){
-          self.log('dump ended with error');
-          if(typeof callback === 'function'){ callback(total_writes); }
-        }
-      });
+          if(data.length > 0 && toContinue){
+            self.dump(callback, true, limit, offset, total_writes);
+          }else if(toContinue){
+            self.log('dump complete');
+            if(typeof callback === 'function'){ callback(null, total_writes); }
+          }else if(toContinue === false){
+            self.log('dump ended with error (set phase)  => ' + String(err));
+            if(typeof callback === 'function'){ callback(err, total_writes); }
+          }
+        });
+      }else{
+        self.log('dump ended with error (get phase) => ' + String(err));
+        if(typeof callback === 'function'){ callback(err, total_writes); }
+      }
     });
   }
 };

@@ -330,7 +330,7 @@ describe("ELASTICDUMP", function(){
       var dumper_a = new elasticdump(options.input, options.output, options);
       var dumper_b = new elasticdump(options.input, options.output, options);
 
-      dumper_a.dump(function(total_writes){
+      dumper_a.dump(function(err, total_writes){
         var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, body){
           should.not.exist(err);
@@ -338,7 +338,7 @@ describe("ELASTICDUMP", function(){
           body.hits.total.should.equal(seedSize);
           total_writes.should.equal(seedSize);
 
-          dumper_b.dump(function(total_writes){
+          dumper_b.dump(function(err, total_writes){
             var url = baseUrl + "/destination_index/_search";
             request.get(url, function(err, response, body){
               should.not.exist(err);
