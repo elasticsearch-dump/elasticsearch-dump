@@ -22,7 +22,7 @@ var defaults = {
   searchBody: 	   '{"query": { "match_all": {} } }',
   timeout:         null,
   skip:            null,
-}
+};
 
 var options = {};
 
@@ -62,5 +62,11 @@ if(argv.help === true){
   dumper.on('debug', function(message){ log('debug', message); });
   dumper.on('error', function(error){   log('log',   error.message || JSON.stringify(error)); });
 
-  dumper.dump();
+  dumper.dump(function(err, total_writes){
+    if(err){
+      process.exit(1);
+    }else{
+      process.exit(0);
+    }
+  });
 }
