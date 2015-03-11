@@ -2,6 +2,7 @@ var util  = require("util");
 var http  = require("http");
 var https = require("https");
 var EventEmitter = require('events').EventEmitter;
+var isUrl = require('./lib/is-url');
 
 var elasticdump = function(input, output, options){
   var self  = this;
@@ -25,7 +26,7 @@ var elasticdump = function(input, output, options){
   if(self.options.input){
     if(self.options.input === "$"){
       self.inputType = 'stdio';
-    }else if(self.options.input.indexOf(":") >= 0){
+    }else if(isUrl(self.options.input)){
       self.inputType = 'elasticsearch';
     }else{
       self.inputType  = 'file';
@@ -39,7 +40,7 @@ var elasticdump = function(input, output, options){
     if(self.options.output === "$"){
       self.outputType = 'stdio';
       self.toLog = false;
-    }else if(self.options.output.indexOf(":") >= 0){
+    }else if(isUrl(self.options.output)){
       self.outputType = 'elasticsearch';
     }else{
       self.outputType = 'file';
