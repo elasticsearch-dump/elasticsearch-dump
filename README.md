@@ -1,6 +1,8 @@
 elasticdump
 ==================
 
+[![Join the chat at https://gitter.im/taskrabbit/elasticsearch-dump](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/taskrabbit/elasticsearch-dump?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Tools for moving and saving indicies.
 
 ![picture](https://raw.github.com/taskrabbit/elasticsearch-dump/master/elasticdump.jpg)
