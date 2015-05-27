@@ -10,8 +10,9 @@ var elasticdump = function(input, output, options){
   self.input   = input;
   self.output  = output;
   self.options = options;
+
   if (!self.options.searchBody)  {
-      self.options.searchBody = {"query": { "match_all": {} } };
+      self.options.searchBody = {"query": { "match_all": {} }, "fields": ["*"], "_source": true };
   }
 
   self.validationErrors = self.validateOptions();
