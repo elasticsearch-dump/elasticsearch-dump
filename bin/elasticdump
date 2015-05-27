@@ -19,7 +19,7 @@ var defaults = {
   'ignore-errors': false,
   scrollTime:      '10m',
   'bulk-use-output-index-name': false,
-  searchBody: 	   '{"query": { "match_all": {} } }',
+  searchBody: 	   '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }',
   timeout:         null,
   skip:            null,
 };
