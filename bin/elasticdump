@@ -15,6 +15,7 @@ var defaults = {
   maxSockets:      null,
   input:           null,
   output:          null,
+  searchBody:      null,
   format:          '',
   'ignore-errors': false,
   scrollTime:      '10m',
