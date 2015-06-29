@@ -17,6 +17,7 @@ var defaults = {
   output:          null,
   inputTransport:  null,
   outputTransport: null,
+  searchBody:      null,
   format:          '',
   'ignore-errors': false,
   scrollTime:      '10m',
