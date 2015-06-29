@@ -24,7 +24,8 @@ var elasticdump = function(input, output, options){
     https.globalAgent.maxSockets = options.maxSockets;
   }
 
-  if(self.options.input){
+  var InputProto;
+  if(self.options.input && !self.options.inputTransport){
     if(self.options.input === "$"){
       self.inputType = 'stdio';
     }else if(isUrl(self.options.input)){
@@ -33,11 +34,16 @@ var elasticdump = function(input, output, options){
       self.inputType  = 'file';
     }
 
-    var InputProto  = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
+    InputProto = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
     self.input  = (new InputProto(self, self.options.input));
+  }else if(self.options.inputTransport){
+    InputProto = require(self.options.inputTransport);
+    var inputProtoKeys = Object.keys(InputProto);
+    self.input = (new InputProto[inputProtoKeys[0]](self, self.options.input));
   }
 
-  if(self.options.output){
+  var OutputProto;
+  if(self.options.output && !self.options.outputTransport){
     if(self.options.output === "$"){
       self.outputType = 'stdio';
       self.toLog = false;
@@ -47,8 +53,12 @@ var elasticdump = function(input, output, options){
       self.outputType = 'file';
     }
 
-    var OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
+    OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
     self.output = (new OutputProto(self, self.options.output));
+  }else if(self.options.outputTransport){
+    OutputProto = require(self.options.outputTransport);
+    var outputProtoKeys = Object.keys(OutputProto);
+    self.output = (new OutputProto[outputProtoKeys[0]](self, self.options.output));
   }
 };
 
