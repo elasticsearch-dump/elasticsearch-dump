@@ -93,6 +93,7 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
 
   if(self.validationErrors.length > 0){
     self.emit('error', {errors: self.validationErrors});
+    callback( new Error('There was an error starting this dump') );
   }else{
 
     if(!limit){ limit = self.options.limit;  }
