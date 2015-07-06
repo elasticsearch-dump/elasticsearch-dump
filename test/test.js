@@ -9,13 +9,22 @@ var baseUrl                    = "http://127.0.0.1:9200";
 
 var seeds                      = {};
 var seedSize                   = 500;
-var testTimeout                = seedSize * 100;
+var parents                    = {};
+var parentSize                 = 5;
+var totalSize                  = seedSize + parentSize;
+var testTimeout                = totalSize * 100;
 var i                          = 0;
+var j                          = 0;
 var indexesExistingBeforeSuite = 0;
 
 while(i < seedSize){
   seeds[i] = { key: ("key" + i) };
   i++;
+}
+
+while(j < parentSize){
+  parents[j] = { keyHolder: ("holder" + j) };
+  j++;
 }
 
 var seed = function(index, type, callback){
@@ -36,6 +45,36 @@ var seed = function(index, type, callback){
   }
 };
 
+// Seed indice with keys children and parents keyholders
+var pseed = function(index, ptype, type, callback){
+  for(var pkey in parents){
+    var parent = parents[pkey];
+    parent['_uuid'] = pkey;
+    var url = baseUrl + "/" + index + "/" + ptype + "/" + pkey;
+    request.put(url, {body: JSON.stringify(parent)}, function(err, response, body){
+      should.not.exist(err);
+    });
+  }
+
+  // Put mapping for parent-child relationship
+  var mappingUrl = baseUrl + "/" + index + "/_mapping/" + type;
+  var mappingType = {
+    properties: {
+      _parent: {
+        type: ptype
+      }
+    }
+  };
+  var mapping = {};
+  mapping[type] = mappingType;
+  request.put(mappingUrl,
+              { body: JSON.stringify(mapping) },
+              function(err, response, body) {
+                should.not.exist(err);
+                seed(index, type, callback);
+              });
+};
+
 var clear = function(callback){
   request.del(baseUrl + '/destination_index', function(err, response, body){
     request.del(baseUrl + '/source_index', function(err, response, body){
@@ -50,6 +89,7 @@ describe("ELASTICDUMP", function(){
 
   before(function(done){
     request(baseUrl + '/_cat/indices', function(err, response, body){
+      should.not.exist(err, "Could not connect to ES on " + baseUrl);
       lines = body.split("\n");
       lines.forEach(function(line){
         words = line.split(' ');
@@ -65,8 +105,8 @@ describe("ELASTICDUMP", function(){
   beforeEach(function(done){
     this.timeout(testTimeout);
     clear(function(){
-      seed("source_index", 'seeds', function(){
-        seed("another_index", 'seeds', function(){
+      pseed("source_index", 'holders', 'seeds', function(){
+        pseed("another_index", 'holders', 'seeds', function(){
           setTimeout(function(){
             done();
           }, 500);
@@ -75,6 +115,7 @@ describe("ELASTICDUMP", function(){
     });
   });
 
+  // This test is not meaningful, as we already try to connect to ES in before()
   it('can connect', function(done){
     this.timeout(testTimeout);
     request(baseUrl, function(err, response, body){
@@ -89,8 +130,9 @@ describe("ELASTICDUMP", function(){
     this.timeout(testTimeout);
     var url = baseUrl + "/source_index/_search";
     request.get(url, function(err, response, body){
+      should.not.exist(err);
       body = JSON.parse(body);
-      body.hits.total.should.equal(seedSize);
+      body.hits.total.should.equal(totalSize);
       done();
     });
   });
@@ -99,6 +141,7 @@ describe("ELASTICDUMP", function(){
     this.timeout(testTimeout);
     var url = baseUrl + "/destination_index/_search";
     request.get(url, function(err, response, body){
+      should.not.exist(err);
       body = JSON.parse(body);
       body.status.should.equal(404);
       done();
@@ -125,7 +168,7 @@ describe("ELASTICDUMP", function(){
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
-          body.hits.total.should.equal(seedSize);
+          body.hits.total.should.equal(totalSize);
           done();
         });
       });
@@ -151,7 +194,7 @@ describe("ELASTICDUMP", function(){
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
-          body.hits.total.should.equal(seedSize - 250);
+          body.hits.total.should.equal(totalSize - 250);
           done();
         });
       });
@@ -284,7 +327,7 @@ describe("ELASTICDUMP", function(){
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
-          body.hits.total.should.equal(seedSize);
+          body.hits.total.should.equal(totalSize);
           done();
         });
       });
@@ -309,7 +352,7 @@ describe("ELASTICDUMP", function(){
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
-          body.hits.total.should.equal(seedSize);
+          body.hits.total.should.equal(totalSize);
           done();
         });
       });
@@ -335,16 +378,16 @@ describe("ELASTICDUMP", function(){
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
-          body.hits.total.should.equal(seedSize);
-          total_writes.should.equal(seedSize);
+          body.hits.total.should.equal(totalSize);
+          total_writes.should.equal(totalSize);
 
           dumper_b.dump(function(err, total_writes){
             var url = baseUrl + "/destination_index/_search";
             request.get(url, function(err, response, body){
               should.not.exist(err);
               body = JSON.parse(body);
-              body.hits.total.should.equal(seedSize);
-              total_writes.should.equal(seedSize);
+              body.hits.total.should.equal(totalSize);
+              total_writes.should.equal(totalSize);
               done();
             });
           });
@@ -372,7 +415,7 @@ describe("ELASTICDUMP", function(){
         var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, destination_body){
           destination_body = JSON.parse(destination_body);
-          destination_body.hits.total.should.equal(seedSize);
+          destination_body.hits.total.should.equal(totalSize);
           dumper.input.reindex(function(){
             // Note: Depending on the speed of your ES server
             // all the elements might not be deleted when the HTTP response returns
@@ -385,7 +428,7 @@ describe("ELASTICDUMP", function(){
                 source_body.hits.total.should.equal(0);
                 done();
               });
-            }, 5 * seedSize);
+            }, 5 * totalSize);
           });
         });
       });
@@ -410,7 +453,7 @@ describe("ELASTICDUMP", function(){
       dumper.dump(function(){
         var raw = fs.readFileSync('/tmp/out.json');
         var output = JSON.parse( raw );
-        output.length.should.equal(seedSize);
+        output.length.should.equal(totalSize);
         done();
       });
     });
@@ -436,7 +479,7 @@ describe("ELASTICDUMP", function(){
         request.get(url, function(err, response, body){
           should.not.exist(err);
           body = JSON.parse(body);
-          body.hits.total.should.equal(seedSize);
+          body.hits.total.should.equal(totalSize);
           done();
         });
       });
@@ -463,7 +506,7 @@ describe("ELASTICDUMP", function(){
           should.not.exist(err);
           body = JSON.parse(body);
           // skips 250 so 250 less in there
-          body.hits.total.should.equal(seedSize - 250);
+          body.hits.total.should.equal(totalSize - 250);
           done();
         });
       });
@@ -506,7 +549,7 @@ describe("ELASTICDUMP", function(){
             }
           }
 
-          count.should.equal(seedSize * 2);
+          count.should.equal(totalSize * 2);
           done();
         });
       }
@@ -583,5 +626,4 @@ describe("ELASTICDUMP", function(){
   describe("stdin to es", function(){
     it('works');
   });
-
 });
