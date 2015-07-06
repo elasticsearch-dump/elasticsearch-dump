@@ -32,8 +32,10 @@ var seed = function(index, type, callback){
   for(var key in seeds){
     started++;
     var s = seeds[key];
+    var p = (key % 5);
     s['_uuid'] = key;
-    var url = baseUrl + "/" + index + "/" + type + "/" + key;
+    s['_parent'] = p;
+    var url = baseUrl + "/" + index + "/" + type + "/" + key + "?parent=" + p + "&routing=" + p;
     request.put(url, {body: JSON.stringify(s)}, function(err, response, body){
       started--;
       if(started == 0){
@@ -56,23 +58,23 @@ var pseed = function(index, ptype, type, callback){
     });
   }
 
-  // Put mapping for parent-child relationship
-  var mappingUrl = baseUrl + "/" + index + "/_mapping/" + type;
-  var mappingType = {
-    properties: {
+  request.put(baseUrl + "/" + index, function(err, response){ // ensure the index exists
+    // Put mapping for parent-child relationship
+    var mappingUrl = baseUrl + "/" + index + "/_mapping/" + type;
+    var mappingType = {
       _parent: {
         type: ptype
       }
-    }
-  };
-  var mapping = {};
-  mapping[type] = mappingType;
-  request.put(mappingUrl,
-              { body: JSON.stringify(mapping) },
-              function(err, response, body) {
-                should.not.exist(err);
-                seed(index, type, callback);
-              });
+    };
+    var mapping = {};
+    mapping[type] = mappingType;
+    request.put(mappingUrl,
+                { body: JSON.stringify(mapping) },
+                function(err, response, body) {
+                  should.not.exist(err);
+                  seed(index, type, callback);
+                });
+  });
 };
 
 var clear = function(callback){
