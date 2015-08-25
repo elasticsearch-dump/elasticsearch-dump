@@ -174,6 +174,7 @@ NOTE: only works for output
 
 ## Notes
 
+- this tool is likley to require Elasticsearch version 1.0.0 or higher
 - elasticdump (and elasticsearch in general) will create indices if they don't exist upon import
 - when exporting from elasticsearch, you can have export an entire index (`--input="http://localhost:9200/index"`) or a type of object from that index (`--input="http://localhost:9200/index/type"`).  This requires ElasticSearch 1.2.0 or higher
 - we are using the `put` method to write objects.  This means new objects will be created and old objects with the same ID will be updated
