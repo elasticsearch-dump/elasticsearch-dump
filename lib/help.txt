@@ -67,6 +67,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     you want to get most data as possible in the index 
                     without concern for losing some rows in the process, 
                     gsimilar to the `timeout` option.
+--inputTransport    
+                    Provide a custom js file to us as the input transport
+--outputTransport   
+                    Provide a custom js file to us as the output transport
 --help
                     This page
 

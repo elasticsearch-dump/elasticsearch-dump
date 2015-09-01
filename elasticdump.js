@@ -24,7 +24,8 @@ var elasticdump = function(input, output, options){
     https.globalAgent.maxSockets = options.maxSockets;
   }
 
-  if(self.options.input){
+  var InputProto;
+  if(self.options.input && !self.options.inputTransport){
     if(self.options.input === "$"){
       self.inputType = 'stdio';
     }else if(isUrl(self.options.input)){
@@ -33,11 +34,16 @@ var elasticdump = function(input, output, options){
       self.inputType  = 'file';
     }
 
-    var InputProto  = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
+    InputProto = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
     self.input  = (new InputProto(self, self.options.input));
+  }else if(self.options.inputTransport){
+    InputProto = require(self.options.inputTransport);
+    var inputProtoKeys = Object.keys(InputProto);
+    self.input = (new InputProto[inputProtoKeys[0]](self, self.options.input));
   }
 
-  if(self.options.output){
+  var OutputProto;
+  if(self.options.output && !self.options.outputTransport){
     if(self.options.output === "$"){
       self.outputType = 'stdio';
       self.toLog = false;
@@ -47,8 +53,12 @@ var elasticdump = function(input, output, options){
       self.outputType = 'file';
     }
 
-    var OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
+    OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
     self.output = (new OutputProto(self, self.options.output));
+  }else if(self.options.outputTransport){
+    OutputProto = require(self.options.outputTransport);
+    var outputProtoKeys = Object.keys(OutputProto);
+    self.output = (new OutputProto[outputProtoKeys[0]](self, self.options.output));
   }
 };
 
@@ -83,6 +93,7 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
 
   if(self.validationErrors.length > 0){
     self.emit('error', {errors: self.validationErrors});
+    callback( new Error('There was an error starting this dump') );
   }else{
 
     if(!limit){ limit = self.options.limit;  }
@@ -100,8 +111,8 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
 
     self.input.get(limit, offset, function(err, data){
       if(err){  self.emit('error', err); }
-      self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
       if(!err || (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true') ){
+        self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
         self.output.set(data, limit, offset, function(err, writes){
           var toContinue = true;
           if(err){
@@ -119,14 +130,17 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
           if(data.length > 0 && toContinue){
             self.dump(callback, true, limit, offset, total_writes);
           }else if(toContinue){
+            self.log('Total Writes: ' + total_writes);
             self.log('dump complete');
             if(typeof callback === 'function'){ callback(null, total_writes); }
           }else if(toContinue === false){
+            self.log('Total Writes: ' + total_writes);
             self.log('dump ended with error (set phase)  => ' + String(err));
             if(typeof callback === 'function'){ callback(err, total_writes); }
           }
         });
       }else{
+        self.log('Total Writes: ' + total_writes);
         self.log('dump ended with error (get phase) => ' + String(err));
         if(typeof callback === 'function'){ callback(err, total_writes); }
       }

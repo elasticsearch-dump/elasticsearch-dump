@@ -156,6 +156,10 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
                     more of an option for when you want to get most data as
                     possible in the index without concern for losing some rows
                     in the process, similar to the `timeout` option.
+--inputTransport    
+                    Provide a custom js file to us as the input transport
+--outputTransport   
+                    Provide a custom js file to us as the output transport
 --help
                     This page
 ```
@@ -170,6 +174,7 @@ NOTE: only works for output
 
 ## Notes
 
+- this tool is likley to require Elasticsearch version 1.0.0 or higher
 - elasticdump (and elasticsearch in general) will create indices if they don't exist upon import
 - when exporting from elasticsearch, you can have export an entire index (`--input="http://localhost:9200/index"`) or a type of object from that index (`--input="http://localhost:9200/index/type"`).  This requires ElasticSearch 1.2.0 or higher
 - we are using the `put` method to write objects.  This means new objects will be created and old objects with the same ID will be updated
@@ -177,7 +182,8 @@ NOTE: only works for output
 - If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index`
 - if you choose a stdio output (`--output=$`), you can also request a more human-readable output with `--format=human`
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
-
+- when using the `--bulk` option, aliases will be ignored and the documents you write will be linked thier original index name.  For example if you have an alias "events" which contains "events-may-2015" and "events-june-2015" and you bulk dump from one ES cluster to another `elasticdump --bulk --import http://localhost:9200/events --output http://other-server:9200`, you will have the source indicies, "events-may-2015" and "events-june-2015", and not "events".
+ 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 
 Built at [TaskRabbit](https://www.taskrabbit.com)

@@ -15,6 +15,8 @@ var defaults = {
   maxSockets:      null,
   input:           null,
   output:          null,
+  inputTransport:  null,
+  outputTransport: null,
   searchBody:      null,
   format:          '',
   'ignore-errors': false,
@@ -60,10 +62,10 @@ if(argv.help === true){
 
   dumper.on('log',   function(message){ log('log',   message); });
   dumper.on('debug', function(message){ log('debug', message); });
-  dumper.on('error', function(error){   log('log',   error.message || JSON.stringify(error)); });
+  dumper.on('error', function(error){   log('log', 'Error Emitted => ' + ( error.message || JSON.stringify(error)) ); });
 
-  dumper.dump(function(err, total_writes){
-    if(err){
+  dumper.dump(function(error, total_writes){
+    if(error){
       process.exit(1);
     }else{
       process.exit(0);
