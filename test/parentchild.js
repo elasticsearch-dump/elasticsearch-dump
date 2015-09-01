@@ -45,6 +45,8 @@ var pcInitIndexMapping         = {
   }
 };
 
+var testTimeout                = pcInitElementCount * 100;
+
 /////////////// Suite ////////////////////////////
 describe('Parent-Child Test Suite', pcSuite);
 
@@ -112,6 +114,7 @@ function pcSuite() {
 
 /////////////// Hooks ////////////////////////////
 function pcInit(done) {
+  this.timeout(testTimeout);
   var exist = false;
   var setExist = function(bool) { exist = bool; }
   var continuation = function(done) {
@@ -140,6 +143,7 @@ function pcInit(done) {
 }
 
 function pcCleanup(done) {
+  this.timeout(testTimeout);
   request.del(baseUrl + pcInitIndexName,
               function(err, resp, body) {
                 request.del(baseUrl + pcCopyIndexName,
@@ -157,6 +161,7 @@ function pcCleanup(done) {
 /////////////// Tests ////////////////////////////
 function testIndexExists(index) {
   return (function(done) {
+    this.timeout(testTimeout);
     pathMustExists(index, false, done);
   });
 }
@@ -167,6 +172,7 @@ function testIndexMappings(index) {
     done();
   }
   return (function(done) {
+    this.timeout(testTimeout);
     pathMustExists(index + '/_mapping', checkMapping, done);
   });
 }
@@ -177,6 +183,7 @@ function testIndexElements(index) {
     done();
   }
   return (function(done) {
+    this.timeout(testTimeout);
     pathMustExists(index + '/_search?search_type=count', checkElements, done);
   });
 }
@@ -187,6 +194,7 @@ function testIndexNoOrphans(index) {
     done();
   }
   return (function(done) {
+    this.timeout(testTimeout);
     esCountOrphans(index, 'units', 'tens', checkCount, done);
   });
 }
@@ -204,6 +212,7 @@ function testIndexCopy(src, dst, type) {
   var dumper = new elasticdump(options.input, options.output, options);
 
   return (function(done) {
+    this.timeout(testTimeout);
     dumper.dump(function(err, writes) {
       should.not.exists(err);
       pathMustExists(dst + '/_refresh', false, done);
@@ -224,6 +233,7 @@ function testDumpIndex(index, file, type) {
   var dumper = new elasticdump(options.input, options.output, options);
 
   return (function(done) {
+    this.timeout(testTimeout);
     dumper.dump(function(err, writes) {
       should.not.exists(err);
       done();
@@ -244,6 +254,7 @@ function testRestoreIndex(file, index, type) {
   var dumper = new elasticdump(options.input, options.output, options);
 
   return (function(done) {
+    this.timeout(testTimeout);
     dumper.dump(function(err, writes) {
       should.not.exists(err);
       pathMustExists(index + '/_refresh', false, done);
@@ -287,11 +298,6 @@ function pathExists(path, callback, done) {
     }
   }
   request.get(baseUrl + '/' + path, requestCont(exists, done));
-}
-
-function putMapping(path, mapping, done) {
-  var apply = function(done) { return done(); }
-  return putMapping(path, mapping, done, apply);
 }
 
 function putMappingThen(path, mapping, done, then) {
