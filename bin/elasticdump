@@ -59,7 +59,7 @@ if(argv.help === true){
   console.log(String(helpText));
 }else{
   var dumper = new elasticdump(options.input, options.output, options);
-
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
   dumper.on('log',   function(message){ log('log',   message); });
   dumper.on('debug', function(message){ log('debug', message); });
   dumper.on('error', function(error){   log('log', 'Error Emitted => ' + ( error.message || JSON.stringify(error)) ); });
