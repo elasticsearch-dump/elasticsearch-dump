@@ -8,7 +8,7 @@
     "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
   },
   "main": "elasticdump.js",
-  "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export", "transfer", "migrate", "migartion"],
+  "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export", "transfer", "migrate", "migartion", "elasitic", "cluster", "elastic-dump", "elastic dump"],
   "engines": {
     "node": ">=0.9.0"
   },
