@@ -24,6 +24,7 @@ var defaults = {
   'bulk-use-output-index-name': false,
   timeout:         null,
   skip:            null,
+  toLog:           null,
 };
 
 var options = {};

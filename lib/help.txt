@@ -71,6 +71,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Provide a custom js file to us as the input transport
 --outputTransport   
                     Provide a custom js file to us as the output transport
+--toLog
+                    When using a custom outputTransport, should log lines 
+                    be appended to the output stream? 
+                    (default: true, except for `$`)
 --help
                     This page
 
