@@ -15,8 +15,11 @@ var elasticdump = function(input, output, options){
       self.options.searchBody = {"query": { "match_all": {} }, "fields": ["*"], "_source": true };
   }
 
+  if (self.options.toLog === null || self.options.toLog === undefined) {
+    self.options.toLog = true;
+  }
+
   self.validationErrors = self.validateOptions();
-  self.toLog = true;
 
   if(options.maxSockets){
     self.log('globally setting maxSockets=' + options.maxSockets);
@@ -46,7 +49,7 @@ var elasticdump = function(input, output, options){
   if(self.options.output && !self.options.outputTransport){
     if(self.options.output === "$"){
       self.outputType = 'stdio';
-      self.toLog = false;
+      self.options.toLog = false;
     }else if(isUrl(self.options.output)){
       self.outputType = 'elasticsearch';
     }else{
@@ -69,7 +72,7 @@ elasticdump.prototype.log = function(message){
 
   if(typeof self.options.logger === 'function'){
     self.options.logger(message);
-  }else if(self.toLog === true){
+  }else if(self.options.toLog === true){
     self.emit("log", message);
   }
 };
