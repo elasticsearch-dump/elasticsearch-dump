@@ -25,6 +25,7 @@ var defaults = {
   timeout:         null,
   skip:            null,
   toLog:           null,
+  update:          true,
 };
 
 var options = {};

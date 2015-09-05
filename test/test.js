@@ -324,7 +324,8 @@ describe("ELASTICDUMP", function(){
         type:   'data',
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
-        scrollTime: '10m'
+        scrollTime: '10m',
+        update: true
       };
 
       var dumper_a = new elasticdump(options.input, options.output, options);
@@ -349,6 +350,58 @@ describe("ELASTICDUMP", function(){
             });
           });
 
+        });
+      });
+    });
+
+    describe("with update: false", function() {
+      [
+        {bulk: true,  desc: "when bulk updating"},
+        {bulk: false, desc: "when non-bulk updating"}
+      ].forEach(function(o) {
+        it('does not update existing documents ' + o.desc, function(done) {
+          this.timeout(testTimeout);
+          var options = {
+            limit:  1000,
+            offset: 0,
+            debug:  false,
+            type:   'data',
+            input:  baseUrl + '/source_index',
+            output: baseUrl + '/another_index',
+            scrollTime: '10m',
+            bulk: o.bulk,
+            'bulk-use-output-index-name': o.bulk,
+            update: false
+          };
+
+          Promise.
+            all([
+              es.put ("source_index", {type: "seeds", id: "0"},    {"key": "updated", "_uuid": "0"}),
+              es.post("source_index", {type: "seeds", id: "9999"}, {"key": "new",     "_uuid": "9999"})
+            ]).
+            then(function() {
+              return es.refresh("source_index");
+            }).
+            then(function() {
+              return es.runDump(new elasticdump(options.input, options.output, options));
+            }).
+            then(function(total_writes) {
+              return es.refresh("another_index");
+            }).
+            then(function() {
+              return Promise.all([
+                es.get("another_index", {type: "seeds", id: "0"}),
+                es.get("another_index", {type: "seeds", id: "9999"})
+              ]);
+            }).
+            then(function(results) {
+              results[0]._source["key"].should.equal("key0"); // not updated
+              results[0]._source["_uuid"].should.equal("0");
+
+              results[1]._source["key"].should.equal("new");
+              results[1]._source["_uuid"].should.equal("9999");
+            }).
+            then(done, done);
         });
       });
     });
