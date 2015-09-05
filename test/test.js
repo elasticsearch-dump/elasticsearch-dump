@@ -1,4 +1,6 @@
 var http = require('http');
+var assert = require("assert");
+var Promise = require("promise");
 http.globalAgent.maxSockets = 10;
 
 var elasticdump                = require( __dirname + "/../elasticdump.js" ).elasticdump;
@@ -18,32 +20,105 @@ while(i < seedSize){
   i++;
 }
 
-var seed = function(index, type, callback){
-  var started = 0;
-  for(var key in seeds){
-    started++;
-    var s = seeds[key];
-    s['_uuid'] = key;
-    var url = baseUrl + "/" + index + "/" + type + "/" + key;
-    request.put(url, {body: JSON.stringify(s)}, function(err, response, body){
-      started--;
-      if(started == 0){
-        request.post(baseUrl + "/" + index + "/_refresh", function(err, response){
-          callback();
-        });
-      }
+var es = {
+  // { type: "seeds", id: "0" }
+  urlFor: function(idx, pathParams) {
+    assert(pathParams.type, "type must be provided");
+    url = baseUrl + "/" + idx + "/" + pathParams.type;
+    if ('id' in pathParams)
+      url += "/" + pathParams.id;
+    return url;
+  },
+  get: function(idx, pathParams) {
+    return new Promise(function (resolve, reject) {
+      request.get(es.urlFor(idx, pathParams), function(err, response, body) {
+        if (err === null)
+          resolve(JSON.parse(body));
+        else
+          reject(response);
+      });
+    });
+  },
+  post: function(idx, pathParams, body) {
+    return new Promise(function(resolve, reject) {
+      request.post(es.urlFor(idx, pathParams), {body: JSON.stringify(body)}, function(err, response, body){
+        if (err === null)
+          resolve(JSON.parse(body));
+        else
+          reject(response);
+      });
+    });
+  },
+  put: function(idx, pathParams, body) {
+    return new Promise(function(resolve, reject) {
+      request.put(es.urlFor(idx, pathParams), {body: JSON.stringify(body)}, function(err, response, body){
+        if (err === null)
+          resolve(JSON.parse(body));
+        else
+          reject(response);
+      });
+    });
+  },
+  refresh: function(/*indices...*/) {
+    var indices = Array.prototype.slice.call(arguments);
+    return new Promise(function(resolve, reject) {
+      request.post(baseUrl + "/" + indices.join(",") + "/_refresh", function(err, response) {
+        if(err === null)
+          resolve();
+        else
+          reject(response);
+      });
+    });
+  },
+  deleteIndex: function(idx) {
+    return new Promise(function(resolve, reject) {
+      request.del(baseUrl + '/' + idx, function(err, response, body) {
+        if (err === null)
+          resolve();
+        else
+          reject(err);
+      });
+    });
+  },
+  runDump: function(elasticdump) {
+    return new Promise(function(resolve, reject) {
+      elasticdump.dump(function(err, total_writes) {
+        if (err === null)
+          resolve(total_writes);
+        else
+          reject(err);
+      });
     });
   }
 };
 
+var seed = function(index, type, callback){
+  var puts = [];
+  for(var key in seeds){
+    var s = seeds[key];
+    s['_uuid'] = key;
+    puts.push(es.put(index, {type: type, id: key}, s));
+  };
+  return Promise.all(puts).then(
+    function() {
+      return es.refresh(index).then(
+        callback,
+        function(err) { throw err; }
+      );
+    },
+    function(err) { throw err; }
+  );
+};
+
 var clear = function(callback){
-  request.del(baseUrl + '/destination_index', function(err, response, body){
-    request.del(baseUrl + '/source_index', function(err, response, body){
-      request.del(baseUrl + '/another_index', function(err, response, body){
-        callback();
-      });
-    });
-  });
+  return Promise.all([
+    es.deleteIndex('destination_index'),
+    es.deleteIndex('source_index'),
+    es.deleteIndex('another_index')
+  ]).then(
+    callback,
+    function(err) { throw err; }
+  );
 };
 
 describe("ELASTICDUMP", function(){
@@ -67,9 +142,7 @@ describe("ELASTICDUMP", function(){
     clear(function(){
       seed("source_index", 'seeds', function(){
         seed("another_index", 'seeds', function(){
-          setTimeout(function(){
-            done();
-          }, 500);
+          es.refresh("source_index", "another_index").then(done);
         });
       });
     });
