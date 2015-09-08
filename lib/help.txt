@@ -17,8 +17,14 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: data, options: [data, mapping])
 --delete                      
                     Delete documents one-by-one from the input as they are 
-                    moved.  Will not delete the source index
+                    moved.  Will not delete the source index.
                     (default: false)
+--update
+                    Update existing documents if they exist in the
+                    destination. When set to false, existing documents in the
+                    destination will not be overwritten. See "op_type", and /
+                    or bulk operation "create" vs "index".
+                    (default: true)
 --searchBody                  
                     Preform a partial extract based on search results 
                     (when ES is the input, 
