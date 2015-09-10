@@ -4,6 +4,7 @@ var argv        = require('optimist').argv;
 var util        = require('util');
 var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
 
+// For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 var defaults = {
   limit:           100,
   offset:          0,
@@ -18,6 +19,8 @@ var defaults = {
   inputTransport:  null,
   outputTransport: null,
   searchBody:      null,
+  sourceOnly:      false,
+  jsonLines:       false,
   format:          '',
   'ignore-errors': false,
   scrollTime:      '10m',

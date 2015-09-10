@@ -113,6 +113,15 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
                     Preform a partial extract based on search results 
                     (when ES is the input, 
                       default: '{"query": { "match_all": {} } }')
+--sourceOnly                  
+                    Output only the json contained within the document _source 
+                      Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
+                      sourceOnly: {SOURCE}
+                      default: false
+--jsonLines                  
+                    Do not include leading '[', trailing ']' and separating ',' chararacters in output
+                      Note: Most useful in conjunction with sourceOnly to create a file of a single JSON entry per line
+                      default: false
 --all                         
                     Load/store documents from ALL indexes 
                     (default: false)
