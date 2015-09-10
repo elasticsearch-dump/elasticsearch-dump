@@ -6,36 +6,45 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Source location (required)
 --output                      
                     Destination location (required)
---limit                       
+--limit
                     How many objects to move in bulk per operation 
                     (default: 100)
---debug                       
+--debug
                     Display the elasticsearch commands being used 
                     (default: false)
---type                        
+--type
                     What are we exporting? 
                     (default: data, options: [data, mapping])
---delete                      
+--delete
                     Delete documents one-by-one from the input as they are 
                     moved.  Will not delete the source index
                     (default: false)
---searchBody                  
+--searchBody
                     Preform a partial extract based on search results 
                     (when ES is the input, 
                       default: '{"query": { "match_all": {} } }')
---all                         
+--sourceOnly
+                    Output only the json contained within the document _source 
+                      Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
+                      sourceOnly: {SOURCE}
+                      default: false
+--jsonLines
+                    Do not include leading '[', trailing ']' and separating ',' chararacters in output
+                      Note: Most useful in conjunction with sourceOnly to create a file of a single JSON entry per line
+                      default: false
+--all
                     Load/store documents from ALL indexes 
                     (default: false)
---bulk                        
+--bulk
                     Leverage elasticsearch Bulk API when writing documents 
                     (default: false)
---ignore-errors               
+--ignore-errors
                     Will continue the read/write loop on write error 
                     (default: false)
---scrollTime                  
+--scrollTime
                     Time the nodes will hold the requested search in order. 
                     (default: 10m)
---maxSockets                  
+--maxSockets
                     How many simultaneous HTTP requests can we process make? 
                     (default: 
                       5 [node <= v0.10.x] / 
@@ -46,7 +55,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     leveraging Bulk API copying data inside the same 
                     elasticsearch instance. 
                     (default: false)
---timeout                     
+--timeout
                     Integer containing the number of milliseconds to wait for 
                     a request to respond before aborting the request. Passed 
                     directly to the request library. If used in bulk writing, 
@@ -67,9 +76,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     you want to get most data as possible in the index 
                     without concern for losing some rows in the process, 
                     gsimilar to the `timeout` option.
---inputTransport    
+--inputTransport
                     Provide a custom js file to us as the input transport
---outputTransport   
+--outputTransport
                     Provide a custom js file to us as the output transport
 --toLog
                     When using a custom outputTransport, should log lines 
