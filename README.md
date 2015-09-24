@@ -27,6 +27,8 @@ elasticdump
 
 ## Use
 
+### Standard Install
+
 elasticdump works by sending an `input` to an `output`.  Both can be either an elasticsearch URL or a File.
 
 Elasticsearch:
@@ -87,6 +89,55 @@ elasticdump \
   --searchBody '{"query":{"term":{"username": "admin"}}}'
 ```
 
+### Non-Standard Install
+
+If Elasticsearch is not being served from the root directory the `--input-index` and
+`--output-index` are required. If they are not provided, the additional sub-directories will
+be parsed for index and type.
+
+Elasticsearch:
+- format:  `{protocol}://{host}:{port}/{sub}/{directory...}`
+- example: `http://127.0.0.1:9200/api/search`
+
+```bash
+# Copy a single index from a elasticsearch:
+elasticdump \
+  --input=http://es.com:9200/api/search \
+  --input-index=my_index \
+  --output=http://es.com:9200/api/search \
+  --output-index=my_index \
+  --type=mapping
+
+# Copy a single type:
+elasticdump \
+  --input=http://es.com:9200/api/search \
+  --input-index=my_index/my_type \
+  --output=http://es.com:9200/api/search \
+  --output-index=my_index \
+  --type=mapping
+
+# Copy a single type:
+elasticdump \
+  --input=http://es.com:9200/api/search \
+  --input-index=my_index/my_type \
+  --output=http://es.com:9200/api/search \
+  --output-index=my_index \
+  --type=mapping
+
+# Backup ALL indices, then use Bulk API to populate another ES cluster:
+# Notice, the single `/` is required to specify all indices.
+elasticdump \
+  --all=true \
+  --input=http://production-a.es.com:9200/api/search \
+  --input-index=/ \
+  --output=/data/production.json
+elasticdump \
+  --bulk=true \
+  --input=/data/production.json \
+  --output=http://production-b.es.com:9200/api/search \
+  --output-index=/
+```
+
 ## Options
 
 ```
@@ -94,8 +145,15 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
 
 --input                       
                     Source location (required)
+--input-index
+                    Source index and type
+                    (default: all, example: index/type)
+                    
 --output                      
                     Destination location (required)
+--output-index
+                    Destination index and type
+                    (default: all, example: index/type)
 --limit                       
                     How many objects to move in bulk per operation 
                     (default: 100)
@@ -190,6 +248,7 @@ NOTE: only works for output
 - this tool is likley to require Elasticsearch version 1.0.0 or higher
 - elasticdump (and elasticsearch in general) will create indices if they don't exist upon import
 - when exporting from elasticsearch, you can have export an entire index (`--input="http://localhost:9200/index"`) or a type of object from that index (`--input="http://localhost:9200/index/type"`).  This requires ElasticSearch 1.2.0 or higher
+- If elasticsearch is in a sub-directory, index and type must be provided with a separate argument (`--input="http://localhost:9200/sub/directory --input-index=index/type"`). Using `--input-index=/` will include all indices and types.
 - we are using the `put` method to write objects.  This means new objects will be created and old objects with the same ID will be updated
 - the `file` transport will overwrite any existing files
 - If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index`
