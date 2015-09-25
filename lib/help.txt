@@ -4,8 +4,14 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 
 --input                       
                     Source location (required)
+--input-index
+                    Source index and type
+                    (default: all, example: index/type)
 --output                      
                     Destination location (required)
+--output-index
+                    Destination index and type
+                    (default: all, example: index/type)
 --limit
                     How many objects to move in bulk per operation 
                     (default: 100)

@@ -182,6 +182,33 @@ describe("ELASTICDUMP", function(){
       });
     });
 
+    it('works for index/types in separate option', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:          100,
+        offset:         0,
+        debug:          false,
+        type:           'data',
+        input:          baseUrl,
+        'input-index':  '/source_index/seeds',
+        output:         baseUrl,
+        'output-index': '/destination_index',
+        scrollTime:     '10m'
+      };
+
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        var url = baseUrl + "/destination_index/_search";
+        request.get(url, function(err, response, body){
+          should.not.exist(err);
+          body = JSON.parse(body);
+          body.hits.total.should.equal(seedSize);
+          done();
+        });
+      });
+    });
+
     it('works with searchBody', function(done){
       this.timeout(testTimeout);
       var options = {
