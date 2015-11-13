@@ -138,6 +138,39 @@ elasticdump \
   --output-index=/
 ```
 
+### Docker install
+If you prefer using docker to use elasticdump, you can clone this git repo and run :
+```bash
+docker build -t elasticdump .
+```
+Then you can use it just by :
+- using `docker run --rm -ti elasticdump`
+- remembering that you cannot use `localhost` or `127.0.0.1` as you ES host ;)
+- you'll need to mount your file storage dir `-v <your dumps dir>:<your mount point>` to your docker container
+
+Example:
+```bash
+# Copy an index from production to staging with mappings:
+docker run --rm -ti elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=mapping
+docker run --rm -ti elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=data
+
+# Backup index data to a file (ie : stored in /tmp/myESdumps) :
+docker run --rm -ti -v /tmp/myESdumps:/data elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=/data/my_index_mapping.json \
+  --type=mapping
+docker run --rm -ti -v /tmp/myESdumps:/data elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=/data/my_index.json \
+  --type=data
+```
+
 ## Options
 
 ```
