@@ -27,6 +27,7 @@ var defaults = {
   'ignore-errors': false,
   scrollTime:      '10m',
   'bulk-use-output-index-name': false,
+  'bulk-mode':     'index',
   timeout:         null,
   skip:            null,
   toLog:           null,
