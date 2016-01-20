@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "mocha": "latest",
-    "should": "latest"
+    "should": "latest",
+    "async": "1.x.x"
   },
   "bin": {
     "elasticdump": "./bin/elasticdump",

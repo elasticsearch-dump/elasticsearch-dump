@@ -5,6 +5,7 @@ var elasticdump                = require( __dirname + "/../elasticdump.js" ).ela
 var request                    = require('request');
 var should                     = require('should');
 var fs                         = require('fs');
+var async                      = require('async');
 var baseUrl                    = "http://127.0.0.1:9200";
 
 var seeds                      = {};
@@ -18,22 +19,25 @@ while(i < seedSize){
   i++;
 }
 
-var seed = function(index, type, callback){
-  var started = 0;
-  for(var key in seeds){
-    started++;
-    var s = seeds[key];
-    s['_uuid'] = key;
-    var url = baseUrl + "/" + index + "/" + type + "/" + key;
-    request.put(url, {body: JSON.stringify(s)}, function(err, response, body){
-      started--;
-      if(started == 0){
-        request.post(baseUrl + "/" + index + "/_refresh", function(err, response){
-          callback();
-        });
-      }
-    });
-  }
+var seed = function(index, type, settings, callback){
+  var payload = {url: baseUrl + "/" + index, body: JSON.stringify(settings)};
+  request.put(payload, function(err, response) { // create the index first with potential custom analyzers before seeding
+    var started = 0;
+    for(var key in seeds){
+      started++;
+      var s = seeds[key];
+      s['_uuid'] = key;
+      var url = baseUrl + "/" + index + "/" + type + "/" + key;
+      request.put(url, {body: JSON.stringify(s)}, function(err, response, body){
+        started--;
+        if(started == 0){
+          request.post(baseUrl + "/" + index + "/_refresh", function(err, response){
+            callback();
+          });
+        }
+      });
+    }
+  })
 };
 
 var clear = function(callback){
@@ -54,8 +58,8 @@ describe("ELASTICDUMP", function(){
       lines.forEach(function(line){
         words = line.split(' ');
         index = words[2];
-        if(line.length > 0 && ['source_index', 'another_index', 'destination_index'].indexOf(index) < 0){ 
-          indexesExistingBeforeSuite++; 
+        if(line.length > 0 && ['source_index', 'another_index', 'destination_index'].indexOf(index) < 0){
+          indexesExistingBeforeSuite++;
         }
       });
       done();
@@ -65,8 +69,20 @@ describe("ELASTICDUMP", function(){
   beforeEach(function(done){
     this.timeout(testTimeout);
     clear(function(){
-      seed("source_index", 'seeds', function(){
-        seed("another_index", 'seeds', function(){
+      var settings = {
+        'settings': {
+          'analysis': {
+            'analyzer':{
+              'content':{
+                'type':'custom',
+                'tokenizer':'whitespace'
+              }
+            }
+          }
+        }
+      }; //settings for index to be created with
+      seed("source_index", 'seeds', settings, function(){
+        seed("another_index", 'seeds', undefined, function(){
           setTimeout(function(){
             done();
           }, 500);
@@ -259,6 +275,51 @@ describe("ELASTICDUMP", function(){
           body.hits.total.should.equal(113);
           done();
         });
+      });
+    });
+
+    it('can get and set analyzer', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'analyzer',
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      };
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        // Use async's whilst module to ensure that index is for sure opened after setting analyzers
+        // opening an index has a delay
+        var status = false;
+        async.whilst(
+          function () { return !status },
+          function (callback) {
+            var url = baseUrl + "/destination_index/_search";
+            request.get(url, function(err, response, body){
+              body = JSON.parse(body);
+              try {
+                body.hits.total.should.equal(0);
+                status = true;
+              }
+              catch (err) {
+                status = false;
+              }
+              callback(null, status);
+            });
+          },
+          function (err, n) {
+            var url = baseUrl + "/destination_index/_settings";
+            request.get(url, function(err, response, body){
+              body = JSON.parse(body);
+              body.destination_index.settings.index.analysis.analyzer.content.type.should.equal('custom');
+              done();
+            });
+          }
+        );
       });
     });
 
@@ -475,13 +536,13 @@ describe("ELASTICDUMP", function(){
         lines[2][0].should.equal("{")
 
         // one line for each document (500) plus an extra "1" entry for the final \r\n
-        linecount.should.equal(501); 
+        linecount.should.equal(501);
 
         done();
       });
     });
   });
-  
+
   describe("es to file sourceOnly", function(){
     it('works', function(done){
       this.timeout(testTimeout);
@@ -545,7 +606,7 @@ describe("ELASTICDUMP", function(){
         output["key"].length.should.be.above(0)
 
         // one line for each document (500) plus an extra "1" entry for the final \r\n
-        linecount.should.equal(501); 
+        linecount.should.equal(501);
         done();
       });
     });

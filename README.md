@@ -46,7 +46,11 @@ Stdio:
 You can then do things like:
 
 ```bash
-# Copy an index from production to staging with mappings:
+# Copy an index from production to staging with analyzer and mapping:
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=analyzer
 elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
@@ -181,31 +185,31 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
 --input-index
                     Source index and type
                     (default: all, example: index/type)
-                    
+
 --output                      
                     Destination location (required)
 --output-index
                     Destination index and type
                     (default: all, example: index/type)
 --limit                       
-                    How many objects to move in bulk per operation 
+                    How many objects to move in bulk per operation
                     (default: 100)
 --debug                       
-                    Display the elasticsearch commands being used 
+                    Display the elasticsearch commands being used
                     (default: false)
 --type                        
-                    What are we exporting? 
-                    (default: data, options: [data, mapping])
+                    What are we exporting?
+                    (default: data, options: [data, mapping, analyzer])
 --delete                      
-                    Delete documents one-by-one from the input as they are 
+                    Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
                     (default: false)
 --searchBody                  
-                    Preform a partial extract based on search results 
-                    (when ES is the input, 
+                    Preform a partial extract based on search results
+                    (when ES is the input,
                       default: '{"query": { "match_all": {} } }')
 --sourceOnly                  
-                    Output only the json contained within the document _source 
+                    Output only the json contained within the document _source
                       Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
                       sourceOnly: {SOURCE}
                       default: false
@@ -214,33 +218,33 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
                       Note: Most useful in conjunction with sourceOnly to create a file of a single JSON entry per line
                       default: false
 --all                         
-                    Load/store documents from ALL indexes 
+                    Load/store documents from ALL indexes
                     (default: false)
 --bulk                        
-                    Leverage elasticsearch Bulk API when writing documents 
+                    Leverage elasticsearch Bulk API when writing documents
                     (default: false)
 --ignore-errors               
-                    Will continue the read/write loop on write error 
+                    Will continue the read/write loop on write error
                     (default: false)
 --scrollTime                  
-                    Time the nodes will hold the requested search in order. 
+                    Time the nodes will hold the requested search in order.
                     (default: 10m)
 --maxSockets                  
-                    How many simultaneous HTTP requests can we process make? 
-                    (default: 
-                      5 [node <= v0.10.x] / 
+                    How many simultaneous HTTP requests can we process make?
+                    (default:
+                      5 [node <= v0.10.x] /
                       Infinity [node >= v0.11.x] )
 --bulk-use-output-index-name  
                     Force use of destination index name (the actual output URL)
-                    as destination while bulk writing to ES. Allows 
-                    leveraging Bulk API copying data inside the same 
-                    elasticsearch instance. 
+                    as destination while bulk writing to ES. Allows
+                    leveraging Bulk API copying data inside the same
+                    elasticsearch instance.
                     (default: false)
 --timeout                     
-                    Integer containing the number of milliseconds to wait for 
-                    a request to respond before aborting the request. Passed 
-                    directly to the request library. If used in bulk writing, 
-                    it will result in the entire batch not being written. 
+                    Integer containing the number of milliseconds to wait for
+                    a request to respond before aborting the request. Passed
+                    directly to the request library. If used in bulk writing,
+                    it will result in the entire batch not being written.
                     Mostly used when you don't care too much if you lose some
                     data when importing but rather have speed.
 --skip
@@ -261,8 +265,8 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
 --outputTransport   
                     Provide a custom js file to us as the output transport
 --toLog
-                    When using a custom outputTransport, should log lines 
-                    be appended to the output stream? 
+                    When using a custom outputTransport, should log lines
+                    be appended to the output stream?
                     (default: true, except for `$`)
 --help
                     This page
@@ -288,7 +292,7 @@ NOTE: only works for output
 - if you choose a stdio output (`--output=$`), you can also request a more human-readable output with `--format=human`
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
 - when using the `--bulk` option, aliases will be ignored and the documents you write will be linked thier original index name.  For example if you have an alias "events" which contains "events-may-2015" and "events-june-2015" and you bulk dump from one ES cluster to another `elasticdump --bulk --import http://localhost:9200/events --output http://other-server:9200`, you will have the source indicies, "events-may-2015" and "events-june-2015", and not "events".
- 
+
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 
 Built at [TaskRabbit](https://www.taskrabbit.com)
