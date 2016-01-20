@@ -16,6 +16,7 @@ var defaults = {
   maxSockets:      null,
   input:           null,
   'input-index':   null,
+  'input-file-buffer-size': null,
   output:          null,
   'output-index':  null,
   inputTransport:  null,
