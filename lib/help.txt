@@ -55,6 +55,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default:
                       5 [node <= v0.10.x] /
                       Infinity [node >= v0.11.x] )
+--input-file-buffer-size
+                    Set the buffer size for file type input. If there are large size documents, increase
+                    the buffer size to get better performance.
+                    (default: null)
 --bulk-mode
                     The mode can be index, delete or update.
                     'index': Add or replace documents on the destination index.
