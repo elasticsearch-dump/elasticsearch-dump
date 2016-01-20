@@ -59,6 +59,12 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Set the buffer size for file type input. If there are large size documents, increase
                     the buffer size to get better performance.
                     (default: null)
+--bulk-mode
+                    The mode can be index, delete or update.
+                    'index': Add or replace documents on the destination index.
+                    'delete': Delete documents on destination index.
+                    'update': Use 'doc_as_upsert' option with bulk update API to do partial update.
+                    (default: index)
 --bulk-use-output-index-name
                     Force use of destination index name (the actual output URL)
                     as destination while bulk writing to ES. Allows
