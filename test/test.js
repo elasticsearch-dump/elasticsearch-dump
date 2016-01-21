@@ -744,6 +744,101 @@ describe("ELASTICDUMP", function(){
     });
   });
 
+  describe("file to bulk es, bulk-mode=update", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options1 = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        output:  baseUrl,
+        input: __dirname + '/seeds.json',
+        all:    true,
+        bulk:   true,
+        scrollTime: '10m'
+      };
+      var options2 = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        output:  baseUrl,
+        input: __dirname + '/seeds.json',
+        all:    true,
+        bulk:   true,
+        'bulk-mode': 'update',
+        scrollTime: '10m'
+      };
+
+      var dumper1 = new elasticdump(options1.input, options1.output, options1);
+      var dumper2 = new elasticdump(options2.input, options2.output, options2);
+
+      clear(function(){
+        dumper1.dump(function() {
+          request.post(baseUrl + "/source_index/seeds/0", {json:{key:"key0_tampered"}}, function(err, response, body){
+            dumper2.dump(function() {
+              request.get(baseUrl + "/source_index/seeds/0", function(err, response, body){
+                body = JSON.parse(body);
+                body._source.key.should.equal("key0");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe("file to bulk es, bulk-mode=delete", function(){
+    it('works', function(done){
+      this.timeout(testTimeout);
+      var options1 = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        output:  baseUrl,
+        input: __dirname + '/seeds.json',
+        all:    true,
+        bulk:   true,
+        scrollTime: '10m'
+      };
+      var options2 = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'data',
+        output:  baseUrl,
+        input: __dirname + '/seeds.json',
+        all:    true,
+        bulk:   true,
+        'bulk-mode': 'delete',
+        scrollTime: '10m'
+      };
+
+      var dumper1 = new elasticdump(options1.input, options1.output, options1);
+      var dumper2 = new elasticdump(options2.input, options2.output, options2);
+
+      clear(function(){
+        dumper1.dump(function() {
+          request.get(baseUrl + "/source_index/_search", function(err, response, body1){
+            body1 = JSON.parse(body1);
+            body1.hits.total.should.equal(5);
+
+            dumper2.dump(function() {
+              request.get(baseUrl + "/source_index/_search", function(err, response, body2){
+                body2 = JSON.parse(body2);
+                body2.hits.total.should.equal(0);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
   describe("file to bulk es, respecting output name", function(){
     it('works', function(done){
       this.timeout(testTimeout);
