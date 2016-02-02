@@ -30,14 +30,14 @@ var seed = function(index, type, settings, callback){
       var url = baseUrl + "/" + index + "/" + type + "/" + key;
       request.put(url, {body: JSON.stringify(s)}, function(err, response, body){
         started--;
-        if(started == 0){
+        if(started === 0){
           request.post(baseUrl + "/" + index + "/_refresh", function(err, response){
             callback();
           });
         }
       });
     }
-  })
+  });
 };
 
 var clear = function(callback){
@@ -296,7 +296,7 @@ describe("ELASTICDUMP", function(){
         // opening an index has a delay
         var status = false;
         async.whilst(
-          function () { return !status },
+          function () { return !status; },
           function (callback) {
             var url = baseUrl + "/destination_index/_search";
             request.get(url, function(err, response, body){
@@ -499,8 +499,8 @@ describe("ELASTICDUMP", function(){
 
       dumper.dump(function(){
         var raw = fs.readFileSync('/tmp/out.json');
-        var output = JSON.parse( raw );
-        output.length.should.equal(seedSize);
+        var lineCount = String( raw ).split('\n').length;
+        lineCount.should.equal(seedSize + 1);
         done();
       });
     });
@@ -526,14 +526,14 @@ describe("ELASTICDUMP", function(){
       dumper.dump(function(){
         var raw = fs.readFileSync('/tmp/out.jsonlines').toString();
         var lines = raw.split(/[\r\n]+/g);
-        var linecount = lines.length
+        var linecount = lines.length;
 
         // first character should be { not [
-        raw[0].should.equal("{")
+        raw[0].should.equal("{");
 
         // first character of following lines should be { not ,
-        lines[1][0].should.equal("{")
-        lines[2][0].should.equal("{")
+        lines[1][0].should.equal("{");
+        lines[2][0].should.equal("{");
 
         // one line for each document (500) plus an extra "1" entry for the final \r\n
         linecount.should.equal(501);
@@ -562,11 +562,12 @@ describe("ELASTICDUMP", function(){
 
       dumper.dump(function(){
         var raw = fs.readFileSync('/tmp/out.sourceOnly');
-        var output = JSON.parse( raw );
-        output.length.should.equal(seedSize);
+        var lines = String( raw ).split("\n");
+        lines.length.should.equal(seedSize + 1);
 
         // "key" should be immediately available
-        output[0]["key"].length.should.be.above(0)
+        var first = JSON.parse(lines[0]);
+        first["key"].length.should.be.above(0);
         done();
       });
     });
@@ -592,18 +593,18 @@ describe("ELASTICDUMP", function(){
       dumper.dump(function(){
         var raw = fs.readFileSync('/tmp/out.sourceOnly.jsonLines').toString();
         var lines = raw.split(/[\r\n]+/g);
-        var linecount = lines.length
+        var linecount = lines.length;
 
         // first character should be { not [
-        raw[0].should.equal("{")
+        raw[0].should.equal("{");
 
         // first character of following lines should be { not ,
-        lines[1][0].should.equal("{")
-        lines[2][0].should.equal("{")
+        lines[1][0].should.equal("{");
+        lines[2][0].should.equal("{");
 
         // "key" should be immediately available
         var output = JSON.parse( lines[0] );
-        output["key"].length.should.be.above(0)
+        output["key"].length.should.be.above(0);
 
         // one line for each document (500) plus an extra "1" entry for the final \r\n
         linecount.should.equal(501);
