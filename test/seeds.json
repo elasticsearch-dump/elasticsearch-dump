@@ -1,13 +1,11 @@
-[
-  {"_index":"source_index","_type":"seeds","_id":"0","_score":1,"_source":{"key":"key0","_uuid":"0"}}
-  {"_index":"source_index","_type":"seeds","_id":"1","_score":1,"_source":{"key":"key1","_uuid":"1"}}
-  {"_index":"source_index","_type":"seeds","_id":"2","_score":1,"_source":{"key":"key2","_uuid":"2"}}
-  {"_index":"source_index","_type":"seeds","_id":"3","_score":1,"_source":{"key":"key3","_uuid":"3"}}
-  {"_index":"source_index","_type":"seeds","_id":"4","_score":1,"_source":{"key":"key4","_uuid":"4"}}
+{"_index":"source_index","_type":"seeds","_id":"0","_score":1,"_source":{"key":"key0","_uuid":"0"}}
+{"_index":"source_index","_type":"seeds","_id":"1","_score":1,"_source":{"key":"key1","_uuid":"1"}}
+{"_index":"source_index","_type":"seeds","_id":"2","_score":1,"_source":{"key":"key2","_uuid":"2"}}
+{"_index":"source_index","_type":"seeds","_id":"3","_score":1,"_source":{"key":"key3","_uuid":"3"}}
+{"_index":"source_index","_type":"seeds","_id":"4","_score":1,"_source":{"key":"key4","_uuid":"4"}}
 
-  {"_index":"another_index","_type":"seeds","_id":"10","_score":1,"_source":{"key":"key0","_uuid":"0"}}
-  {"_index":"another_index","_type":"seeds","_id":"11","_score":1,"_source":{"key":"key1","_uuid":"1"}}
-  {"_index":"another_index","_type":"seeds","_id":"12","_score":1,"_source":{"key":"key2","_uuid":"2"}}
-  {"_index":"another_index","_type":"seeds","_id":"13","_score":1,"_source":{"key":"key3","_uuid":"3"}}
-  {"_index":"another_index","_type":"seeds","_id":"14","_score":1,"_source":{"key":"key4","_uuid":"4"}}
-]
+{"_index":"another_index","_type":"seeds","_id":"10","_score":1,"_source":{"key":"key0","_uuid":"0"}}
+{"_index":"another_index","_type":"seeds","_id":"11","_score":1,"_source":{"key":"key1","_uuid":"1"}}
+{"_index":"another_index","_type":"seeds","_id":"12","_score":1,"_source":{"key":"key2","_uuid":"2"}}
+{"_index":"another_index","_type":"seeds","_id":"13","_score":1,"_source":{"key":"key3","_uuid":"3"}}
+{"_index":"another_index","_type":"seeds","_id":"14","_score":1,"_source":{"key":"key4","_uuid":"4"}}

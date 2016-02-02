@@ -495,6 +495,8 @@ describe("ELASTICDUMP", function(){
         jsonLines: false
       };
 
+      if(fs.existsSync('/tmp/out.json')){ fs.unlinkSync('/tmp/out.json'); }
+
       var dumper = new elasticdump(options.input, options.output, options);
 
       dumper.dump(function(){
@@ -506,44 +508,7 @@ describe("ELASTICDUMP", function(){
     });
   });
 
-  describe("es to file jsonLines", function(){
-    it('works', function(done){
-      this.timeout(testTimeout);
-      var options = {
-        limit:  100,
-        offset: 0,
-        debug:  false,
-        type:   'data',
-        input:  baseUrl + '/source_index',
-        output: '/tmp/out.jsonlines',
-        scrollTime: '10m',
-        sourceOnly: false,
-        jsonLines: true
-      };
-
-      var dumper = new elasticdump(options.input, options.output, options);
-
-      dumper.dump(function(){
-        var raw = fs.readFileSync('/tmp/out.jsonlines').toString();
-        var lines = raw.split(/[\r\n]+/g);
-        var linecount = lines.length;
-
-        // first character should be { not [
-        raw[0].should.equal("{");
-
-        // first character of following lines should be { not ,
-        lines[1][0].should.equal("{");
-        lines[2][0].should.equal("{");
-
-        // one line for each document (500) plus an extra "1" entry for the final \r\n
-        linecount.should.equal(501);
-
-        done();
-      });
-    });
-  });
-
-  describe("es to file sourceOnly", function(){
+    describe("es to file sourceOnly", function(){
     it('works', function(done){
       this.timeout(testTimeout);
       var options = {
@@ -558,6 +523,8 @@ describe("ELASTICDUMP", function(){
         jsonLines: false
       };
 
+      if(fs.existsSync('/tmp/out.sourceOnly')){ fs.unlinkSync('/tmp/out.sourceOnly'); }
+
       var dumper = new elasticdump(options.input, options.output, options);
 
       dumper.dump(function(){
@@ -568,46 +535,6 @@ describe("ELASTICDUMP", function(){
         // "key" should be immediately available
         var first = JSON.parse(lines[0]);
         first["key"].length.should.be.above(0);
-        done();
-      });
-    });
-  });
-
-  describe("es to file jsonLines sourceOnly", function(){
-    it('works', function(done){
-      this.timeout(testTimeout);
-      var options = {
-        limit:  100,
-        offset: 0,
-        debug:  false,
-        type:   'data',
-        input:  baseUrl + '/source_index',
-        output: '/tmp/out.sourceOnly.jsonLines',
-        scrollTime: '10m',
-        sourceOnly: true,
-        jsonLines: true
-      };
-
-      var dumper = new elasticdump(options.input, options.output, options);
-
-      dumper.dump(function(){
-        var raw = fs.readFileSync('/tmp/out.sourceOnly.jsonLines').toString();
-        var lines = raw.split(/[\r\n]+/g);
-        var linecount = lines.length;
-
-        // first character should be { not [
-        raw[0].should.equal("{");
-
-        // first character of following lines should be { not ,
-        lines[1][0].should.equal("{");
-        lines[2][0].should.equal("{");
-
-        // "key" should be immediately available
-        var output = JSON.parse( lines[0] );
-        output["key"].length.should.be.above(0);
-
-        // one line for each document (500) plus an extra "1" entry for the final \r\n
-        linecount.should.equal(501);
         done();
       });
     });
@@ -654,7 +581,7 @@ describe("ELASTICDUMP", function(){
 
       var dumper = new elasticdump(options.input, options.output, options);
 
-      dumper.dump(function(){
+      dumper.dump(function(error){
         var url = baseUrl + "/destination_index/_search";
         request.get(url, function(err, response, body){
           should.not.exist(err);
@@ -691,6 +618,8 @@ describe("ELASTICDUMP", function(){
           jsonLines: false,
           all:    true
         };
+
+        if(fs.existsSync('/tmp/out.json')){ fs.unlinkSync('/tmp/out.json'); }
 
         var dumper = new elasticdump(options.input, options.output, options);
 

@@ -29,16 +29,14 @@ var elasticdump = function(input, output, options){
 
   var InputProto;
   if(self.options.input && !self.options.inputTransport){
-    if(self.options.input === "$"){
-      self.inputType = 'stdio';
-    }else if(isUrl(self.options.input)){
+    if(isUrl(self.options.input)){
       self.inputType = 'elasticsearch';
     }else{
       self.inputType  = 'file';
     }
 
     InputProto = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
-    self.input  = (new InputProto(self, self.options.input, self.options['input-index']));
+    self.input = (new InputProto(self, self.options.input, self.options['input-index']));
   }else if(self.options.inputTransport){
     InputProto = require(self.options.inputTransport);
     var inputProtoKeys = Object.keys(InputProto);
@@ -47,13 +45,11 @@ var elasticdump = function(input, output, options){
 
   var OutputProto;
   if(self.options.output && !self.options.outputTransport){
-    if(self.options.output === "$"){
-      self.outputType = 'stdio';
-      self.options.toLog = false;
-    }else if(isUrl(self.options.output)){
+    if(isUrl(self.options.output)){
       self.outputType = 'elasticsearch';
     }else{
       self.outputType = 'file';
+      if(self.options.output === "$"){ self.options.toLog = false; }
     }
 
     OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
@@ -118,6 +114,9 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
         self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
         self.output.set(data, limit, offset, function(err, writes){
           var toContinue = true;
+          var skipToContinue = false;
+          if(self.options.skip){ skipToContinue = true; }
+
           if(err){
             self.emit('error', err);
             if( self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true' ){
@@ -127,10 +126,19 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
             }
           }else{
             total_writes += writes;
-            self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
-            offset = offset + data.length;
+            if(data.length > 0){
+              self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
+              offset = offset + data.length;
+            }else if(self.options.skip){
+              if(self.options.skip > offset){
+                offset = offset + self.options.skip;
+              }else{
+                if(data.length === 0){ skipToContinue = false; }
+              }
+            }
           }
-          if(data.length > 0 && toContinue){
+
+          if((data.length > 0 && toContinue) || skipToContinue){
             self.dump(callback, true, limit, offset, total_writes);
           }else if(toContinue){
             self.log('Total Writes: ' + total_writes);

@@ -35,13 +35,10 @@ Elasticsearch:
 - format:  `{protocol}://{host}:{port}/{index}`
 - example: `http://127.0.0.1:9200/my_index`
 
-File:
+File/Stdio:
 - format:  `{FilePath}`
-- example: `/Users/evantahler/Desktop/dump.json`
-
-Stdio:
-- format: stdin / stdout
-- format: `$`
+- example (a file): `/Users/evantahler/Desktop/dump.json`
+- example (stdio): `$`
 
 You can then do things like:
 
@@ -193,6 +190,7 @@ Usage: elasticdump --input [SOURCE] --output [DESTINATION] [OPTIONS]
                     (default: all, example: index/type)
 --limit                       
                     How many objects to move in bulk per operation
+                    limit is approximate for file streams
                     (default: 100)
 --debug                       
                     Display the elasticsearch commands being used
