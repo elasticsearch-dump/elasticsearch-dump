@@ -10,7 +10,7 @@
   "main": "elasticdump.js",
   "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export", "transfer", "migrate", "migartion", "elasitic", "cluster", "elastic-dump", "elastic dump"],
   "engines": {
-    "node": ">=0.9.0"
+    "node": ">=1.0.0"
   },
   "dependencies": {
     "optimist": "latest",
