@@ -1,4 +1,5 @@
 var sut = require('../lib/is-url');
+var should = require('should');
 
 describe('is-url', function(){
   it('returns true if url starts with http://', function(){

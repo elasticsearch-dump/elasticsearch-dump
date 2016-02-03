@@ -2,7 +2,7 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "elasticdump",
   "description": "import and export tools for elasticsearch",
-  "version": "0.18.0",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
@@ -10,13 +10,12 @@
   "main": "elasticdump.js",
   "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export", "transfer", "migrate", "migartion", "elasitic", "cluster", "elastic-dump", "elastic dump"],
   "engines": {
-    "node": ">=0.9.0"
+    "node": ">=1.0.0"
   },
   "dependencies": {
     "optimist": "latest",
     "request": "2.x.x",
-    "JSONStream": "0.9.x",
-    "line-reader": "0.2.x"
+    "JSONStream": "0.9.x"
   },
   "devDependencies": {
     "mocha": "latest",

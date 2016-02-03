@@ -14,6 +14,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: all, example: index/type)
 --limit
                     How many objects to move in bulk per operation
+                    limit is approximate for file streams
                     (default: 100)
 --debug
                     Display the elasticsearch commands being used
@@ -28,16 +29,12 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --searchBody
                     Preform a partial extract based on search results
                     (when ES is the input,
-                      default: '{"query": { "match_all": {} } }')
+                    (default: '{"query": { "match_all": {} } }'))
 --sourceOnly
                     Output only the json contained within the document _source
-                      Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
-                      sourceOnly: {SOURCE}
-                      default: false
---jsonLines
-                    Do not include leading '[', trailing ']' and separating ',' chararacters in output
-                      Note: Most useful in conjunction with sourceOnly to create a file of a single JSON entry per line
-                      default: false
+                    Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
+                    sourceOnly: {SOURCE}
+                    (default: false)
 --all
                     Load/store documents from ALL indexes
                     (default: false)
@@ -95,7 +92,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     written/parsed.  This is more of an option for when
                     you want to get most data as possible in the index
                     without concern for losing some rows in the process,
-                    gsimilar to the `timeout` option.
+                    similar to the `timeout` option.
 --inputTransport
                     Provide a custom js file to us as the input transport
 --outputTransport
