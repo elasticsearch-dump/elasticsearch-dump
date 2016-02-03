@@ -19,8 +19,8 @@ var pcInitElementCount         = 250;
 var pcInitIndexName            = 'esdump-pcinit';
 var pcCopyIndexName            = 'esdump-pccopy';
 var pcRestoreIndexName         = 'esdump-pcrestored';
-var pcDumpMappingFile          = '/tmp/esdump.mapping.json'
-var pcDumpDataFile             = '/tmp/esdump.data.json'
+var pcDumpMappingFile          = '/tmp/esdump.mapping.json';
+var pcDumpDataFile             = '/tmp/esdump.data.json';
 var pcInitIndexSettings        = {
   index: {
     number_of_shard: 2,
@@ -128,7 +128,7 @@ function pcInit(done) {
     for (var i=0; i<pcInitElementCount; i++) {
       insertElement(pcInitIndexName, i, done, counter, continuation);
     }
-  }
+  };
 
   pathExists(pcInitIndexName, setExist, done);
 
@@ -170,7 +170,7 @@ function testIndexMappings(index) {
   var checkMapping = function(body, done) {
     should.deepEqual(body[index], { mappings: pcInitIndexMapping});
     done();
-  }
+  };
   return (function(done) {
     this.timeout(testTimeout);
     pathMustExists(index + '/_mapping', checkMapping, done);
@@ -181,7 +181,7 @@ function testIndexElements(index) {
   var checkElements = function(body, done) {
     should.equal(body.hits.total, pcInitElementCount);
     done();
-  }
+  };
   return (function(done) {
     this.timeout(testTimeout);
     pathMustExists(index + '/_search?search_type=count', checkElements, done);
@@ -192,7 +192,7 @@ function testIndexNoOrphans(index) {
   var checkCount = function(body, done) {
     should.equal(body.hits.total, 0);
     done();
-  }
+  };
   return (function(done) {
     this.timeout(testTimeout);
     esCountOrphans(index, 'units', 'tens', checkCount, done);
@@ -230,10 +230,12 @@ function testDumpIndex(index, file, type) {
     output: file,
     scrollTime: '10m'
   };
+
   var dumper = new elasticdump(options.input, options.output, options);
 
   return (function(done) {
     this.timeout(testTimeout);
+    if(fs.existsSync(file)){ fs.unlinkSync(file); }
     dumper.dump(function(err, writes) {
       should.not.exists(err);
       done();
@@ -267,7 +269,7 @@ function requestCont(callback, done) {
   return function(err, resp, body) {
     if (err) return done(err);
     callback(resp, body, done);
-  }
+  };
 }
 
 function pathMustExists(path, callback, done) {
@@ -282,7 +284,7 @@ function pathMustExists(path, callback, done) {
     } else {
       done(new Error(body));
     }
-  }
+  };
   request.get(baseUrl + '/' + path, requestCont(exists, done));
 }
 
@@ -296,7 +298,7 @@ function pathExists(path, callback, done) {
       console.log("pathExists for '" + path + "' returned " + resp.statusCode);
       done(body);
     }
-  }
+  };
   request.get(baseUrl + '/' + path, requestCont(exists, done));
 }
 
@@ -368,7 +370,7 @@ function esCountOrphans(index, type, ptype, callback, done) {
       return done(new Error("No such index '" + index + "': " + body));
     }
     callback(JSON.parse(body), done);
-  }
+  };
 
   request.post(uri,
                { body: JSON.stringify(body) },
