@@ -5,6 +5,7 @@ var elasticdump                = require( __dirname + "/../elasticdump.js" ).ela
 var request                    = require('request');
 var should                     = require('should');
 var fs                         = require('fs');
+var os                         = require('os');
 var async                      = require('async');
 var baseUrl                    = "http://127.0.0.1:9200";
 
@@ -625,7 +626,13 @@ describe("ELASTICDUMP", function(){
 
         dumper.dump(function(){
           var raw = fs.readFileSync('/tmp/out.json');
-          var output = JSON.parse( raw );
+          var output = [];
+          raw.toString().split(os.EOL).forEach(function(line){
+            if(line.length > 0){
+              output.push(JSON.parse(line));
+            }
+          });
+
           count = 0;
           for(var i in output){
             var elem = output[i];
