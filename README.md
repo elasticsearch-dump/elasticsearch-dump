@@ -11,6 +11,10 @@ Tools for moving and saving indicies.
 
 [![Build Status](https://secure.travis-ci.org/taskrabbit/elasticsearch-dump.png?branch=master)](http://travis-ci.org/taskrabbit/elasticsearch-dump)  [![Code Climate](https://codeclimate.com/github/taskrabbit/elasticsearch-dump/badges/gpa.svg)](https://codeclimate.com/github/taskrabbit/elasticsearch-dump)
 
+## Version `1.x.x` Warning!
+
+Version 1.x.x of Elasticdump changes the format of the files created by the dump.  Files created with version 0.x.x of this tool are likely not to work with versions going forward.
+
 ## Installing
 
 (local)
@@ -21,33 +25,115 @@ npm install elasticdump
 
 (global)
 ```bash
-npm install elasticdump -g
-elasticdump
-```
+elasticdump: Import and export tools for elasticsearch
 
-## Use
+Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 
-### Standard Install
+--input
+                    Source location (required)
+--input-index
+                    Source index and type
+                    (default: all, example: index/type)
+--output
+                    Destination location (required)
+--output-index
+                    Destination index and type
+                    (default: all, example: index/type)
+--limit
+                    How many objects to move in bulk per operation
+                    limit is approximate for file streams
+                    (default: 100)
+--debug
+                    Display the elasticsearch commands being used
+                    (default: false)
+--type
+                    What are we exporting?
+                    (default: data, options: [data, mapping])
+--delete
+                    Delete documents one-by-one from the input as they are
+                    moved.  Will not delete the source index
+                    (default: false)
+--searchBody
+                    Preform a partial extract based on search results
+                    (when ES is the input,
+                    (default: '{"query": { "match_all": {} } }'))
+--sourceOnly
+                    Output only the json contained within the document _source
+                    Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
+                    sourceOnly: {SOURCE}
+                    (default: false)
+--all
+                    Load/store documents from ALL indexes
+                    (default: false)
+--bulk
+                    Leverage elasticsearch Bulk API when writing documents
+                    (default: false)
+--ignore-errors
+                    Will continue the read/write loop on write error
+                    (default: false)
+--scrollTime
+                    Time the nodes will hold the requested search in order.
+                    (default: 10m)
+--maxSockets
+                    How many simultaneous HTTP requests can we process make?
+                    (default:
+                      5 [node <= v0.10.x] /
+                      Infinity [node >= v0.11.x] )
+--input-file-buffer-size
+                    Set the buffer size for file type input. If there are large size documents, increase
+                    the buffer size to get better performance.
+                    (default: null)
+--bulk-mode
+                    The mode can be index, delete or update.
+                    'index': Add or replace documents on the destination index.
+                    'delete': Delete documents on destination index.
+                    'update': Use 'doc_as_upsert' option with bulk update API to do partial update.
+                    (default: index)
+--input-file-buffer-size
+                    Set the buffer size for file type input. If there are large size documents, increase
+                    the buffer size to get better performance.
+                    (default: null)
+--bulk-use-output-index-name
+                    Force use of destination index name (the actual output URL)
+                    as destination while bulk writing to ES. Allows
+                    leveraging Bulk API copying data inside the same
+                    elasticsearch instance.
+                    (default: false)
+--timeout
+                    Integer containing the number of milliseconds to wait for
+                    a request to respond before aborting the request. Passed
+                    directly to the request library. If used in bulk writing,
+                    it will result in the entire batch not being written.
+                    Mostly used when you don't care too much if you lose some
+                    data when importing but rather have speed.
+--skip
+                    Integer containing the number of rows you wish to skip
+                    ahead from the input transport.  When importing a large
+                    index, things can go wrong, be it connectivity, crashes,
+                    someone forgetting to `screen`, etc.  This allows you
+                    to start the dump again from the last known line written
+                    (as logged by the `offset` in the output).  Please be
+                    advised that since no sorting is specified when the
+                    dump is initially created, there's no real way to
+                    guarantee that the skipped rows have already been
+                    written/parsed.  This is more of an option for when
+                    you want to get most data as possible in the index
+                    without concern for losing some rows in the process,
+                    similar to the `timeout` option.
+--inputTransport
+                    Provide a custom js file to us as the input transport
+--outputTransport
+                    Provide a custom js file to us as the output transport
+--toLog
+                    When using a custom outputTransport, should log lines
+                    be appended to the output stream?
+                    (default: true, except for `$`)
+--help
+                    This page
 
-elasticdump works by sending an `input` to an `output`.  Both can be either an elasticsearch URL or a File.
+Examples:
 
-Elasticsearch:
-- format:  `{protocol}://{host}:{port}/{index}`
-- example: `http://127.0.0.1:9200/my_index`
-
-File/Stdio:
-- format:  `{FilePath}`
-- example (a file): `/Users/evantahler/Desktop/dump.json`
-- example (stdio): `$`
-
-You can then do things like:
-
-```bash
-# Copy an index from production to staging with analyzer and mapping:
-elasticdump \
-  --input=http://production.es.com:9200/my_index \
-  --output=http://staging.es.com:9200/my_index \
-  --type=analyzer
+# Copy an index from production to staging with mappings:
 elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
@@ -88,6 +174,9 @@ elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output=query.json \
   --searchBody '{"query":{"term":{"username": "admin"}}}'
+
+------------------------------------------------------------------------------
+Learn more @ https://github.com/taskrabbit/elasticsearch-dump
 ```
 
 ### Non-Standard Install
