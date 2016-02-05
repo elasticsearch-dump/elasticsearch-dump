@@ -87,7 +87,7 @@ elasticdump.prototype.validateOptions = function(){
   return validationErrors;
 };
 
-elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes){
+elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes, remainingSkip){
   var self  = this;
 
   if(self.validationErrors.length > 0){
@@ -98,6 +98,10 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
     if(!limit){ limit = self.options.limit;  }
     if(!offset){ offset = self.options.offset; }
     if(!total_writes){ total_writes = 0; }
+    if(remainingSkip === undefined || remainingSkip === null){
+      remainingSkip = 0;
+      if(self.options.skip){ remainingSkip = self.options.skip; }
+    }
 
     if(continuing !== true){
       self.log('starting dump');
@@ -114,8 +118,6 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
         self.log("got " + data.length + " objects from source " + self.inputType + " (offset: "+offset+")");
         self.output.set(data, limit, offset, function(err, writes){
           var toContinue = true;
-          var skipToContinue = false;
-          if(self.options.skip){ skipToContinue = true; }
 
           if(err){
             self.emit('error', err);
@@ -129,17 +131,21 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
             if(data.length > 0){
               self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
               offset = offset + data.length;
-            }else if(self.options.skip){
-              if(self.options.skip > offset){
-                offset = offset + self.options.skip;
+            }
+
+            if(remainingSkip > 0){
+              if(remainingSkip > limit){
+                offset = offset + limit;
+                remainingSkip = remainingSkip - limit;
               }else{
-                if(data.length === 0){ skipToContinue = false; }
+                offset = offset + remainingSkip;
+                remainingSkip = 0;
               }
             }
           }
 
-          if((data.length > 0 && toContinue) || skipToContinue){
-            self.dump(callback, true, limit, offset, total_writes);
+          if((data.length > 0 && toContinue) || (remainingSkip > 0 && toContinue)){
+            self.dump(callback, true, limit, offset, total_writes, remainingSkip);
           }else if(toContinue){
             self.log('Total Writes: ' + total_writes);
             self.log('dump complete');
