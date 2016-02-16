@@ -2,6 +2,7 @@ FROM ubuntu:trusty
 MAINTAINER evan@evantahler.com
 
 RUN apt-get update -y
+RUN apt-get install -y curl
 RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 RUN apt-get install -y nodejs && apt-get clean && rm -rf /var/lib/apt/lists/*
 
