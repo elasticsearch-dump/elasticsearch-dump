@@ -296,7 +296,7 @@ NOTE: only works for output
 - when exporting from elasticsearch, you can have export an entire index (`--input="http://localhost:9200/index"`) or a type of object from that index (`--input="http://localhost:9200/index/type"`).  This requires ElasticSearch 1.2.0 or higher
 - If elasticsearch is in a sub-directory, index and type must be provided with a separate argument (`--input="http://localhost:9200/sub/directory --input-index=index/type"`). Using `--input-index=/` will include all indices and types.
 - we are using the `put` method to write objects.  This means new objects will be created and old objects with the same ID will be updated
-- the `file` transport will overwrite any existing files
+- the `file` transport will not overwrite any existing files, it will throw an exception of the file already exists
 - If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index`
 - if you choose a stdio output (`--output=$`), you can also request a more human-readable output with `--format=human`
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
