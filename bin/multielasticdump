@@ -3,7 +3,7 @@
 // I am a wrapper around basic elastcidump
 // I will source all indices from your elasticserach server and dump them out to .json and .mapping.json files
 // I probably only work on *nix hosts
-// --input must be a UTL and --output must be a path on this system
+// --input must be a URL and --output must be a path on this system
 
 var argv        = require('optimist').argv;
 var fs          = require('fs');
