@@ -289,6 +289,21 @@ documents in the export. All documents in the export will unique and therefore n
 
 NOTE: only works for output
 
+## MultiElasticDump
+This package also ships with a second binary, `multielasticdump`.  This is a wrapper for the normal elasticdump binary, which provides a limited option set, but will run elasticdump in parallel across many indexes at once.  It runs a process which forks into `n` (default your running host's # of CPUs) subprocesses running elasticdump.
+
+The limited option set includes:
+
+- `parallel`:   `os.cpus()`,
+- `match`:      `'^.*$'`,
+- `input`:      `null`,
+- `output`:     `null`,
+- `scrollTime`: `'10m'`,
+- `limit`:      `100`,
+- `offset`:     `100`,
+
+In this mode, `--input` MUST be a URL for the base location of an ElasticSearch server (http://localhost:9200) and `--output` MUST be a directory. The new options, `--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped (regex).  Each index that does match will have a data, mapping, and analyzer file created. 
+
 ## Notes
 
 - this tool is likley to require Elasticsearch version 1.0.0 or higher

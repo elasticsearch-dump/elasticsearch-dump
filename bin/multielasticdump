@@ -3,15 +3,27 @@
 // I am a wrapper around basic elastcidump
 // I will source all indices from your elasticserach server and dump them out to .json and .mapping.json files
 // I probably only work on *nix hosts
+// --input must be a URL and --output must be a path on this system
 
 var argv        = require('optimist').argv;
 var fs          = require('fs');
+var os          = require('os');
 var util        = require('util');
+var async       = require('async');
 var request     = require('request');
 var fork        = require('child_process').fork;
 
+var options = {};
+var matchedIndexes = [];
+var working = 0;
+var complete = 0;
+var indexCounter = 0;
+var sleepTime = 1000;
+var workTimeout;
+
 var defaults = {
   debug:      true,
+  // parallel:   os.cpus().length,
   parallel:   1,
   match:      '^.*$',
   input:      null,
@@ -21,13 +33,18 @@ var defaults = {
   offset:     100,
 };
 
-var options = {};
-var matchedIndexes = [];
-var working = 0;
-var complete = 0;
-var indexCounter = 0;
-var sleepTime = 1000;
-var workTimeout;
+for(var i in defaults){
+  options[i] = defaults[i];
+  if(argv[i]){
+    options[i] = argv[i];
+  }
+  if(options[i] === 'true' ){ options[i] = true; }
+  if(options[i] === 'false'){ options[i] = false; }
+  // searchBody needs to go from JSON to object in order for size to be added later during elasticsearch query
+  if(i == "searchBody") {
+    options[i] = JSON.parse(options[i]);
+  }
+}
 
 var log = function(type, message){
   if(type === 'debug'){
@@ -39,17 +56,12 @@ var log = function(type, message){
   }else{
     message = (new Date().toUTCString()) + " | " + message;
   }
-  console.log(message); 
+  console.log(message);
 };
 
-for(var i in defaults){
-  options[i] = defaults[i];
-  if(argv[i]){ 
-    options[i] = argv[i];
-  }
-  if(options[i] === 'true' ){ options[i] = true; }
-  if(options[i] === 'false'){ options[i] = false; }
-}
+if(!options.input){ throw new Error('--input is required'); }
+if(!options.output){ throw new Error('--output is required'); }
+if(!fs.existsSync(options.output)){ throw new Error('--output does not exist'); }
 
 request.get(options.input + '/_aliases', function(err, response){
   if(err){ log('err', err); process.exit(); }
@@ -61,6 +73,8 @@ request.get(options.input + '/_aliases', function(err, response){
     }
   }
 
+  log('info', 'matching indexes for dump: ' + matchedIndexes.join(', '));
+
   work();
 });
 
@@ -69,21 +83,21 @@ request.get(options.input + '/_aliases', function(err, response){
 var work = function(){
   clearTimeout(workTimeout);
   if(complete == matchedIndexes.length){
-    log('debug', ' all done ');
-    log('debug', ' bye ');
+    log('info', ' all done ');
+    log('info', ' bye ');
     process.exit();
   }else if(working == options.parallel){
-    setTimeout(work, sleepTime);
+    workTimeout = setTimeout(work, sleepTime);
   }else{
     dump();
-    setTimeout(work, sleepTime);
+    workTimeout = setTimeout(work, sleepTime);
   }
 };
 
 var dump = function(){
   working++;
   var index = matchedIndexes[indexCounter];
-  
+
   if(!index){
     working--;
     return;
@@ -91,37 +105,78 @@ var dump = function(){
 
   indexCounter++;
 
-  try{
-    fs.mkdirSync(options.output);
-  }catch(e){}
+  var input           = options.input + '/' + index;
+  var output_data     = options.output + '/' + index + '.json';
+  var output_mapping  = options.output + '/' + index + '.mapping.json';
+  var output_analyzer = options.output + '/' + index + '.analyzer.json';
 
-  var input          = options.input + '/' + index;
-  var output_data    = options.output + '/' + index + '.json';
-  var output_mapping = options.output + '/' + index + '.mapping.json';
-  
-  log('debug', "dumping " + input + ' to ' + output_mapping);
+  var jobs = [];
 
-  var mapping_child = fork(__dirname + '/elasticdump', [
-    '--type='       + 'mapping',
-    '--input='      + input,
-    '--output='     + output_mapping,
-  ]);
+  jobs.push(function(done){
+    log('info', "dumping " + input + ' to ' + output_mapping);
 
-  log('debug', "dumping " + input + ' to ' + output_data);
+    var mapping_child = fork(__dirname + '/elasticdump', [
+      '--type='       + 'mapping',
+      '--input='      + input,
+      '--output='     + output_mapping,
+    ]);
 
-  var data_child = fork(__dirname + '/elasticdump', [
-    '--type='       + 'data',
-    '--input='      + input,
-    '--output='     + output_data,
-    '--scrollTime=' + options.scrollTime,
-    '--limit='      + options.limit,
-    '--offset='     + options.offset,
-  ]);
-
-  data_child.on('close', function(){
-    log('debug', ' *** complete! ');
-    working--;
-    complete++;
+    mapping_child.on('close', function(code){
+      if(code !== 0){
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
+      }else{
+        return done();
+      }
+    });
   });
-  
+
+  jobs.push(function(done){
+    log('info', "analyzer " + input + ' to ' + output_analyzer);
+
+    var analyzer_child = fork(__dirname + '/elasticdump', [
+      '--type='       + 'analyzer',
+      '--input='      + input,
+      '--output='     + output_analyzer,
+    ]);
+
+    analyzer_child.on('close', function(code){
+      if(code !== 0){
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
+      }else{
+        return done();
+      }
+    });
+  });
+
+  jobs.push(function(done){
+    log('info', "dumping " + input + ' to ' + output_data);
+
+    var data_child = fork(__dirname + '/elasticdump', [
+      '--type='       + 'data',
+      '--input='      + input,
+      '--output='     + output_data,
+      '--scrollTime=' + options.scrollTime,
+      '--limit='      + options.limit,
+      '--offset='     + options.offset,
+    ]);
+
+    data_child.on('close', function(code){
+      if(code !== 0){
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
+      }else{
+        return done();
+      }
+    });
+  });
+
+  async.series(jobs, function(error){
+    if(error){
+      log('error', error);
+      process.exit(1);
+    }else{
+      working--;
+      complete++;
+    }
+  });
+
 };
