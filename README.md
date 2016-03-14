@@ -282,12 +282,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 ```
 
 ## Elasticsearch's scan and scroll method
-Elasticsearch provides a scan and scroll method to fetch all documents of an index. This method is much safer to use since
-it will maintain the result set in cache for the given period of time. This means it will be a lot faster to export the data
-and more important it will keep the result set in order. While dumping the result set in batches it won't export duplicate
-documents in the export. All documents in the export will unique and therefore no missing documents.
+Elasticsearch provides a [scan and scroll](https://www.elastic.co/guide/en/elasticsearch/guide/1.x/scan-scroll.html) API to fetch all documents of an index starting form (and keeping) a consistent snapshot in time, which we use under the hood.  This method is safe to use for large exporrts since it will maintain the result set in cache for the given period of time.
 
-NOTE: only works for output
+NOTE: only works for `--output`
 
 ## MultiElasticDump
 This package also ships with a second binary, `multielasticdump`.  This is a wrapper for the normal elasticdump binary, which provides a limited option set, but will run elasticdump in parallel across many indexes at once.  It runs a process which forks into `n` (default your running host's # of CPUs) subprocesses running elasticdump.
