@@ -40,7 +40,7 @@ var elasticdump = function(input, output, options){
     InputProto = require(__dirname + "/lib/transports/" + self.inputType)[self.inputType];
     self.input  = (new InputProto(self, self.options.input, self.options['input-index']));
   }else if(self.options.inputTransport){
-    self.inputType = 'inputTransport';
+    self.inputType = String(self.options.inputTransport);
     InputProto = require(self.options.inputTransport);
     var inputProtoKeys = Object.keys(InputProto);
     self.input = (new InputProto[inputProtoKeys[0]](self, self.options.input, self.options['input-index']));
@@ -60,7 +60,7 @@ var elasticdump = function(input, output, options){
     OutputProto = require(__dirname + "/lib/transports/" + self.outputType)[self.outputType];
     self.output = (new OutputProto(self, self.options.output, self.options['output-index']));
   }else if(self.options.outputTransport){
-    self.outputType = 'outputTransport';
+    self.outputType = String(self.options.outputTransport);
     OutputProto = require(self.options.outputTransport);
     var outputProtoKeys = Object.keys(OutputProto);
     self.output = (new OutputProto[outputProtoKeys[0]](self, self.options.output, self.options['output-index']));
