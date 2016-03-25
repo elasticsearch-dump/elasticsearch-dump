@@ -3,6 +3,7 @@
   "name": "elasticdump",
   "description": "import and export tools for elasticsearch",
   "version": "1.1.2",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
