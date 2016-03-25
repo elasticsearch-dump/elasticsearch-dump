@@ -2,7 +2,7 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "elasticdump",
   "description": "import and export tools for elasticsearch",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
@@ -15,12 +15,12 @@
   "dependencies": {
     "optimist": "latest",
     "request": "2.x.x",
-    "JSONStream": "0.9.x"
+    "JSONStream": "0.9.x",
+    "async": "1.x.x"
   },
   "devDependencies": {
     "mocha": "latest",
-    "should": "latest",
-    "async": "1.x.x"
+    "should": "latest"
   },
   "bin": {
     "elasticdump": "./bin/elasticdump",
