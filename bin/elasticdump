@@ -55,10 +55,13 @@ var log = function(type, message){
     }else{
       return false;
     }
+  }else if(type === 'error'){
+    message = (new Date().toUTCString()) + " | " + message;
+    console.error(message);
   }else{
     message = (new Date().toUTCString()) + " | " + message;
+    console.log(message);
   }
-  console.log(message);
 };
 
 if(argv.help === true){
@@ -69,7 +72,7 @@ if(argv.help === true){
 
   dumper.on('log',   function(message){ log('log',   message); });
   dumper.on('debug', function(message){ log('debug', message); });
-  dumper.on('error', function(error){   log('log', 'Error Emitted => ' + ( error.message || JSON.stringify(error)) ); });
+  dumper.on('error', function(error){   log('error', 'Error Emitted => ' + ( error.message || JSON.stringify(error)) ); });
 
   dumper.dump(function(error, total_writes){
     if(error){
