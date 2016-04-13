@@ -80,16 +80,6 @@ elasticdump \
   --output=$ \
   | gzip > /data/my_index.json.gz
 
-# Backup ALL indices, then use Bulk API to populate another ES cluster:
-elasticdump \
-  --all=true \
-  --input=http://production-a.es.com:9200/ \
-  --output=/data/production.json
-elasticdump \
-  --bulk=true \
-  --input=/data/production.json \
-  --output=http://production-b.es.com:9200/
-
 # Backup the results of a query to a file
 elasticdump \
   --input=http://production.es.com:9200/my_index \
@@ -131,19 +121,6 @@ elasticdump \
   --output=http://es.com:9200/api/search \
   --output-index=my_index \
   --type=mapping
-
-# Backup ALL indices, then use Bulk API to populate another ES cluster:
-# Notice, the single `/` is required to specify all indices.
-elasticdump \
-  --all=true \
-  --input=http://production-a.es.com:9200/api/search \
-  --input-index=/ \
-  --output=/data/production.json
-elasticdump \
-  --bulk=true \
-  --input=/data/production.json \
-  --output=http://production-b.es.com:9200/api/search \
-  --output-index=/
 ```
 
 ### Docker install
@@ -197,7 +174,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Destination index and type
                     (default: all, example: index/type)
 --limit
-                    How many objects to move in bulk per operation
+                    How many objects to move in batch per operation
                     limit is approximate for file streams
                     (default: 100)
 --debug
@@ -222,9 +199,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --all
                     Load/store documents from ALL indexes
                     (default: false)
---bulk
-                    Leverage elasticsearch Bulk API when writing documents
-                    (default: false)
 --ignore-errors
                     Will continue the read/write loop on write error
                     (default: false)
@@ -236,25 +210,12 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default:
                       5 [node <= v0.10.x] /
                       Infinity [node >= v0.11.x] )
---bulk-mode
-                    The mode can be index, delete or update.
-                    'index': Add or replace documents on the destination index.
-                    'delete': Delete documents on destination index.
-                    'update': Use 'doc_as_upsert' option with bulk update API to do partial update.
-                    (default: index)
---bulk-use-output-index-name
-                    Force use of destination index name (the actual output URL)
-                    as destination while bulk writing to ES. Allows
-                    leveraging Bulk API copying data inside the same
-                    elasticsearch instance.
-                    (default: false)
 --timeout
                     Integer containing the number of milliseconds to wait for
                     a request to respond before aborting the request. Passed
-                    directly to the request library. If used in bulk writing,
-                    it will result in the entire batch not being written.
-                    Mostly used when you don't care too much if you lose some
-                    data when importing but rather have speed.
+                    directly to the request library. Mostly used when you don't
+                    care too much if you lose some data when importing
+                    but rather have speed.
 --skip
                     Integer containing the number of rows you wish to skip
                     ahead from the input transport.  When importing a large
@@ -299,7 +260,7 @@ The limited option set includes:
 - `limit`:      `100`,
 - `offset`:     `100`,
 
-In this mode, `--input` MUST be a URL for the base location of an ElasticSearch server (http://localhost:9200) and `--output` MUST be a directory. The new options, `--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped (regex).  Each index that does match will have a data, mapping, and analyzer file created. 
+In this mode, `--input` MUST be a URL for the base location of an ElasticSearch server (http://localhost:9200) and `--output` MUST be a directory. The new options, `--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped (regex).  Each index that does match will have a data, mapping, and analyzer file created.
 
 ## Notes
 
@@ -312,7 +273,6 @@ In this mode, `--input` MUST be a URL for the base location of an ElasticSearch 
 - If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index`
 - if you choose a stdio output (`--output=$`), you can also request a more human-readable output with `--format=human`
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
-- when using the `--bulk` option, aliases will be ignored and the documents you write will be linked thier original index name.  For example if you have an alias "events" which contains "events-may-2015" and "events-june-2015" and you bulk dump from one ES cluster to another `elasticdump --bulk --input http://localhost:9200/events --output http://other-server:9200`, you will have the source indicies, "events-may-2015" and "events-june-2015", and not "events".
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 
