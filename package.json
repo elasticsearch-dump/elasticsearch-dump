@@ -16,7 +16,7 @@
   "dependencies": {
     "optimist": "latest",
     "request": "2.x.x",
-    "JSONStream": "0.9.x",
+    "JSONStream": "1.1.x",
     "async": "1.x.x"
   },
   "devDependencies": {
