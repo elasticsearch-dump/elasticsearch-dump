@@ -2,7 +2,7 @@ sudo: false
 
 notifications:
   email:
-    - bloublou2014@gmail.com
+    - evantahler@gmail.com
 language: node_js
 node_js:
   - "iojs"
