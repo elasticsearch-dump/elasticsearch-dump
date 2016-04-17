@@ -51,7 +51,11 @@ Stdio:
 You can then do things like:
 
 ```bash
-# Copy an index from production to staging with analyzer and mapping:
+# Copy an index from production to staging with settings, analyzer and mapping:
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=settings
 elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
@@ -183,7 +187,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
 --type
                     What are we exporting?
-                    (default: data, options: [data, mapping])
+                    (default: data, options: [settings, analyzer, data, mapping])
 --delete
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
