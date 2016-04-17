@@ -72,6 +72,11 @@ describe("ELASTICDUMP", function(){
     clear(function(){
       var settings = {
         'settings': {
+          'index':{
+            'creation_date' : '20160101',
+            'number_of_shards' : 5,
+            'number_of_replicas' : 0
+          },
           'analysis': {
             'analyzer':{
               'content':{
@@ -276,6 +281,53 @@ describe("ELASTICDUMP", function(){
           body.hits.total.should.equal(113);
           done();
         });
+      });
+    });
+
+    it('can get and set settings', function(done){
+      this.timeout(testTimeout);
+      var options = {
+        limit:  100,
+        offset: 0,
+        debug:  false,
+        type:   'settings',
+        input:  baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      };
+      var dumper = new elasticdump(options.input, options.output, options);
+
+      dumper.dump(function(){
+        // Use async's whilst module to ensure that index is for sure opened after setting analyzers
+        // opening an index has a delay
+        var status = false;
+        async.whilst(
+            function () { return !status; },
+            function (callback) {
+              var url = baseUrl + "/destination_index/_search";
+              request.get(url, function(err, response, body){
+                body = JSON.parse(body);
+                try {
+                  body.hits.total.should.equal(0);
+                  status = true;
+                }
+                catch (err) {
+                  status = false;
+                }
+                callback(null, status);
+              });
+            },
+            function (err, n) {
+              var url = baseUrl + "/destination_index/_settings";
+              request.get(url, function(err, response, body){
+                body = JSON.parse(body);
+                body.destination_index.settings.index.creation_date.should.equal('20160101');
+                body.destination_index.settings.index.number_of_shards.should.equal('5');
+                body.destination_index.settings.index.number_of_replicas.should.equal('0');
+                done();
+              });
+            }
+        );
       });
     });
 
