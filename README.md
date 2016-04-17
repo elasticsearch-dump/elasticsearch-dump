@@ -246,6 +246,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 ## Elasticsearch's scan and scroll method
 Elasticsearch provides a [scan and scroll](https://www.elastic.co/guide/en/elasticsearch/guide/1.x/scan-scroll.html) API to fetch all documents of an index starting form (and keeping) a consistent snapshot in time, which we use under the hood.  This method is safe to use for large exporrts since it will maintain the result set in cache for the given period of time.
 
+The actual use of `scan` is deprecated in Elasticsearch 5.0 and is now replaced by the backward compatible `sort: ['doc']`.  See https://www.elastic.co/guide/en/elasticsearch/reference/master/breaking_50_search_changes.html#_literal_search_type_scan_literal_removed
+
 NOTE: only works for `--output`
 
 ## MultiElasticDump
