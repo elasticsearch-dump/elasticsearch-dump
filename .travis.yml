@@ -22,4 +22,7 @@ branches:
 
 before_install:
   # - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ES_VERSION.deb && sudo dpkg -i --force-confnew elasticsearch-$ES_VERSION.deb && sudo service elasticsearch restart
-  - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.3.deb && sudo service elasticsearch restart
+  - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb
+  - sudo dpkg -i --force-confnew elasticsearch-1.7.3.deb
+  - sudo service elasticsearch restart
+  - sleep 15
