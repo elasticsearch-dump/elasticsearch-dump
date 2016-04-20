@@ -85,7 +85,7 @@ describe('parent child', function(){
     });
   });
 
-  // after(function(done){ clear(done); });
+  after(function(done){ clear(done); });
 
   it('did the setup properly and parents + children are loaded', function(done){
     var url = baseUrl + "/source_index/_search";
@@ -259,7 +259,10 @@ describe('parent child', function(){
       var dumpedCties = [];
       dataLines.forEach(function(d){
         if(d._type === 'person'){
-          should.exist( d._parent );
+          var parent;
+          if(d._parent){ var parent = d._parent}  // ES 2.x
+          if(d.fields._parent){ var parent = d.fields._parent}  // ES 1.x
+          should.exist( parent );
           dumpedPeople.push(d);
         }
         if(d._type === 'city'){
