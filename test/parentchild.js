@@ -85,7 +85,7 @@ describe('parent child', function(){
     });
   });
 
-  after(function(done){ clear(done); });
+  // after(function(done){ clear(done); });
 
   it('did the setup properly and parents + children are loaded', function(done){
     var url = baseUrl + "/source_index/_search";
@@ -232,7 +232,7 @@ describe('parent child', function(){
 
       mappingDumper.dump(function(){
       dataDumper.dump(function(){
-        done();
+        setTimeout(done, 500);
       });
       });
     });
@@ -261,7 +261,7 @@ describe('parent child', function(){
         if(d._type === 'person'){
           var parent;
           if(d._parent){ var parent = d._parent}  // ES 2.x
-          if(d.fields._parent){ var parent = d.fields._parent}  // ES 1.x
+          if(d.fields && d.fields._parent){ var parent = d.fields._parent}  // ES 1.x
           should.exist( parent );
           dumpedPeople.push(d);
         }
@@ -279,6 +279,8 @@ describe('parent child', function(){
 
     describe('can restore from a dumpfile', function(){
       before(function(done){
+        this.timeout(1000 * 10);
+
         var mappingOptions = {
           limit:  100,
           offset: 0,
@@ -307,7 +309,7 @@ describe('parent child', function(){
 
         mappingDumper.dump(function(){
         dataDumper.dump(function(){
-          done();
+          setTimeout(done, 500);
         });
         });
       });
