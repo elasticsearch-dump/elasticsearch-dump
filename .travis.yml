@@ -1,4 +1,4 @@
-sudo: false
+sudo: true
 
 notifications:
   email:
@@ -11,6 +11,21 @@ node_js:
 branches:
   only:
     - master
-services:
-  - redis-server
-  - elasticsearch
+
+# We'll manually install versions of ES ourselves
+# services:
+#   - elasticsearch
+
+env:
+  - "ES_VERSION=2.3.1"
+  - "ES_VERSION=1.7.4"
+
+before_install:
+  ## ES has different download locations for each version, so we'll download them both and then just use the one we want
+  - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.4.deb
+  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.1/elasticsearch-2.3.1.deb
+  ## Now, use the ENV to choose the version
+  - sudo dpkg -i --force-confnew elasticsearch-$ES_VERSION.deb
+  - sudo service elasticsearch restart
+  # ES needs some time to start
+  - sleep 15
