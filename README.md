@@ -15,6 +15,7 @@ Tools for moving and saving indicies.
 
 - Version `1.0.0` of Elasticdump changes the format of the files created by the dump.  Files created with version `0.x.x` of this tool are likely not to work with versions going forward.  To learn more about the breaking changes, vist the release notes for version [`1.0.0`](https://github.com/taskrabbit/elasticsearch-dump/releases/tag/v1.0.0).  If you recive an "out of memory" error, this is probaly the cause.
 - Version `2.0.0` of Elasticdump removes the `bulk` options.  These options were buggy, and differ between versions of Elasticsearch.  If you need to export multiple indexes, look for the `multielasticdump` section of the tool.
+- Version `2.1.0` of Elasticdump moves from using `scan/scroll` (ES 1.x) to just `scan` (ES 2.x).  This is a backwards-compatible change within Elasticsearch, but performance may suffer on Elasticsearch versions prior to 2.x.
 
 ## Installing
 
