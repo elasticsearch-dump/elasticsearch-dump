@@ -160,7 +160,7 @@ describe('parent child', function(){
 
       mappingDumper.dump(function(){
       dataDumper.dump(function(){
-        done();
+        setTimeout(done, 1000);
       });
       });
     });
@@ -236,7 +236,7 @@ describe('parent child', function(){
 
       mappingDumper.dump(function(){
       dataDumper.dump(function(){
-        setTimeout(done, 500);
+        setTimeout(done, 1000);
       });
       });
     });
@@ -313,7 +313,7 @@ describe('parent child', function(){
 
         mappingDumper.dump(function(){
         dataDumper.dump(function(){
-          setTimeout(done, 500);
+          setTimeout(done, 1000);
         });
         });
       });
