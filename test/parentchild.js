@@ -130,7 +130,8 @@ describe('parent child', function(){
 
   describe('ES to ES dump should maintain parent-child relationships', function(){
     before(function(done){
-      this.timeout(1000 * 10);
+      this.timeout(2000 * 10);
+      var jobs = [];
 
       var mappingOptions = {
         limit:  100,
@@ -158,11 +159,12 @@ describe('parent child', function(){
       mappingDumper.on('error', function(error){ throw(error); });
       dataDumper.on('error', function(error){ throw(error); });
 
-      mappingDumper.dump(function(){
-      dataDumper.dump(function(){
-        done();
-      });
-      });
+      jobs.push(function(next){ mappingDumper.dump(next); });
+      jobs.push(function(next){ setTimeout(next, 5001) });
+      jobs.push(function(next){ dataDumper.dump(next); });
+      jobs.push(function(next){ setTimeout(next, 5001) });
+
+      async.series(jobs, done);
     });
 
     it('the dump transfered', function(done){
@@ -206,7 +208,8 @@ describe('parent child', function(){
 
   describe('ES to File and back to ES should work', function(){
     before(function(done){
-      this.timeout(1000 * 10);
+      this.timeout(2000 * 10);
+      var jobs = [];
 
       var mappingOptions = {
         limit:  100,
@@ -234,11 +237,12 @@ describe('parent child', function(){
       mappingDumper.on('error', function(error){ throw(error); });
       dataDumper.on('error', function(error){ throw(error); });
 
-      mappingDumper.dump(function(){
-      dataDumper.dump(function(){
-        setTimeout(done, 500);
-      });
-      });
+      jobs.push(function(next){ mappingDumper.dump(next); });
+      jobs.push(function(next){ setTimeout(next, 5001) });
+      jobs.push(function(next){ dataDumper.dump(next); });
+      jobs.push(function(next){ setTimeout(next, 5001) });
+
+      async.series(jobs, done);
     });
 
     it('the dump files should have worked', function(done){
@@ -283,7 +287,8 @@ describe('parent child', function(){
 
     describe('can restore from a dumpfile', function(){
       before(function(done){
-        this.timeout(1000 * 10);
+        this.timeout(2000 * 10);
+        var jobs = [];
 
         var mappingOptions = {
           limit:  100,
@@ -311,11 +316,12 @@ describe('parent child', function(){
         mappingDumper.on('error', function(error){ throw(error); });
         dataDumper.on('error', function(error){ throw(error); });
 
-        mappingDumper.dump(function(){
-        dataDumper.dump(function(){
-          setTimeout(done, 500);
-        });
-        });
+        jobs.push(function(next){ mappingDumper.dump(next); });
+        jobs.push(function(next){ setTimeout(next, 5001) });
+        jobs.push(function(next){ dataDumper.dump(next); });
+        jobs.push(function(next){ setTimeout(next, 5001) });
+
+        async.series(jobs, done);
       });
 
       it('the dump transfered', function(done){
