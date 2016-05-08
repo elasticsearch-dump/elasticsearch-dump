@@ -49,7 +49,7 @@ var log = function(type, message){
   if(type === 'debug'){
     if(options.debug === true){
       message = new Date().toUTCString() + " [debug] | " + message;
-      console.error(message);
+      console.log(message);
     }else{
       return false;
     }
