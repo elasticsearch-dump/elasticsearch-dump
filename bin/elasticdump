@@ -48,7 +48,8 @@ for(var i in defaults){
 var log = function(type, message){
   if(type === 'debug'){
     if(options.debug === true){
-      message = "[debug] | " + message;
+      message = new Date().toUTCString() + " [debug] | " + message;
+      console.log(message);
     }else{
       return false;
     }
