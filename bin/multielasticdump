@@ -3,7 +3,8 @@
 // I am a wrapper around basic elastcidump
 // I will source all indices from your elasticserach server and dump them out to .json and .mapping.json files
 // I probably only work on *nix hosts
-// --input must be a URL and --output must be a path on this system
+// dump --input must be a URL and --output must be a path on this system
+// index --input must be a a path on this system --output must be URL
 
 var argv        = require('optimist').argv;
 var fs          = require('fs');
@@ -21,6 +22,12 @@ var indexCounter = 0;
 var sleepTime = 1000;
 var workTimeout;
 
+function unique(arr, keepLast) {
+  return arr.filter(function (value, index, array) {
+    return keepLast ? array.indexOf(value, index + 1) < 0 : array.indexOf(value) === index;
+  });
+};
+
 var defaults = {
   debug:      true,
   // parallel:   os.cpus().length,
@@ -31,6 +38,7 @@ var defaults = {
   scrollTime: '10m',
   limit:      100,
   offset:     100,
+  action:     'dump'
 };
 
 for(var i in defaults){
@@ -44,6 +52,9 @@ for(var i in defaults){
   if(i == "searchBody") {
     options[i] = JSON.parse(options[i]);
   }
+}
+if(argv._[0]) {
+  options.action = argv._[0] || defaults.action;
 }
 
 var log = function(type, message){
@@ -61,38 +72,68 @@ var log = function(type, message){
 
 if(!options.input){ throw new Error('--input is required'); }
 if(!options.output){ throw new Error('--output is required'); }
-if(!fs.existsSync(options.output)){ throw new Error('--output does not exist'); }
+log('info', 'We are performing action: ' + options.action);
+log('info', 'options: ' + JSON.stringify(options));
 
-request.get(options.input + '/_aliases', function(err, response){
-  if(err){ log('err', err); process.exit(); }
-  response = JSON.parse(response.body);
-  for(var index in response){
-    var matches = index.match(new RegExp(options.match, "i"));
-    if(matches){
-      matchedIndexes.push(index);
+if(options.action === 'dump') {
+  if(!fs.existsSync(options.output)){ throw new Error('--output does not exist'); }
+  request.get(options.input + '/_aliases', function(err, response){
+    if(err){ log('err', err); process.exit(); }
+    response = JSON.parse(response.body);
+    for(var index in response){
+      var matches = index.match(new RegExp(options.match, "i"));
+      if(matches){
+        matchedIndexes.push(index);
+      }
     }
-  }
 
-  log('info', 'matching indexes for dump: ' + matchedIndexes.join(', '));
+    dumpWork()
+  });
+}
+if(options.action === 'index'){
+  if(!fs.existsSync(options.input)){ throw new Error('--input() does not exist'); }
+  fs.readdir(options.input, function(err, data){
+    if (err) { log('error', err); throw new Error('Something went wrong reading the list of files')}
+    // log('info', data);
+    matchedIndexes = data.map(function(value) {
+      return value.replace('.mapping.json', '').replace('.analyzer.json', '').replace('.json','')
+    })
+    matchedIndexes = unique(matchedIndexes);
+    log('info', 'list of indexes' + JSON.stringify(matchedIndexes));
+    indexWork();
+  });
 
-  work();
-});
 
-//
+}
 
-var work = function(){
+var dumpWork = function(){
   clearTimeout(workTimeout);
   if(complete == matchedIndexes.length){
     log('info', ' all done ');
     log('info', ' bye ');
     process.exit();
   }else if(working == options.parallel){
-    workTimeout = setTimeout(work, sleepTime);
+    workTimeout = setTimeout(dumpWork, sleepTime);
   }else{
     dump();
-    workTimeout = setTimeout(work, sleepTime);
+    workTimeout = setTimeout(dumpWork, sleepTime);
   }
 };
+
+var indexWork = function(){
+  clearTimeout(workTimeout);
+  if(complete == matchedIndexes.length){
+    log('info', ' all done ');
+    log('info', ' bye ');
+    process.exit();
+  }else if(working == options.parallel){
+    workTimeout = setTimeout(indexWork, sleepTime);
+  }else{
+    index();
+    workTimeout = setTimeout(indexWork, sleepTime);
+  }
+};
+
 
 var dump = function(){
   working++;
@@ -155,6 +196,97 @@ var dump = function(){
       '--type='       + 'data',
       '--input='      + input,
       '--output='     + output_data,
+      '--scrollTime=' + options.scrollTime,
+      '--limit='      + options.limit,
+      '--offset='     + options.offset,
+    ]);
+
+    data_child.on('close', function(code){
+      if(code !== 0){
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
+      }else{
+        return done();
+      }
+    });
+  });
+
+  async.series(jobs, function(error){
+    if(error){
+      log('error', error);
+      process.exit(1);
+    }else{
+      working--;
+      complete++;
+    }
+  });
+
+};
+
+// --------------
+var index = function(){
+  working++;
+  var index = matchedIndexes[indexCounter];
+
+  if(!index){
+    working--;
+    return;
+  }
+
+  log('info', index);
+
+  indexCounter++;
+
+  var output         = options.output + '/' + index;
+  var input          = options.input;
+  var input_data     = options.input + '/' + index + '.json';
+  var input_mapping  = options.input + '/' + index + '.mapping.json';
+  var input_analyzer = options.input + '/' + index + '.analyzer.json';
+
+  var jobs = [];
+
+  jobs.push(function(done){
+    log('info', "indexing mapping " + output + ' to ' + input_mapping);
+
+    var mapping_child = fork(__dirname + '/elasticdump', [
+      '--type='       + 'mapping',
+      '--input='      + input_mapping,
+      '--output='     + output,
+    ]);
+
+    mapping_child.on('close', function(code){
+      if(code !== 0){
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
+      }else{
+        return done();
+      }
+    });
+  });
+
+  jobs.push(function(done){
+    log('info', "indexing analyzer " + output + ' to ' + input_analyzer);
+
+    var analyzer_child = fork(__dirname + '/elasticdump', [
+      '--type='       + 'analyzer',
+      '--input='      + input_analyzer,
+      '--output='     + output,
+    ]);
+
+    analyzer_child.on('close', function(code){
+      if(code !== 0){
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
+      }else{
+        return done();
+      }
+    });
+  });
+
+  jobs.push(function(done){
+    log('info', "indexing data " + output + ' to ' + input_data);
+
+    var data_child = fork(__dirname + '/elasticdump', [
+      '--type='       + 'data',
+      '--input='      + input_data,
+      '--output='     + output,
       '--scrollTime=' + options.scrollTime,
       '--limit='      + options.limit,
       '--offset='     + options.offset,
