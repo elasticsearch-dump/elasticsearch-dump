@@ -87,7 +87,7 @@ if(options.action === 'dump') {
       }
     }
 
-    dumpWork()
+    dumpWork();
   });
 }
 if(options.action === 'index'){
@@ -97,9 +97,10 @@ if(options.action === 'index'){
     // log('info', data);
     matchedIndexes = data.map(function(value) {
       return value.replace('.mapping.json', '').replace('.analyzer.json', '').replace('.json','')
-    })
+    });
     matchedIndexes = unique(matchedIndexes);
     log('info', 'list of indexes' + JSON.stringify(matchedIndexes));
+
     indexWork();
   });
 
@@ -109,7 +110,7 @@ if(options.action === 'index'){
 var dumpWork = function(){
   clearTimeout(workTimeout);
   if(complete == matchedIndexes.length){
-    log('info', ' all done ');
+    log('info', ' dumping all done ');
     log('info', ' bye ');
     process.exit();
   }else if(working == options.parallel){
@@ -123,7 +124,7 @@ var dumpWork = function(){
 var indexWork = function(){
   clearTimeout(workTimeout);
   if(complete == matchedIndexes.length){
-    log('info', ' all done ');
+    log('info', ' indexing all done ');
     log('info', ' bye ');
     process.exit();
   }else if(working == options.parallel){
@@ -222,7 +223,7 @@ var dump = function(){
 
 };
 
-// --------------
+
 var index = function(){
   working++;
   var index = matchedIndexes[indexCounter];
@@ -232,7 +233,7 @@ var index = function(){
     return;
   }
 
-  log('info', index);
+  log('info', 'Working on ' + index);
 
   indexCounter++;
 
