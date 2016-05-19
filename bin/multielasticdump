@@ -53,8 +53,11 @@ for(var i in defaults){
     options[i] = JSON.parse(options[i]);
   }
 }
+
+options.action = defaults.action;
+
 if(argv._[0]) {
-  options.action = argv._[0] || defaults.action;
+  options.action = argv._[0];
 }
 
 var log = function(type, message){
