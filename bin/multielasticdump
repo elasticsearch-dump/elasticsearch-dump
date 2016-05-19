@@ -93,6 +93,7 @@ if(options.action === 'dump') {
     dumpWork();
   });
 }
+
 if(options.action === 'index'){
   if(!fs.existsSync(options.input)){ throw new Error('--input() does not exist'); }
   fs.readdir(options.input, function(err, data){
@@ -106,8 +107,6 @@ if(options.action === 'index'){
 
     indexWork();
   });
-
-
 }
 
 var dumpWork = function(){
@@ -137,7 +136,6 @@ var indexWork = function(){
     workTimeout = setTimeout(indexWork, sleepTime);
   }
 };
-
 
 var dump = function(){
   working++;
@@ -225,7 +223,6 @@ var dump = function(){
   });
 
 };
-
 
 var index = function(){
   working++;
