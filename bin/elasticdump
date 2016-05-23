@@ -3,6 +3,7 @@
 var argv        = require('optimist').argv;
 var util        = require('util');
 var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
+var packageData = require(__dirname + '/../package.json');
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 var defaults = {
@@ -64,7 +65,11 @@ var log = function(type, message){
 
 if(argv.help === true){
   var helpText = require('fs').readFileSync( __dirname + '/../lib/help.txt');
-  console.log(String(helpText));
+  helpText = helpText.toString();
+  helpText = helpText.replace('%%version%%', packageData.version);
+  console.log(helpText);
+}else if (argv.version === true){
+  console.log(packageData.version)
 }else{
   var dumper = new elasticdump(options.input, options.output, options);
 
