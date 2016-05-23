@@ -152,6 +152,7 @@ docker run --rm -ti taskrabbit/elasticsearch-dump \
 
 ```
 elasticdump: Import and export tools for elasticsearch
+version: %%version%%
 
 Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 

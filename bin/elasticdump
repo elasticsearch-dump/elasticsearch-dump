@@ -64,7 +64,10 @@ var log = function(type, message){
 
 if(argv.help === true){
   var helpText = require('fs').readFileSync( __dirname + '/../lib/help.txt');
-  console.log(String(helpText));
+  helpText = helpText.toString();
+  var packageData = require(__dirname + '/../package.json');
+  helpText = helpText.replace('%%version%%', packageData.version);
+  console.log(helpText);
 }else{
   var dumper = new elasticdump(options.input, options.output, options);
 
