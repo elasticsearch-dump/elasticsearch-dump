@@ -38,7 +38,7 @@ var defaults = {
   scrollTime: '10m',
   limit:      100,
   offset:     100,
-  action:     'dump'
+  direction:  'dump' // deafult to dump
 };
 
 for(var i in defaults){
@@ -52,12 +52,6 @@ for(var i in defaults){
   if(i == "searchBody") {
     options[i] = JSON.parse(options[i]);
   }
-}
-
-options.action = defaults.action;
-
-if(argv._[0]) {
-  options.action = argv._[0];
 }
 
 var log = function(type, message){
@@ -75,10 +69,10 @@ var log = function(type, message){
 
 if(!options.input){ throw new Error('--input is required'); }
 if(!options.output){ throw new Error('--output is required'); }
-log('info', 'We are performing action: ' + options.action);
+log('info', 'We are performing : ' + options.direction);
 log('info', 'options: ' + JSON.stringify(options));
 
-if(options.action === 'dump') {
+if(options.direction === 'dump') {
   if(!fs.existsSync(options.output)){ throw new Error('--output does not exist'); }
   request.get(options.input + '/_aliases', function(err, response){
     if(err){ log('err', err); process.exit(); }
@@ -94,7 +88,7 @@ if(options.action === 'dump') {
   });
 }
 
-if(options.action === 'index'){
+if(options.direction === 'load'){
   if(!fs.existsSync(options.input)){ throw new Error('--input() does not exist'); }
   fs.readdir(options.input, function(err, data){
     if (err) { log('error', err); throw new Error('Something went wrong reading the list of files')}
@@ -105,7 +99,7 @@ if(options.action === 'index'){
     matchedIndexes = unique(matchedIndexes);
     log('info', 'list of indexes' + JSON.stringify(matchedIndexes));
 
-    indexWork();
+    loadWork();
   });
 }
 
@@ -123,17 +117,17 @@ var dumpWork = function(){
   }
 };
 
-var indexWork = function(){
+var loadWork = function(){
   clearTimeout(workTimeout);
   if(complete == matchedIndexes.length){
     log('info', ' indexing all done ');
     log('info', ' bye ');
     process.exit();
   }else if(working == options.parallel){
-    workTimeout = setTimeout(indexWork, sleepTime);
+    workTimeout = setTimeout(loadWork, sleepTime);
   }else{
-    index();
-    workTimeout = setTimeout(indexWork, sleepTime);
+    load();
+    workTimeout = setTimeout(loadWork, sleepTime);
   }
 };
 
@@ -224,7 +218,7 @@ var dump = function(){
 
 };
 
-var index = function(){
+var load = function(){
   working++;
   var index = matchedIndexes[indexCounter];
 
