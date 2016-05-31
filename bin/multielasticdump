@@ -38,7 +38,7 @@ var defaults = {
   scrollTime: '10m',
   limit:      100,
   offset:     100,
-  direction:  'dump' // deafult to dump
+  direction:  'dump' // default to dump
 };
 
 for(var i in defaults){
