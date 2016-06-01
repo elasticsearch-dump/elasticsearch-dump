@@ -27,7 +27,6 @@ var defaults = {
   'ignore-errors': false,
   scrollTime:      '10m',
   timeout:         null,
-  skip:            null,
   toLog:           null,
 };
 

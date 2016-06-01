@@ -209,7 +209,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     directly to the request library. Mostly used when you don't
                     care too much if you lose some data when importing
                     but rather have speed.
---skip
+--offset
                     Integer containing the number of rows you wish to skip
                     ahead from the input transport.  When importing a large
                     index, things can go wrong, be it connectivity, crashes,

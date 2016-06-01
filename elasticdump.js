@@ -89,7 +89,7 @@ elasticdump.prototype.validateOptions = function(){
   return validationErrors;
 };
 
-elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes, remainingSkip){
+elasticdump.prototype.dump = function(callback, continuing, limit, offset, total_writes){
   var self  = this;
 
   if(self.validationErrors.length > 0){
@@ -100,17 +100,13 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
     if(!limit){ limit = self.options.limit;  }
     if(!offset){ offset = self.options.offset; }
     if(!total_writes){ total_writes = 0; }
-    if(remainingSkip === undefined || remainingSkip === null){
-      remainingSkip = 0;
-      if(self.options.skip){ remainingSkip = self.options.skip; }
-    }
 
     if(continuing !== true){
       self.log('starting dump');
 
-      if(self.options.skip){
-        self.log('Warning: skipping ' + self.options.skip + ' rows.');
-        self.log("  * skipping doesn't guarantee that the skipped rows have already been written, please refer to the README.");
+      if(self.options.offset){
+        self.log('Warning: offseting ' + self.options.offset + ' rows.');
+        self.log("  * Using an offset doesn't guarantee that the offset rows have already been written, please refer to the HELP text.");
       }
     }
 
@@ -134,20 +130,10 @@ elasticdump.prototype.dump = function(callback, continuing, limit, offset, total
               self.log("sent " + data.length + " objects to destination " + self.outputType + ", wrote " + writes);
               offset = offset + data.length;
             }
-
-            if(remainingSkip > 0){
-              if(remainingSkip > limit){
-                offset = offset + limit;
-                remainingSkip = remainingSkip - limit;
-              }else{
-                offset = offset + remainingSkip;
-                remainingSkip = 0;
-              }
-            }
           }
 
-          if((data.length > 0 && toContinue) || (remainingSkip > 0 && toContinue)){
-            self.dump(callback, true, limit, offset, total_writes, remainingSkip);
+          if(data.length > 0 && toContinue){
+            self.dump(callback, true, limit, offset, total_writes);
           }else if(toContinue){
             self.log('Total Writes: ' + total_writes);
             self.log('dump complete');
