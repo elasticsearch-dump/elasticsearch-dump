@@ -78,7 +78,7 @@ var setup = function(callback){
 describe('parent child', function(){
 
   before(function(done){
-    this.timeout(10 * 1000);
+    this.timeout(15 * 1000);
     clear(function(error){
       if(error){ return done(error); }
       setup(done);
