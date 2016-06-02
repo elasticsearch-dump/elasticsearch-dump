@@ -148,7 +148,7 @@ describe("ELASTICDUMP", function(){
       });
     });
 
-    it('can skip', function(done) {
+    it('can provide offset', function(done) {
       this.timeout(testTimeout);
       var options = {
         limit:  100,
@@ -158,7 +158,7 @@ describe("ELASTICDUMP", function(){
         input:  baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        skip: 250
+        offset: 250
       };
 
       var dumper = new elasticdump(options.input, options.output, options);
@@ -567,7 +567,7 @@ describe("ELASTICDUMP", function(){
       });
     });
 
-    it('can skip', function(done) {
+    it('can provide offset', function(done) {
       this.timeout(testTimeout);
       var options = {
         limit:  100,
@@ -577,7 +577,7 @@ describe("ELASTICDUMP", function(){
         input: '/tmp/out.json',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        skip: 250
+        offset: 250
       };
 
       var dumper = new elasticdump(options.input, options.output, options);
