@@ -12,7 +12,7 @@ var should      = require('should');
 var fs          = require('fs');
 var async       = require('async');
 var baseUrl     = 'http://127.0.0.1:9200';
-var indexes     = ['source_index', 'destination_index', 'file_destination_index'];
+var indexes     = ['source_index', 'destination_index', 'file_destination_index', 'another_index'];
 var files       = ['/tmp/mapping.json', '/tmp/data.json'];
 var cities      = ['new_york', 'san_francisco', 'london', 'tokyo'];
 var people      = ['evan', 'christina', 'pablo', 'brian', 'aaron'];
@@ -78,7 +78,7 @@ var setup = function(callback){
 describe('parent child', function(){
 
   before(function(done){
-    this.timeout(10 * 1000);
+    this.timeout(15 * 1000);
     clear(function(error){
       if(error){ return done(error); }
       setup(done);
