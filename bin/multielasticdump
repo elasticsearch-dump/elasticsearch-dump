@@ -30,14 +30,13 @@ function unique(arr, keepLast) {
 
 var defaults = {
   debug:      true,
-  // parallel:   os.cpus().length,
-  parallel:   1,
+  parallel:   os.cpus().length,
   match:      '^.*$',
   input:      null,
   output:     null,
   scrollTime: '10m',
   limit:      100,
-  offset:     100,
+  offset:     0,
   direction:  'dump' // default to dump
 };
 
@@ -240,25 +239,7 @@ var load = function(){
   var jobs = [];
 
   jobs.push(function(done){
-    log('info', "indexing mapping " + output + ' to ' + input_mapping);
-
-    var mapping_child = fork(__dirname + '/elasticdump', [
-      '--type='       + 'mapping',
-      '--input='      + input_mapping,
-      '--output='     + output,
-    ]);
-
-    mapping_child.on('close', function(code){
-      if(code !== 0){
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
-      }else{
-        return done();
-      }
-    });
-  });
-
-  jobs.push(function(done){
-    log('info', "indexing analyzer " + output + ' to ' + input_analyzer);
+    log('info', "indexing analyzer " + input_analyzer + ' to ' + output);
 
     var analyzer_child = fork(__dirname + '/elasticdump', [
       '--type='       + 'analyzer',
@@ -276,7 +257,25 @@ var load = function(){
   });
 
   jobs.push(function(done){
-    log('info', "indexing data " + output + ' to ' + input_data);
+    log('info', "indexing mapping " + input_mapping + ' to ' + output);
+
+    var mapping_child = fork(__dirname + '/elasticdump', [
+      '--type='       + 'mapping',
+      '--input='      + input_mapping,
+      '--output='     + output,
+    ]);
+
+    mapping_child.on('close', function(code){
+      if(code !== 0){
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
+      }else{
+        return done();
+      }
+    });
+  });
+
+  jobs.push(function(done){
+    log('info', "indexing data " + input_data + ' to ' + output);
 
     var data_child = fork(__dirname + '/elasticdump', [
       '--type='       + 'data',
