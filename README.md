@@ -223,6 +223,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     you want to get most data as possible in the index
                     without concern for losing some rows in the process,
                     similar to the `timeout` option.
+                    (default: 0)
 --inputTransport
                     Provide a custom js file to us as the input transport
 --outputTransport
@@ -254,9 +255,9 @@ The limited option set includes:
 - `offset`:     `100`,
 - `direction`:   `dump`
 
-If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (http://localhost:9200) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.
+If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (i.e. `http://localhost:9200`) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.
 
-For loading files that you have dumped from multielasticsearch, ```--direction``` should be set to `load', `--input` MUST be a directory of a multielasticsearch dump and `--output` MUST be a Elasticsearch server URL.
+For loading files that you have dumped from multielasticsearch, `--direction` should be set to `load`, `--input` MUST be a directory of a multielasticsearch dump and `--output` MUST be a Elasticsearch server URL.
 
 The new options, `--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped/loaded (regex).
 
