@@ -25,7 +25,7 @@ before_install:
   - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.1/elasticsearch-2.3.1.deb
   ## Now, use the ENV to choose the version
   - sudo dpkg -i --force-confnew elasticsearch-$ES_VERSION.deb
-  - echo -e "index.number_of_shards: 1\nindex.number_of_replicas: 0" >> /etc/elasticsearch/elasticsearch.yml
+  - 'echo -e "index.number_of_shards: 1\nindex.number_of_replicas: 0" >> /etc/elasticsearch/elasticsearch.yml'
   - sudo service elasticsearch restart
   # ES needs some time to start
   - sleep 15
