@@ -571,7 +571,6 @@ describe("ELASTICDUMP", function(){
       this.timeout(testTimeout);
       var options = {
         limit:  100,
-        offset: 0,
         debug:  false,
         type:   'data',
         input: '/tmp/out.json',
