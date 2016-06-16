@@ -71,17 +71,15 @@ if(!options.output){ throw new Error('--output is required'); }
 log('info', 'We are performing : ' + options.direction);
 log('info', 'options: ' + JSON.stringify(options));
 
+var matchRegExp = new RegExp(options.match, "i");
 if(options.direction === 'dump') {
   if(!fs.existsSync(options.output)){ throw new Error('--output does not exist'); }
   request.get(options.input + '/_aliases', function(err, response){
     if(err){ log('err', err); process.exit(); }
     response = JSON.parse(response.body);
-    for(var index in response){
-      var matches = index.match(new RegExp(options.match, "i"));
-      if(matches){
-        matchedIndexes.push(index);
-      }
-    }
+    matchedIndexes = response.filter(function(index){
+      return matchRegExp.test(index);
+    });
 
     dumpWork();
   });
@@ -94,6 +92,8 @@ if(options.direction === 'load'){
     // log('info', data);
     matchedIndexes = data.map(function(value) {
       return value.replace('.mapping.json', '').replace('.analyzer.json', '').replace('.json','')
+    }).filter(function(item){
+      return matchRegExp.test(item);
     });
     matchedIndexes = unique(matchedIndexes);
     log('info', 'list of indexes' + JSON.stringify(matchedIndexes));
