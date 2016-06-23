@@ -36,9 +36,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
                     sourceOnly: {SOURCE}
                     (default: false)
---all
-                    Load/store documents from ALL indexes
-                    (default: false)
 --ignore-errors
                     Will continue the read/write loop on write error
                     (default: false)
