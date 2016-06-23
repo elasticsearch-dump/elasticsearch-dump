@@ -12,7 +12,6 @@ var defaults = {
   debug:           false,
   type:            'data',
   delete:          false,
-  all:             false,
   maxSockets:      null,
   input:           null,
   'input-index':   null,
