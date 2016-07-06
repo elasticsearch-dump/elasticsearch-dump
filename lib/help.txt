@@ -22,7 +22,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
 --type
                     What are we exporting?
-                    (default: data, options: [data, mapping])
+                    (default: data, options: [data, analyzer, mapping])
 --delete
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
