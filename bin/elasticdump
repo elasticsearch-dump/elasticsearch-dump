@@ -27,6 +27,8 @@ var defaults = {
   scrollTime:      '10m',
   timeout:         null,
   toLog:           null,
+  awsAccessKeyId:    null,
+  awsSecretAccessKey:null,
 };
 
 var options = {};
