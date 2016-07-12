@@ -48,7 +48,7 @@ describe('aws4signer', function () {
 			method : 'GET',
 			body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
 		};
-		aws4signer(r);
+		aws4signer(r, {options: {}});
 
 		if(r.headers !== undefined) {
 			r.headers.should.not.have.property('X-Amz-Date');
@@ -62,7 +62,7 @@ describe('aws4signer', function () {
 			method : 'GET',
 			body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
 		};
-		aws4signer(r, 'keyORsecret');
+		aws4signer(r, {options: {something: 'else'}});
 
 		if(r.headers !== undefined) {
 			r.headers.should.not.have.property('X-Amz-Date');
