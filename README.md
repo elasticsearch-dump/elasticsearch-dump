@@ -229,6 +229,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     When using a custom outputTransport, should log lines
                     be appended to the output stream?
                     (default: true, except for `$`)
+--awsAccessKeyId
+--awsSecretAccessKey
+                    When using Amazon Elasticsearch Service proteced by
+                    AWS Identity and Access Management (IAM), provide
+                    your Access Key ID and Secret Access Key
 --help
                     This page
 ```

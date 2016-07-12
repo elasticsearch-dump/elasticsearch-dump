@@ -1,5 +1,6 @@
 var should = require('should');
 var aws4signer = require('../lib/aws4signer');
+var parent = {options: {awsAccessKeyId: 'key', awsSecretAccessKey: 'secret'}}
 
 describe('aws4signer', function () {
 	it('should parse "uri" from request object and add signature, if credentials provided', function() {
@@ -8,7 +9,8 @@ describe('aws4signer', function () {
 			method : 'GET',
 			body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
 		};
-		aws4signer(r, 'key', 'secret');
+
+		aws4signer(r, parent);
 
 		r.should.have.property('headers').which.is.an.Object;
 		r.headers.should.have.property('host').which.is.a.String();
@@ -27,7 +29,7 @@ describe('aws4signer', function () {
 			method : 'GET',
 			body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
 		};
-		aws4signer(r, 'key', 'secret');
+		aws4signer(r, parent);
 
 		r.should.have.property('headers').which.is.an.Object;
 		r.headers.should.have.property('host').which.is.a.String();
