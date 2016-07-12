@@ -9,15 +9,29 @@
     "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
   },
   "main": "elasticdump.js",
-  "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export", "transfer", "migrate", "migartion", "elasitic", "cluster", "elastic-dump", "elastic dump"],
+  "keywords": [
+    "elasticsearch",
+    "dump",
+    "elasticdump",
+    "import",
+    "export",
+    "transfer",
+    "migrate",
+    "migartion",
+    "elasitic",
+    "cluster",
+    "elastic-dump",
+    "elastic dump"
+  ],
   "engines": {
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "optimist": "latest",
-    "request": "2.x.x",
     "JSONStream": "1.1.x",
-    "async": "1.x.x"
+    "async": "1.x.x",
+    "aws4": "^1.4.1",
+    "optimist": "latest",
+    "request": "2.x.x"
   },
   "devDependencies": {
     "mocha": "latest",
