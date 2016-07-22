@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "JSONStream": "1.1.x",
-    "async": "2.0.0",
+    "async": "2.0.1",
     "aws4": "^1.4.1",
     "optimist": "latest",
     "request": "2.x.x"
