@@ -173,6 +173,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --debug
                     Display the elasticsearch commands being used
                     (default: false)
+--quiet
+                    Suppress all messages except for errors
+                    (default: false)
 --type
                     What are we exporting?
                     (default: data, options: [analyzer, data, mapping])

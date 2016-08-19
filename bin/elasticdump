@@ -7,28 +7,29 @@ var packageData = require(__dirname + '/../package.json');
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 var defaults = {
-  limit:           100,
-  offset:          0,
-  debug:           false,
-  type:            'data',
-  delete:          false,
-  maxSockets:      null,
-  input:           null,
-  'input-index':   null,
-  output:          null,
-  'output-index':  null,
-  inputTransport:  null,
-  outputTransport: null,
-  searchBody:      null,
-  sourceOnly:      false,
-  jsonLines:       false,
-  format:          '',
-  'ignore-errors': false,
-  scrollTime:      '10m',
-  timeout:         null,
-  toLog:           null,
-  awsAccessKeyId:    null,
-  awsSecretAccessKey:null,
+  limit:              100,
+  offset:             0,
+  debug:              false,
+  type:               'data',
+  delete:             false,
+  maxSockets:         null,
+  input:              null,
+  'input-index':      null,
+  output:             null,
+  'output-index':     null,
+  inputTransport:     null,
+  outputTransport:    null,
+  searchBody:         null,
+  sourceOnly:         false,
+  jsonLines:          false,
+  format:             '',
+  'ignore-errors':    false,
+  scrollTime:         '10m',
+  timeout:            null,
+  toLog:              null,
+  quiet:              false,
+  awsAccessKeyId:     null,
+  awsSecretAccessKey: null,
 };
 
 var options = {};
@@ -57,9 +58,11 @@ var log = function(type, message){
   }else if(type === 'error'){
     message = (new Date().toUTCString()) + " | " + message;
     console.error(message);
-  }else{
+  }else if(options.quiet === false){
     message = (new Date().toUTCString()) + " | " + message;
     console.log(message);
+  }else{
+    return false;
   }
 };
 
