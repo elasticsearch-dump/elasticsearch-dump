@@ -77,6 +77,9 @@ if(options.direction === 'dump') {
   request.get(options.input + '/_aliases', function(err, response){
     if(err){ log('err', err); process.exit(); }
     response = JSON.parse(response.body);
+    if (!Array.isArray(response)){
+      response = Object.keys(response);
+    }
     matchedIndexes = response.filter(function(index){
       return matchRegExp.test(index);
     });
