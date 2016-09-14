@@ -257,7 +257,7 @@ The limited option set includes:
 - `output`:     `null`,
 - `scrollTime`: `'10m'`,
 - `limit`:      `100`,
-- `offset`:     `100`,
+- `offset`:     `0`,
 - `direction`:   `dump`
 
 If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (i.e. `http://localhost:9200`) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.
