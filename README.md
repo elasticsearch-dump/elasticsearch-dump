@@ -186,7 +186,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --searchBody
                     Preform a partial extract based on search results
                     (when ES is the input,
-                    (default: '{"query": { "match_all": {} } }'))
+                    (default: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'))
 --sourceOnly
                     Output only the json contained within the document _source
                     Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
