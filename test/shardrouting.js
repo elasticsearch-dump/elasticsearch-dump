@@ -10,7 +10,7 @@ var should      = require('should');
 var fs          = require('fs');
 var async       = require('async');
 var baseUrl     = 'http://127.0.0.1:9200';
-var indexes     = ['source_routing_index', 'destination_index'];
+var indexes     = ['source_routing_index', 'destination_routing_index'];
 var datafile       = ['/tmp/data.json'];
 var mapping     = {
   "doc" : {
@@ -97,7 +97,7 @@ describe('shard routing', function(){
         debug:  false,
         type:   'mapping',
         input:  baseUrl + '/source_routing_index',
-        output: baseUrl + '/destination_index',
+        output: baseUrl + '/destination_routing_index',
         scrollTime: '10m'
       };
 
@@ -107,7 +107,7 @@ describe('shard routing', function(){
         debug:  false,
         type:   'data',
         input:  baseUrl + '/source_routing_index',
-        output: baseUrl + '/destination_index',
+        output: baseUrl + '/destination_routing_index',
         scrollTime: '10m'
       };
 
@@ -126,7 +126,7 @@ describe('shard routing', function(){
     });
 
     it('the dump transfered', function(done){
-      var url = baseUrl + "/destination_index/_search";
+      var url = baseUrl + "/destination_routing_index/_search";
       request.get(url, function(err, response, body){
         body = JSON.parse(body);
         body.hits.total.should.equal(1);
@@ -136,7 +136,7 @@ describe('shard routing', function(){
 
     describe('each doc should have _routing maintained', function(){
       it('doc should have shard _routing maintained', function(done){
-        var url = baseUrl + "/destination_index/_search";
+        var url = baseUrl + "/destination_routing_index/_search";
         var payload = {
           "query": {
             "wildcard": {
