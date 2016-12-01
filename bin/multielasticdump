@@ -6,306 +6,303 @@
 // dump --input must be a URL and --output must be a path on this system
 // index --input must be a a path on this system --output must be URL
 
-var argv        = require('optimist').argv;
-var fs          = require('fs');
-var os          = require('os');
-var util        = require('util');
-var async       = require('async');
-var request     = require('request');
-var fork        = require('child_process').fork;
+var argv = require('optimist').argv
+var fs = require('fs')
+var os = require('os')
+var path = require('path')
+var async = require('async')
+var request = require('request')
+var fork = require('child_process').fork
 
-var options = {};
-var matchedIndexes = [];
-var working = 0;
-var complete = 0;
-var indexCounter = 0;
-var sleepTime = 1000;
-var workTimeout;
+var options = {}
+var matchedIndexes = []
+var working = 0
+var complete = 0
+var indexCounter = 0
+var sleepTime = 1000
+var workTimeout
 
-function unique(arr, keepLast) {
+function unique (arr, keepLast) {
   return arr.filter(function (value, index, array) {
-    return keepLast ? array.indexOf(value, index + 1) < 0 : array.indexOf(value) === index;
-  });
+    return keepLast ? array.indexOf(value, index + 1) < 0 : array.indexOf(value) === index
+  })
 };
 
 var defaults = {
-  debug:      true,
-  parallel:   os.cpus().length,
-  match:      '^.*$',
-  input:      null,
-  output:     null,
+  debug: true,
+  parallel: os.cpus().length,
+  match: '^.*$',
+  input: null,
+  output: null,
   scrollTime: '10m',
-  limit:      100,
-  offset:     0,
-  direction:  'dump' // default to dump
-};
+  limit: 100,
+  offset: 0,
+  direction: 'dump' // default to dump
+}
 
-for(var i in defaults){
-  options[i] = defaults[i];
-  if(argv[i]){
-    options[i] = argv[i];
+for (var i in defaults) {
+  options[i] = defaults[i]
+  if (argv[i]) {
+    options[i] = argv[i]
   }
-  if(options[i] === 'true' ){ options[i] = true; }
-  if(options[i] === 'false'){ options[i] = false; }
+  if (options[i] === 'true') { options[i] = true }
+  if (options[i] === 'false') { options[i] = false }
   // searchBody needs to go from JSON to object in order for size to be added later during elasticsearch query
-  if(i == "searchBody") {
-    options[i] = JSON.parse(options[i]);
+  if (i === 'searchBody') {
+    options[i] = JSON.parse(options[i])
   }
 }
 
-var log = function(type, message){
-  if(type === 'debug'){
-    if(options.debug === true){
-      message = "[debug] | " + message;
-    }else{
-      return false;
+var log = function (type, message) {
+  if (type === 'debug') {
+    if (options.debug === true) {
+      message = '[debug] | ' + message
+    } else {
+      return false
     }
-  }else{
-    message = (new Date().toUTCString()) + " | " + message;
+  } else {
+    message = (new Date().toUTCString()) + ' | ' + message
   }
-  console.log(message);
-};
-
-if(!options.input){ throw new Error('--input is required'); }
-if(!options.output){ throw new Error('--output is required'); }
-log('info', 'We are performing : ' + options.direction);
-log('info', 'options: ' + JSON.stringify(options));
-
-var matchRegExp = new RegExp(options.match, "i");
-if(options.direction === 'dump') {
-  if(!fs.existsSync(options.output)){ throw new Error('--output does not exist'); }
-  request.get(options.input + '/_aliases', function(err, response){
-    if(err){ log('err', err); process.exit(); }
-    response = JSON.parse(response.body);
-    if (!Array.isArray(response)){
-      response = Object.keys(response);
-    }
-    matchedIndexes = response.filter(function(index){
-      return matchRegExp.test(index);
-    });
-
-    dumpWork();
-  });
+  console.log(message)
 }
 
-if(options.direction === 'load'){
-  if(!fs.existsSync(options.input)){ throw new Error('--input() does not exist'); }
-  fs.readdir(options.input, function(err, data){
-    if (err) { log('error', err); throw new Error('Something went wrong reading the list of files')}
+if (!options.input) { throw new Error('--input is required') }
+if (!options.output) { throw new Error('--output is required') }
+log('info', 'We are performing : ' + options.direction)
+log('info', 'options: ' + JSON.stringify(options))
+
+var matchRegExp = new RegExp(options.match, 'i')
+if (options.direction === 'dump') {
+  if (!fs.existsSync(options.output)) { throw new Error('--output does not exist') }
+  request.get(options.input + '/_aliases', function (err, response) {
+    if (err) { log('err', err); process.exit() }
+    response = JSON.parse(response.body)
+    if (!Array.isArray(response)) {
+      response = Object.keys(response)
+    }
+    matchedIndexes = response.filter(function (index) {
+      return matchRegExp.test(index)
+    })
+
+    dumpWork()
+  })
+}
+
+if (options.direction === 'load') {
+  if (!fs.existsSync(options.input)) { throw new Error('--input() does not exist') }
+  fs.readdir(options.input, function (err, data) {
+    if (err) { log('error', err); throw new Error('Something went wrong reading the list of files') }
     // log('info', data);
-    matchedIndexes = data.map(function(value) {
-      return value.replace('.mapping.json', '').replace('.analyzer.json', '').replace('.json','')
-    }).filter(function(item){
-      return matchRegExp.test(item);
-    });
-    matchedIndexes = unique(matchedIndexes);
-    log('info', 'list of indexes' + JSON.stringify(matchedIndexes));
+    matchedIndexes = data.map(function (value) {
+      return value.replace('.mapping.json', '').replace('.analyzer.json', '').replace('.json', '')
+    }).filter(function (item) {
+      return matchRegExp.test(item)
+    })
+    matchedIndexes = unique(matchedIndexes)
+    log('info', 'list of indexes' + JSON.stringify(matchedIndexes))
 
-    loadWork();
-  });
+    loadWork()
+  })
 }
 
-var dumpWork = function(){
-  clearTimeout(workTimeout);
-  if(complete == matchedIndexes.length){
-    log('info', ' dumping all done ');
-    log('info', ' bye ');
-    process.exit();
-  }else if(working == options.parallel){
-    workTimeout = setTimeout(dumpWork, sleepTime);
-  }else{
-    dump();
-    workTimeout = setTimeout(dumpWork, sleepTime);
+var dumpWork = function () {
+  clearTimeout(workTimeout)
+  if (complete === matchedIndexes.length) {
+    log('info', ' dumping all done ')
+    log('info', ' bye ')
+    process.exit()
+  } else if (working === options.parallel) {
+    workTimeout = setTimeout(dumpWork, sleepTime)
+  } else {
+    dump()
+    workTimeout = setTimeout(dumpWork, sleepTime)
   }
-};
+}
 
-var loadWork = function(){
-  clearTimeout(workTimeout);
-  if(complete == matchedIndexes.length){
-    log('info', ' indexing all done ');
-    log('info', ' bye ');
-    process.exit();
-  }else if(working == options.parallel){
-    workTimeout = setTimeout(loadWork, sleepTime);
-  }else{
-    load();
-    workTimeout = setTimeout(loadWork, sleepTime);
+var loadWork = function () {
+  clearTimeout(workTimeout)
+  if (complete === matchedIndexes.length) {
+    log('info', ' indexing all done ')
+    log('info', ' bye ')
+    process.exit()
+  } else if (working === options.parallel) {
+    workTimeout = setTimeout(loadWork, sleepTime)
+  } else {
+    load()
+    workTimeout = setTimeout(loadWork, sleepTime)
   }
-};
+}
 
-var dump = function(){
-  working++;
-  var index = matchedIndexes[indexCounter];
+var dump = function () {
+  working++
+  var index = matchedIndexes[indexCounter]
 
-  if(!index){
-    working--;
-    return;
+  if (!index) {
+    working--
+    return
   }
 
-  indexCounter++;
+  indexCounter++
 
-  var input           = options.input + '/' + index;
-  var output_data     = options.output + '/' + index + '.json';
-  var output_mapping  = options.output + '/' + index + '.mapping.json';
-  var output_analyzer = options.output + '/' + index + '.analyzer.json';
+  var input = options.input + '/' + index
+  var outputData = options.output + '/' + index + '.json'
+  var outputMapping = options.output + '/' + index + '.mapping.json'
+  var outputAnalyzer = options.output + '/' + index + '.analyzer.json'
 
-  var jobs = [];
+  var jobs = []
 
-  jobs.push(function(done){
-    log('info', "dumping " + input + ' to ' + output_mapping);
+  jobs.push(function (done) {
+    log('info', 'dumping ' + input + ' to ' + outputMapping)
 
-    var mapping_child = fork(__dirname + '/elasticdump', [
-      '--type='       + 'mapping',
-      '--input='      + input,
-      '--output='     + output_mapping,
-    ]);
+    var mappingChild = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=' + 'mapping',
+      '--input=' + input,
+      '--output=' + outputMapping
+    ])
 
-    mapping_child.on('close', function(code){
-      if(code !== 0){
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
-      }else{
-        return done();
+    mappingChild.on('close', function (code) {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
       }
-    });
-  });
+    })
+  })
 
-  jobs.push(function(done){
-    log('info', "analyzer " + input + ' to ' + output_analyzer);
+  jobs.push(function (done) {
+    log('info', 'analyzer ' + input + ' to ' + outputAnalyzer)
 
-    var analyzer_child = fork(__dirname + '/elasticdump', [
-      '--type='       + 'analyzer',
-      '--input='      + input,
-      '--output='     + output_analyzer,
-    ]);
+    var analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=' + 'analyzer',
+      '--input=' + input,
+      '--output=' + outputAnalyzer
+    ])
 
-    analyzer_child.on('close', function(code){
-      if(code !== 0){
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
-      }else{
-        return done();
+    analyzerChild.on('close', function (code) {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
       }
-    });
-  });
+    })
+  })
 
-  jobs.push(function(done){
-    log('info', "dumping " + input + ' to ' + output_data);
+  jobs.push(function (done) {
+    log('info', 'dumping ' + input + ' to ' + outputData)
 
-    var data_child = fork(__dirname + '/elasticdump', [
-      '--type='       + 'data',
-      '--input='      + input,
-      '--output='     + output_data,
+    var dataChild = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=' + 'data',
+      '--input=' + input,
+      '--output=' + outputData,
       '--scrollTime=' + options.scrollTime,
-      '--limit='      + options.limit,
-      '--offset='     + options.offset,
-    ]);
+      '--limit=' + options.limit,
+      '--offset=' + options.offset
+    ])
 
-    data_child.on('close', function(code){
-      if(code !== 0){
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
-      }else{
-        return done();
+    dataChild.on('close', function (code) {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
       }
-    });
-  });
+    })
+  })
 
-  async.series(jobs, function(error){
-    if(error){
-      log('error', error);
-      process.exit(1);
-    }else{
-      working--;
-      complete++;
+  async.series(jobs, function (error) {
+    if (error) {
+      log('error', error)
+      process.exit(1)
+    } else {
+      working--
+      complete++
     }
-  });
+  })
+}
 
-};
+var load = function () {
+  working++
+  var index = matchedIndexes[indexCounter]
 
-var load = function(){
-  working++;
-  var index = matchedIndexes[indexCounter];
-
-  if(!index){
-    working--;
-    return;
+  if (!index) {
+    working--
+    return
   }
 
-  log('info', 'Working on ' + index);
+  log('info', 'Working on ' + index)
 
-  indexCounter++;
+  indexCounter++
 
-  var output         = options.output + '/' + index;
-  var input          = options.input;
-  var input_data     = options.input + '/' + index + '.json';
-  var input_mapping  = options.input + '/' + index + '.mapping.json';
-  var input_analyzer = options.input + '/' + index + '.analyzer.json';
+  var output = options.output + '/' + index
+  var inputData = options.input + '/' + index + '.json'
+  var inputMapping = options.input + '/' + index + '.mapping.json'
+  var inputAnalyzer = options.input + '/' + index + '.analyzer.json'
 
-  var jobs = [];
+  var jobs = []
 
-  jobs.push(function(done){
-    log('info', "indexing analyzer " + input_analyzer + ' to ' + output);
+  jobs.push(function (done) {
+    log('info', 'indexing analyzer ' + inputAnalyzer + ' to ' + output)
 
-    var analyzer_child = fork(__dirname + '/elasticdump', [
-      '--type='       + 'analyzer',
-      '--input='      + input_analyzer,
-      '--output='     + output,
-    ]);
+    var analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=' + 'analyzer',
+      '--input=' + inputAnalyzer,
+      '--output=' + output
+    ])
 
-    analyzer_child.on('close', function(code){
-      if(code !== 0){
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
-      }else{
-        return done();
+    analyzerChild.on('close', function (code) {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
       }
-    });
-  });
+    })
+  })
 
-  jobs.push(function(done){
-    log('info', "indexing mapping " + input_mapping + ' to ' + output);
+  jobs.push(function (done) {
+    log('info', 'indexing mapping ' + inputMapping + ' to ' + output)
 
-    var mapping_child = fork(__dirname + '/elasticdump', [
-      '--type='       + 'mapping',
-      '--input='      + input_mapping,
-      '--output='     + output,
-    ]);
+    var mappingChild = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=' + 'mapping',
+      '--input=' + inputMapping,
+      '--output=' + output
+    ])
 
-    mapping_child.on('close', function(code){
-      if(code !== 0){
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
-      }else{
-        return done();
+    mappingChild.on('close', function (code) {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
       }
-    });
-  });
+    })
+  })
 
-  jobs.push(function(done){
-    log('info', "indexing data " + input_data + ' to ' + output);
+  jobs.push(function (done) {
+    log('info', 'indexing data ' + inputData + ' to ' + output)
 
-    var data_child = fork(__dirname + '/elasticdump', [
-      '--type='       + 'data',
-      '--input='      + input_data,
-      '--output='     + output,
+    var dataChild = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=' + 'data',
+      '--input=' + inputData,
+      '--output=' + output,
       '--scrollTime=' + options.scrollTime,
-      '--limit='      + options.limit,
-      '--offset='     + options.offset,
-    ]);
+      '--limit=' + options.limit,
+      '--offset=' + options.offset
+    ])
 
-    data_child.on('close', function(code){
-      if(code !== 0){
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'));
-      }else{
-        return done();
+    dataChild.on('close', function (code) {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
       }
-    });
-  });
+    })
+  })
 
-  async.series(jobs, function(error){
-    if(error){
-      log('error', error);
-      process.exit(1);
-    }else{
-      working--;
-      complete++;
+  async.series(jobs, function (error) {
+    if (error) {
+      log('error', error)
+      process.exit(1)
+    } else {
+      working--
+      complete++
     }
-  });
-
-};
+  })
+}
