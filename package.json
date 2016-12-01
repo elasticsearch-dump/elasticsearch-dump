@@ -30,6 +30,7 @@
     "JSONStream": "^1.2.0",
     "async": "^2.0.1",
     "aws4": "^1.4.1",
+    "awscred": "^1.2.0",
     "optimist": "latest",
     "request": "2.x.x"
   },
