@@ -1,92 +1,92 @@
 #!/usr/bin/env node
 
-var argv        = require('optimist').argv;
-var util        = require('util');
-var elasticdump = require( __dirname + "/../elasticdump.js" ).elasticdump;
-var packageData = require(__dirname + '/../package.json');
+var argv = require('optimist').argv
+var path = require('path')
+var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
+var packageData = require(path.join(__dirname, '..', 'package.json'))
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 var defaults = {
-  limit:              100,
-  offset:             0,
-  debug:              false,
-  type:               'data',
-  delete:             false,
-  maxSockets:         null,
-  input:              null,
-  'input-index':      null,
-  output:             null,
-  'output-index':     null,
-  inputTransport:     null,
-  outputTransport:    null,
-  searchBody:         null,
-  sourceOnly:         false,
-  jsonLines:          false,
-  format:             '',
-  'ignore-errors':    false,
-  scrollTime:         '10m',
-  timeout:            null,
-  toLog:              null,
-  quiet:              false,
-  awsAccessKeyId:     null,
+  limit: 100,
+  offset: 0,
+  debug: false,
+  type: 'data',
+  delete: false,
+  maxSockets: null,
+  input: null,
+  'input-index': null,
+  output: null,
+  'output-index': null,
+  inputTransport: null,
+  outputTransport: null,
+  searchBody: null,
+  sourceOnly: false,
+  jsonLines: false,
+  format: '',
+  'ignore-errors': false,
+  scrollTime: '10m',
+  timeout: null,
+  toLog: null,
+  quiet: false,
+  awsAccessKeyId: null,
   awsSecretAccessKey: null,
-  awsIniFileProfile:  null,
-  awsIniFileName:     null
-};
+  awsIniFileProfile: null,
+  awsIniFileName: null
+}
 
-var options = {};
+var options = {}
 
-for(var i in defaults){
-  options[i] = defaults[i];
-  if(argv[i]){
-    options[i] = argv[i];
+for (var i in defaults) {
+  options[i] = defaults[i]
+  if (argv[i]) {
+    options[i] = argv[i]
   }
-  if(options[i] === 'true' ){ options[i] = true; }
-  if(options[i] === 'false'){ options[i] = false; }
+  if (options[i] === 'true') { options[i] = true }
+  if (options[i] === 'false') { options[i] = false }
   // searchBody needs to go from JSON to object in order for size to be added later during elasticsearch query
-  if(i == "searchBody") {
-    options[i] = JSON.parse(options[i]);
+  if (i === 'searchBody') {
+    options[i] = JSON.parse(options[i])
   }
 }
 
-var log = function(type, message){
-  if(type === 'debug'){
-    if(options.debug === true){
-      message = new Date().toUTCString() + " [debug] | " + message;
-      console.log(message);
-    }else{
-      return false;
+var log = function (type, message) {
+  if (type === 'debug') {
+    if (options.debug === true) {
+      message = new Date().toUTCString() + ' [debug] | ' + message
+      console.log(message)
+    } else {
+      return false
     }
-  }else if(type === 'error'){
-    message = (new Date().toUTCString()) + " | " + message;
-    console.error(message);
-  }else if(options.quiet === false){
-    message = (new Date().toUTCString()) + " | " + message;
-    console.log(message);
-  }else{
-    return false;
+  } else if (type === 'error') {
+    message = (new Date().toUTCString()) + ' | ' + message
+    console.error(message)
+  } else if (options.quiet === false) {
+    message = (new Date().toUTCString()) + ' | ' + message
+    console.log(message)
+  } else {
+    return false
   }
-};
+}
 
-if(argv.help === true){
-  var helpText = require('fs').readFileSync( __dirname + '/../lib/help.txt');
-  helpText = helpText.toString();
-  helpText = helpText.replace('%%version%%', packageData.version);
-  console.log(helpText);
-}else if (argv.version === true){
+if (argv.help === true) {
+  var helpText = require('fs').readFileSync(path.join(__dirname, '..', 'lib', 'help.txt'))
+  helpText = helpText.toString()
+  helpText = helpText.replace('%%version%%', packageData.version)
+  console.log(helpText)
+} else if (argv.version === true) {
   console.log(packageData.version)
-}else{
-  var dumper = new elasticdump(options.input, options.output, options);
+} else {
+  var dumper = new Elasticdump(options.input, options.output, options)
 
-  dumper.on('log',   function(message){ log('log',   message); });
-  dumper.on('debug', function(message){ log('debug', message); });
-  dumper.on('error', function(error){   log('error', 'Error Emitted => ' + ( error.message || JSON.stringify(error)) ); });
+  dumper.on('log', function (message) { log('log', message) })
+  dumper.on('debug', function (message) { log('debug', message) })
+  dumper.on('error', function (error) { log('error', 'Error Emitted => ' + (error.message || JSON.stringify(error))) })
 
-  dumper.dump(function(error, total_writes){
-    if(error){
-      process.exit(1);
-    }else{
-      process.exit(0);
+  dumper.dump(function (error) {
+    if (error) {
+      process.exit(1)
+    } else {
+      process.exit(0)
     }
-  });
+  })
 }

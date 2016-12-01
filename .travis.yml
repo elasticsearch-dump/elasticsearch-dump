@@ -1,31 +1,38 @@
 sudo: true
 
-notifications:
-  email:
-    - evantahler@gmail.com
 language: node_js
+
 node_js:
-  - "4.0"
-  - "6.0"
+  - "4"
+  - "6"
 branches:
   only:
     - master
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+      - oracle-java8-set-default
 
 # We'll manually install versions of ES ourselves
 # services:
 #   - elasticsearch
 
+script: npm run test
+
 env:
-  - "ES_VERSION=2.3.1"
-  - "ES_VERSION=1.7.4"
+  matrix:
+    - "ES_VERSION=2.3.4 ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.4/elasticsearch-2.3.4.deb"
+    - "ES_VERSION=5.0.2 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.0.2.deb"
 
 before_install:
   ## ES has different download locations for each version, so we'll download them both and then just use the one we want
-  - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.4.deb
-  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.1/elasticsearch-2.3.1.deb
+  - curl $ES_DOWNLOAD_URL > elasticsearch_package.deb
   ## Now, use the ENV to choose the version
-  - sudo dpkg -i --force-confnew elasticsearch-$ES_VERSION.deb
-  - 'echo -e "index.number_of_shards: 1\nindex.number_of_replicas: 0" | sudo tee -a /etc/elasticsearch/elasticsearch.yml'
+  - sudo dpkg -i --force-confnew elasticsearch_package.deb
   - sudo service elasticsearch restart
   # ES needs some time to start
   - sleep 15
+  - curl http://localhost:9200
+  # - curl -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{"index.number_of_replicas" : "0","index.number_of_shards" : "1"}'
