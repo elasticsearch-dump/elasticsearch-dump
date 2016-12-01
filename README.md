@@ -237,6 +237,12 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     When using Amazon Elasticsearch Service proteced by
                     AWS Identity and Access Management (IAM), provide
                     your Access Key ID and Secret Access Key
+--awsIniFileProfile
+                    Alternative to --awsAccessKeyId and --awsSecretAccessKey,
+                    loads credentials from profile aws ini file
+--awsIniFileName
+                    Override the default aws ini file name when using --awsIniFileProfile 
+                    (default: config)
 --help
                     This page
 ```

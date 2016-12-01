@@ -30,6 +30,8 @@ var defaults = {
   quiet:              false,
   awsAccessKeyId:     null,
   awsSecretAccessKey: null,
+  awsIniFileProfile:  null,
+  awsIniFileName:     null
 };
 
 var options = {};
