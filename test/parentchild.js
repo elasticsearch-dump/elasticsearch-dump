@@ -65,12 +65,10 @@ var setup = function (callback) {
         request.put(url, {body: JSON.stringify(payload)}, done)
       })
     })
+  })
 
-    jobs.push(function (done) {
-      setTimeout(done, 500)
-      // var url = baseUrl + "/source_index/_flush?wait_if_ongoing=true";
-      // request.put(url, done);
-    })
+  jobs.push(function (done) {
+    setTimeout(done, 6000)
   })
 
   async.series(jobs, callback)
@@ -86,10 +84,6 @@ describe('parent child', function () {
   })
 
   after(function (done) { clear(done) })
-
-  beforeEach(function (done) {
-    setTimeout(done, 500)
-  })
 
   it('did the setup properly and parents + children are loaded', function (done) {
     var url = baseUrl + '/source_index/_search'
@@ -299,8 +293,7 @@ describe('parent child', function () {
           debug: true,
           type: 'mapping',
           input: '/tmp/mapping.json',
-          output: baseUrl + '/file_destination_index',
-          scrollTime: '10m'
+          output: baseUrl + '/file_destination_index'
         }
 
         var dataOptions = {
@@ -309,8 +302,7 @@ describe('parent child', function () {
           debug: true,
           type: 'data',
           input: '/tmp/data.json',
-          output: baseUrl + '/file_destination_index',
-          scrollTime: '10m'
+          output: baseUrl + '/file_destination_index'
         }
 
         var mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
