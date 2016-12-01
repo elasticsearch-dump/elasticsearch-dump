@@ -12,10 +12,6 @@ var elasticdump = function (input, output, options) {
   self.output = output
   self.options = options
 
-  if (!self.options.searchBody) {
-    self.options.searchBody = { 'query': { 'match_all': {} }, 'stored_fields': ['*'], '_source': true }
-  }
-
   if (self.options.toLog === null || self.options.toLog === undefined) {
     self.options.toLog = true
   }
