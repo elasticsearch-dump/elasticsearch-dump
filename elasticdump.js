@@ -4,6 +4,7 @@ var https = require('https')
 var path = require('path')
 var EventEmitter = require('events').EventEmitter
 var isUrl = require('./lib/is-url')
+var vm = require('vm')
 
 var elasticdump = function (input, output, options) {
   var self = this
@@ -58,6 +59,12 @@ var elasticdump = function (input, output, options) {
     var outputProtoKeys = Object.keys(OutputProto)
     self.output = (new OutputProto[outputProtoKeys[0]](self, self.options.output, self.options['output-index']))
   }
+
+  if (self.options.type === 'data' && self.options.transform) {
+    var modificationScriptText = '(function(doc) { ' + self.options.transform + ' })'
+    var modificationScript = new vm.Script(modificationScriptText)
+    self.modifier =  modificationScript.runInNewContext()
+  }
 }
 
 util.inherits(elasticdump, EventEmitter)
@@ -104,12 +111,20 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
         self.log('Warning: offseting ' + self.options.offset + ' rows.')
         self.log("  * Using an offset doesn't guarantee that the offset rows have already been written, please refer to the HELP text.")
       }
+      if(self.modifier) {
+        self.log("Will modify documents using this script: " + self.options.transform)
+      }
     }
 
     self.input.get(limit, offset, function (err, data) {
       if (err) { self.emit('error', err) }
       if (!err || (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
         self.log('got ' + data.length + ' objects from source ' + self.inputType + ' (offset: ' + offset + ')')
+        if(self.modifier) {
+          for(var i = 0; i < data.length; i++) {
+            self.modifier(data[i])
+          }
+        }
         self.output.set(data, limit, offset, function (err, writes) {
           var toContinue = true
 

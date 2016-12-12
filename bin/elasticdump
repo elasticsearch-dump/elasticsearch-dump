@@ -31,7 +31,8 @@ var defaults = {
   awsAccessKeyId: null,
   awsSecretAccessKey: null,
   awsIniFileProfile: null,
-  awsIniFileName: null
+  awsIniFileName: null,
+  transform: null
 }
 
 var options = {}
