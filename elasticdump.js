@@ -62,8 +62,7 @@ var elasticdump = function (input, output, options) {
 
   if (self.options.type === 'data' && self.options.transform) {
     var modificationScriptText = '(function(doc) { ' + self.options.transform + ' })'
-    var modificationScript = new vm.Script(modificationScriptText)
-    self.modifier =  modificationScript.runInNewContext()
+    self.modifier = new vm.Script(modificationScriptText)
   }
 }
 
@@ -111,8 +110,8 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
         self.log('Warning: offseting ' + self.options.offset + ' rows.')
         self.log("  * Using an offset doesn't guarantee that the offset rows have already been written, please refer to the HELP text.")
       }
-      if(self.modifier) {
-        self.log("Will modify documents using this script: " + self.options.transform)
+      if (self.modifier) {
+        self.log('Will modify documents using this script: ' + self.options.transform)
       }
     }
 
@@ -120,8 +119,8 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
       if (err) { self.emit('error', err) }
       if (!err || (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
         self.log('got ' + data.length + ' objects from source ' + self.inputType + ' (offset: ' + offset + ')')
-        if(self.modifier) {
-          for(var i = 0; i < data.length; i++) {
+        if (self.modifier) {
+          for (var i = 0; i < data.length; i++) {
             self.modifier(data[i])
           }
         }
