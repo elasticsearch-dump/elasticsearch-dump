@@ -86,6 +86,13 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     When using Amazon Elasticsearch Service proteced by
                     AWS Identity and Access Management (IAM), provide
                     your Access Key ID and Secret Access Key
+--transform
+                    A javascript, which will be called to modify documents
+                    before writing it to destination. global variable 'doc'
+                    is available.
+                    Example script for computing a new field 'f2' as doubled
+                    value of field 'f1':
+                        doc._source["f2"] = doc._source.f1 * 2;
 
 --help
                     This page
