@@ -233,6 +233,13 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     When using a custom outputTransport, should log lines
                     be appended to the output stream?
                     (default: true, except for `$`)
+--transform
+                    A javascript, which will be called to modify documents
+                    before writing it to destination. global variable 'doc'
+                    is available.
+                    Example script for computing a new field 'f2' as doubled
+                    value of field 'f1':
+                        doc._source["f2"] = doc._source.f1 * 2;
 --awsAccessKeyId
 --awsSecretAccessKey
                     When using Amazon Elasticsearch Service proteced by
