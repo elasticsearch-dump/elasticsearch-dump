@@ -131,6 +131,18 @@ describe('ELASTICDUMP', function () {
     })
   })
 
+  it('sets User-Agent', function (done) {
+    var Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    this.timeout(testTimeout)
+    var parent = { options: { searchBody: 'none' } }
+    var es = (new Elasticsearch(parent, baseUrl, 'source_index'))
+    es.baseRequest(baseUrl, function (err, response, body) {
+      should.not.exist(err)
+      response.req._headers['user-agent'].should.equal('elasticdump')
+      done()
+    })
+  })
+
   describe('es to es', function () {
     it('works for a whole index', function (done) {
       this.timeout(testTimeout)
