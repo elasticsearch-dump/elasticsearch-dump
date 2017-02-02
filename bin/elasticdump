@@ -32,7 +32,8 @@ var defaults = {
   awsSecretAccessKey: null,
   awsIniFileProfile: null,
   awsIniFileName: null,
-  transform: null
+  transform: null,
+  httpAuthFile: null
 }
 
 var options = {}

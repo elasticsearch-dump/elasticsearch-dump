@@ -5,6 +5,7 @@ var path = require('path')
 var EventEmitter = require('events').EventEmitter
 var isUrl = require('./lib/is-url')
 var vm = require('vm')
+var addAuth = require('./lib/add-auth')
 
 var elasticdump = function (input, output, options) {
   var self = this
@@ -29,6 +30,9 @@ var elasticdump = function (input, output, options) {
   if (self.options.input && !self.options.inputTransport) {
     if (isUrl(self.options.input)) {
       self.inputType = 'elasticsearch'
+      if (self.options.httpAuthFile) {
+        self.options.input = addAuth(self.options.input, self.options.httpAuthFile)
+      }
     } else {
       self.inputType = 'file'
     }
@@ -46,6 +50,9 @@ var elasticdump = function (input, output, options) {
   if (self.options.output && !self.options.outputTransport) {
     if (isUrl(self.options.output)) {
       self.outputType = 'elasticsearch'
+      if (self.options.httpAuthFile) {
+        self.options.output = addAuth(self.options.output, self.options.httpAuthFile)
+      }
     } else {
       self.outputType = 'file'
       if (self.options.output === '$') { self.options.toLog = false }

@@ -94,6 +94,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     value of field 'f1':
                         doc._source["f2"] = doc._source.f1 * 2;
 
+--httpAuthFile      When using http auth provide credentials in ini file in form
+                    `user=<username>
+                    password=<password>`
+
 --help
                     This page
 
