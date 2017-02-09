@@ -232,7 +232,7 @@ var load = function () {
 
   indexCounter++
 
-  var output = options.output + '/' + index
+  var output = options.output + '/' + encodeURIComponent(index)
   var inputData = options.input + '/' + index + '.json'
   var inputMapping = options.input + '/' + index + '.mapping.json'
   var inputAnalyzer = options.input + '/' + index + '.analyzer.json'
