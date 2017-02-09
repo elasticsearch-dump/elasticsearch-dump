@@ -144,7 +144,7 @@ var dump = function () {
 
   indexCounter++
 
-  var input = options.input + '/' + index
+  var input = options.input + '/' + encodeURIComponent(index)
   var outputData = options.output + '/' + index + '.json'
   var outputMapping = options.output + '/' + index + '.mapping.json'
   var outputAnalyzer = options.output + '/' + index + '.analyzer.json'
