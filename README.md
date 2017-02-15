@@ -133,7 +133,6 @@ docker pull taskrabbit/elasticsearch-dump
 ```
 Then you can use it just by :
 - using `docker run --rm -ti taskrabbit/elasticsearch-dump`
-- remembering that you cannot use `localhost` or `127.0.0.1` as you ES host ;)
 - you'll need to mount your file storage dir `-v <your dumps dir>:<your mount point>` to your docker container
 
 Example:
@@ -146,6 +145,14 @@ docker run --rm -ti taskrabbit/elasticsearch-dump \
 docker run --rm -ti taskrabbit/elasticsearch-dump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
+  --type=data
+```
+
+If you need to run using `localhost` as your ES host :
+```bash
+docker run --net=host --rm -ti taskrabbit/elasticsearch-dump \
+  --input=http://staging.es.com:9200/my_index \
+  --output=http://localhost:9200/my_index \
   --type=data
 ```
 
