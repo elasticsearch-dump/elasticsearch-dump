@@ -38,7 +38,7 @@
   "devDependencies": {
     "mocha": "latest",
     "should": "latest",
-    "standard": "^8.6.0"
+    "standard": "^9.0.0"
   },
   "standard": {
     "globals": [
