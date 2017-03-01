@@ -12,7 +12,7 @@ describe('aws4signer', function () {
 
     aws4signer(r, parent)
 
-    r.should.have.property('headers').which.is.an.Object
+    r.should.have.property('headers').which.is.an.Object()
     r.headers.should.have.property('host').which.is.a.String()
     r.headers.should.have.property('Content-Type').which.is.a.String()
     r.headers.should.have.property('Content-Length').which.is.a.Number()
@@ -31,7 +31,7 @@ describe('aws4signer', function () {
     }
     aws4signer(r, parent)
 
-    r.should.have.property('headers').which.is.an.Object
+    r.should.have.property('headers').which.is.an.Object()
     r.headers.should.have.property('host').which.is.a.String()
     r.headers.should.have.property('Content-Type').which.is.a.String()
     r.headers.should.have.property('Content-Length').which.is.a.Number()
