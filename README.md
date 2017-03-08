@@ -146,6 +146,12 @@ docker run --rm -ti taskrabbit/elasticsearch-dump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
   --type=data
+  
+# Backup index data to a file:
+docker run --rm -ti -v /data:/tmp taskrabbit/elasticsearch-dump \
+  --input=http://production.es.com:9200/my_index \
+  --output=/tmp/my_index_mapping.json \
+  --type=mapping
 ```
 
 If you need to run using `localhost` as your ES host :
