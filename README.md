@@ -22,7 +22,7 @@ Tools for moving and saving indicies.
 
 (local)
 ```bash
-npm install elasticdump
+npm install
 ./bin/elasticdump
 ```
 
