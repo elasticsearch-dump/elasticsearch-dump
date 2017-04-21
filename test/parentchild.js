@@ -168,7 +168,7 @@ describe('parent child', function () {
       request.get(url, function (err, response, body) {
         should.not.exist(err)
         body = JSON.parse(body)
-        console.log(err, response, body);
+        console.log(err, response, body)
         // this confirms that there are no orphans too!
         body.hits.total.should.equal(cities.length + (cities.length * people.length))
         done()
