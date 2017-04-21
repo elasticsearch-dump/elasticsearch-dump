@@ -20,6 +20,7 @@ var defaults = {
   inputTransport: null,
   outputTransport: null,
   searchBody: null,
+  headers: null,
   sourceOnly: false,
   jsonLines: false,
   format: '',
@@ -35,20 +36,20 @@ var defaults = {
   transform: null,
   httpAuthFile: null
 }
-
+var jsonParsedOpts = ['searchBody', 'headers']
 var options = {}
 
+// parse passed options & use defaults otherwise
 for (var i in defaults) {
-  options[i] = defaults[i]
-  if (argv[i]) {
-    options[i] = argv[i]
-  }
+  options[i] = argv[i] || defaults[i]
+
   if (options[i] === 'true') { options[i] = true }
   if (options[i] === 'false') { options[i] = false }
-  // searchBody needs to go from JSON to object in order for size to be added later during elasticsearch query
-  if (i === 'searchBody') {
-    options[i] = JSON.parse(options[i])
-  }
+}
+
+// parse whitelisted json formatted options
+for (var i of jsonParsedOpts) {
+  if (options[i]) { options[i] = JSON.parse(options[i]) }
 }
 
 var log = function (type, message) {

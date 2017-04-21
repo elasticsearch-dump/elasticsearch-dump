@@ -83,7 +83,7 @@ describe('parent child', function () {
     })
   })
 
-  after(function (done) { clear(done) })
+  after(clear)
 
   it('did the setup properly and parents + children are loaded', function (done) {
     var url = baseUrl + '/source_index/_search'

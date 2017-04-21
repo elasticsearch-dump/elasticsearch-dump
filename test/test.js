@@ -143,6 +143,28 @@ describe('ELASTICDUMP', function () {
     })
   })
 
+  it('sets custom headers', function (done) {
+    var Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    this.timeout(testTimeout)
+    var parent = { options: { searchBody: 'none' } }
+    var opts = {
+      index: 'source_index',
+      headers: {
+        'User-Agent': 'testbot',
+        'Alt-Auth': 'SomeBearerToken',
+        'X-Something': 'anotherheader'
+      }
+    }
+    var es = (new Elasticsearch(parent, baseUrl, opts))
+    es.baseRequest(baseUrl, function (err, response, body) {
+      should.not.exist(err)
+      response.req._headers['user-agent'].should.equal('testbot')
+      response.req._headers['alt-auth'].should.equal('SomeBearerToken')
+      response.req._headers['x-something'].should.equal('anotherheader')
+      done()
+    })
+  })
+
   describe('es to es', function () {
     it('works for a whole index', function (done) {
       this.timeout(testTimeout)
