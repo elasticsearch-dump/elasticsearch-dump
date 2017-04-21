@@ -37,8 +37,12 @@ var elasticdump = function (input, output, options) {
       self.inputType = 'file'
     }
 
+    var inputOpts = {
+      index: self.options['input-index'],
+      headers: self.options['headers']
+    }
     InputProto = require(path.join(__dirname, 'lib', 'transports', self.inputType))[self.inputType]
-    self.input = (new InputProto(self, self.options.input, self.options['input-index']))
+    self.input = (new InputProto(self, self.options.input, inputOpts))
   } else if (self.options.inputTransport) {
     self.inputType = String(self.options.inputTransport)
     InputProto = require(self.options.inputTransport)
@@ -58,8 +62,12 @@ var elasticdump = function (input, output, options) {
       if (self.options.output === '$') { self.options.toLog = false }
     }
 
+    var outputOpts = {
+      index: self.options['output-index'],
+      headers: self.options['headers']
+    }
     OutputProto = require(path.join(__dirname, 'lib', 'transports', self.outputType))[self.outputType]
-    self.output = (new OutputProto(self, self.options.output, self.options['output-index']))
+    self.output = (new OutputProto(self, self.options.output, outputOpts))
   } else if (self.options.outputTransport) {
     self.outputType = String(self.options.outputTransport)
     OutputProto = require(self.options.outputTransport)

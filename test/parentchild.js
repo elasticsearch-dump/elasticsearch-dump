@@ -83,7 +83,7 @@ describe('parent child', function () {
     })
   })
 
-  after(function (done) { clear(done) })
+  after(clear)
 
   it('did the setup properly and parents + children are loaded', function (done) {
     var url = baseUrl + '/source_index/_search'
@@ -168,6 +168,7 @@ describe('parent child', function () {
       request.get(url, function (err, response, body) {
         should.not.exist(err)
         body = JSON.parse(body)
+        console.log(err, response, body)
         // this confirms that there are no orphans too!
         body.hits.total.should.equal(cities.length + (cities.length * people.length))
         done()
