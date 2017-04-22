@@ -250,6 +250,16 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     without concern for losing some rows in the process,
                     similar to the `timeout` option.
                     (default: 0)
+--noRefresh
+                    Disable input index refresh.
+                    Positive:
+                      1. Much increase index speed
+                      2. Much less hardware requirements
+                    Negative:
+                      1. Recently added data may not be indexed
+                    Recommended to use with big data indexing,
+                    where speed and system health in a higher priority
+                    than recently added data.
 --inputTransport
                     Provide a custom js file to us as the input transport
 --outputTransport
