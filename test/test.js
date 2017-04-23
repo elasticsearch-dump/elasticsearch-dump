@@ -488,6 +488,40 @@ describe('ELASTICDUMP', function () {
       })
     })
 
+    it('noRefresh option', function (done) {
+      this.timeout(testTimeout)
+      var options = {
+        limit: 100,
+        offset: 0,
+        debug: true,
+        type: 'data',
+        input: baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m',
+        noRefresh: true
+      }
+
+      var dumper = new Elasticdump(options.input, options.output, options)
+      var inputProto = Object.getPrototypeOf(dumper.input)
+      var originalReindex = inputProto.reindex
+      inputProto.reindex = function (callback) {
+        inputProto.reindex = originalReindex
+        originalReindex.call(this, function (err, response) {
+          if (err) {
+            done(err)
+          } else if (response) {
+            done('refresh occured')
+          } else {
+            callback()
+          }
+        })
+      }
+
+      dumper.dump(function () {
+        done()
+      })
+    })
+
     it('can also delete documents from the source index', function (done) {
       this.timeout(testTimeout)
       var options = {
