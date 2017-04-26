@@ -13,6 +13,7 @@ var defaults = {
   type: 'data',
   delete: false,
   maxSockets: null,
+  ignoreRouting: false,
   input: null,
   'input-index': null,
   output: null,
