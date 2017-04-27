@@ -77,7 +77,7 @@ var elasticdump = function (input, output, options) {
 
   if (self.options.type === 'data' && self.options.transform) {
     var modificationScriptText = '(function(doc) { ' + self.options.transform + ' })'
-    self.modifier = new vm.Script(modificationScriptText).runInNewContext()
+    self.modifier = new vm.Script(modificationScriptText).runInThisContext()
   }
 }
 
