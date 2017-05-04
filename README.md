@@ -21,7 +21,7 @@ Tools for moving and saving indicies.
 
 (local)
 ```bash
-npm install elasticdump
+npm install
 ./bin/elasticdump
 ```
 
@@ -275,16 +275,24 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Example script for computing a new field 'f2' as doubled
                     value of field 'f1':
                         doc._source["f2"] = doc._source.f1 * 2;
+--awsChain
+                    Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) location and ordering for resolving credentials including environment variables, config files, EC2 and ECS metadata locations
+                    _Recommended option for use with AWS_ 
 --awsAccessKeyId
 --awsSecretAccessKey
                     When using Amazon Elasticsearch Service proteced by
                     AWS Identity and Access Management (IAM), provide
-                    your Access Key ID and Secret Access Key
+                    your Access Key ID and Secret Access Key.
+                    --sessionToken can also be optionally provided if using temporary credentials
 --awsIniFileProfile
                     Alternative to --awsAccessKeyId and --awsSecretAccessKey,
-                    loads credentials from profile aws ini file
+                    loads credentials from a specified profile in aws ini file.
+                    For greater flexibility, consider using --awsChain
+                    and setting AWS_PROFILE and AWS_CONFIG_FILE
+                    environment variables to override defaults if needed
 --awsIniFileName
                     Override the default aws ini file name when using --awsIniFileProfile
+                    Filename is relative to ~/.aws/ 
                     (default: config)
 --help
                     This page
