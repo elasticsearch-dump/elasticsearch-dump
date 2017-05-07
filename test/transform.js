@@ -44,7 +44,7 @@ var setup = function (callback) {
   async.series(jobs, callback)
 }
 
-describe('transform script should be executed for written documents', function () {
+describe('multiple transform scripts should be executed for written documents', function () {
   before(function (done) {
     this.timeout(1000 * 20)
     clear(function (error) {
@@ -61,7 +61,10 @@ describe('transform script should be executed for written documents', function (
           input: baseUrl + '/source_index',
           output: baseUrl + '/destination_index',
           scrollTime: '10m',
-          transform: 'doc._source["bar"] = doc._source.foo * 2'
+          transform: [
+            'doc._source["bar"] = doc._source.foo * 2',
+            'doc._source["baz"] = doc._source.bar + 3'
+          ]
         }
 
         var dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
@@ -78,7 +81,7 @@ describe('transform script should be executed for written documents', function (
 
   after(function (done) { clear(done) })
 
-  it('documents should have the new field computed by transform script', function (done) {
+  it('documents should have the new field computed by both transform scripts', function (done) {
     var url = baseUrl + '/destination_index/_search'
     request.get(url, function (err, response, body) {
       should.not.exist(err)
@@ -86,6 +89,7 @@ describe('transform script should be executed for written documents', function (
       body.hits.total.should.equal(2)
       body.hits.hits.forEach(function (doc) {
         doc._source.bar.should.equal(doc._source.foo * 2)
+        doc._source.baz.should.equal(doc._source.bar + 3)
       })
       done()
     })
