@@ -82,7 +82,7 @@ var elasticdump = function (input, output, options) {
     }
     self.modifiers = self.options.transform.map(function (transform) {
       var modificationScriptText = '(function(doc) { ' + transform + ' })'
-      return new vm.Script(modificationScriptText).runInNewContext()
+      return new vm.Script(modificationScriptText).runInThisContext()
     })
   }
 }
