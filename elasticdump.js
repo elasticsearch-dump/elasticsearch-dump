@@ -13,6 +13,7 @@ var elasticdump = function (input, output, options) {
   self.input = input
   self.output = output
   self.options = options
+  self.modifiers = []
 
   if (self.options.toLog === null || self.options.toLog === undefined) {
     self.options.toLog = true
@@ -76,8 +77,13 @@ var elasticdump = function (input, output, options) {
   }
 
   if (self.options.type === 'data' && self.options.transform) {
-    var modificationScriptText = '(function(doc) { ' + self.options.transform + ' })'
-    self.modifier = new vm.Script(modificationScriptText).runInNewContext()
+    if (!(self.options.transform instanceof Array)) {
+      self.options.transform = [self.options.transform]
+    }
+    self.modifiers = self.options.transform.map(function (transform) {
+      var modificationScriptText = '(function(doc) { ' + transform + ' })'
+      return new vm.Script(modificationScriptText).runInNewContext()
+    })
   }
 }
 
@@ -125,8 +131,8 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
         self.log('Warning: offseting ' + self.options.offset + ' rows.')
         self.log("  * Using an offset doesn't guarantee that the offset rows have already been written, please refer to the HELP text.")
       }
-      if (self.modifier) {
-        self.log('Will modify documents using this script: ' + self.options.transform)
+      if (self.modifiers.length) {
+        self.log('Will modify documents using these scripts: ' + self.options.transform)
       }
     }
 
@@ -134,9 +140,11 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
       if (err) { self.emit('error', err) }
       if (!err || (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
         self.log('got ' + data.length + ' objects from source ' + self.inputType + ' (offset: ' + offset + ')')
-        if (self.modifier) {
+        if (self.modifiers.length) {
           for (var i = 0; i < data.length; i++) {
-            self.modifier(data[i])
+            self.modifiers.forEach(function (modifier) {
+              modifier(data[i])
+            })
           }
         }
         self.output.set(data, limit, offset, function (err, writes) {

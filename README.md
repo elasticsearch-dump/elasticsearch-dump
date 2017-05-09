@@ -275,6 +275,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Example script for computing a new field 'f2' as doubled
                     value of field 'f1':
                         doc._source["f2"] = doc._source.f1 * 2;
+                    May be used multiple times.
 --awsChain
                     Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) location and ordering for resolving credentials including environment variables, config files, EC2 and ECS metadata locations
                     _Recommended option for use with AWS_ 
