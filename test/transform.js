@@ -138,7 +138,12 @@ describe('external transform module should be executed for written documents', f
       body = JSON.parse(body)
       body.hits.total.should.equal(2)
       body.hits.hits.forEach(function (doc) {
-        doc._source.bar.should.equal(crypto.createHash('md5').update(doc._source.foo).digest('hex'))
+        doc._source.bar.should.equal(
+          crypto
+              .createHash('md5')
+              .update(String(doc._source.foo))
+              .digest('hex')
+        )
       })
       done()
     })
