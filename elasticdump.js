@@ -4,8 +4,23 @@ var https = require('https')
 var path = require('path')
 var EventEmitter = require('events').EventEmitter
 var isUrl = require('./lib/is-url')
+var url = require('url')
 var vm = require('vm')
 var addAuth = require('./lib/add-auth')
+
+var getParams = function (query) {
+  if (!query) {
+    return {}
+  }
+
+  return (/^[?#]/.test(query) ? query.slice(1) : query)
+    .split('&')
+    .reduce((params, param) => {
+      let [ key, value ] = param.split('=')
+      params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : ''
+      return params
+    }, { })
+}
 
 var elasticdump = function (input, output, options) {
   var self = this
@@ -81,8 +96,15 @@ var elasticdump = function (input, output, options) {
       self.options.transform = [self.options.transform]
     }
     self.modifiers = self.options.transform.map(function (transform) {
-      var modificationScriptText = '(function(doc) { ' + transform + ' })'
-      return new vm.Script(modificationScriptText).runInThisContext()
+      if (transform[0] === '@') {
+        return function (doc) {
+          var parsed = url.parse(transform.slice(1))
+          return require(parsed.pathname)(doc, getParams(parsed.query))
+        }
+      } else {
+        var modificationScriptText = '(function(doc) { ' + transform + ' })'
+        return new vm.Script(modificationScriptText).runInNewContext()
+      }
     })
   }
 }

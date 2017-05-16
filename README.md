@@ -276,6 +276,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     value of field 'f1':
                         doc._source["f2"] = doc._source.f1 * 2;
                     May be used multiple times.
+                    Additionally, transform may be performed by a module. See [Module Transform](#module-transform) below.
 --awsChain
                     Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) location and ordering for resolving credentials including environment variables, config files, EC2 and ECS metadata locations
                     _Recommended option for use with AWS_ 
@@ -324,9 +325,27 @@ For loading files that you have dumped from multielasticsearch, `--direction` sh
 
 The new options, `--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped/loaded (regex).
 
+## Module Transform
+
+When specifying the `transform` option, prefix the value with `@` (a curl convention) to load the top-level function which is called with the document and the parsed arguments to the module.
+
+Uses a pseudo-URL format to specify arguments to the module as follows. Given:
+
+    elasticdump --transform='@./transforms/my-transform?param1=value&param2=another-value'
+
+with a module at `./transforms/my-transform.js` with the following:
+
+    module.exports = function (doc, options) {
+        // do something to doc
+    };
+
+will load module `./transforms/my-transform.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
+
+An example transform for anonymizing data on-the-fly can be found in the `transforms` folder.
+
 ## Notes
 
-- this tool is likley to require Elasticsearch version 1.0.0 or higher
+- this tool is likely to require Elasticsearch version 1.0.0 or higher
 - elasticdump (and elasticsearch in general) will create indices if they don't exist upon import
 - when exporting from elasticsearch, you can have export an entire index (`--input="http://localhost:9200/index"`) or a type of object from that index (`--input="http://localhost:9200/index/type"`).  This requires ElasticSearch 1.2.0 or higher
 - If elasticsearch is in a sub-directory, index and type must be provided with a separate argument (`--input="http://localhost:9200/sub/directory --input-index=index/type"`). Using `--input-index=/` will include all indices and types.
