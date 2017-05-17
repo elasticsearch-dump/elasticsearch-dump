@@ -103,7 +103,7 @@ var elasticdump = function (input, output, options) {
         }
       } else {
         var modificationScriptText = '(function(doc) { ' + transform + ' })'
-        return new vm.Script(modificationScriptText).runInNewContext()
+        return new vm.Script(modificationScriptText).runInThisContext()
       }
     })
   }
