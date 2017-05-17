@@ -135,7 +135,7 @@ elasticdump.prototype.validateOptions = function () {
   return validationErrors
 }
 
-elasticdump.prototype.dump = function (callback, continuing, limit, offset, totalWrites) {
+elasticdump.prototype.dump = function (callback, continuing, limit, offset, totalWrites, startedAt) {
   var self = this
 
   if (self.validationErrors.length > 0) {
@@ -145,6 +145,7 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
     if (!limit) { limit = self.options.limit }
     if (!offset) { offset = self.options.offset }
     if (!totalWrites) { totalWrites = 0 }
+    if (!startedAt) { startedAt = new Date() }
 
     if (continuing !== true) {
       self.log('starting dump')
@@ -160,6 +161,7 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
 
     self.input.get(limit, offset, function (err, data) {
       if (err) { self.emit('error', err) }
+      self.emit('progress', { duration: (new Date() - startedAt), writes: totalWrites });
       if (!err || (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
         self.log('got ' + data.length + ' objects from source ' + self.inputType + ' (offset: ' + offset + ')')
         if (self.modifiers.length) {
@@ -188,7 +190,7 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
           }
 
           if (data.length > 0 && toContinue) {
-            self.dump(callback, true, limit, offset, totalWrites)
+            self.dump(callback, true, limit, offset, totalWrites, startedAt)
           } else if (toContinue) {
             self.log('Total Writes: ' + totalWrites)
             self.log('dump complete')
