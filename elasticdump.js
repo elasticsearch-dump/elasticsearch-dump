@@ -187,6 +187,10 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
             }
           }
 
+          if (self.options['maxResults'] && totalWrites >= self.options['maxResults']) {
+            data = [];
+          }
+
           if (data.length > 0 && toContinue) {
             self.dump(callback, true, limit, offset, totalWrites)
           } else if (toContinue) {

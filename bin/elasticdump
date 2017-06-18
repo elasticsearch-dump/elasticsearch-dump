@@ -35,7 +35,8 @@ var defaults = {
   awsIniFileProfile: null,
   awsIniFileName: null,
   transform: null,
-  httpAuthFile: null
+  httpAuthFile: null,
+  maxResults: null
 }
 var jsonParsedOpts = ['searchBody', 'headers']
 var options = {}
