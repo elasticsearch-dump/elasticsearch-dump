@@ -198,7 +198,7 @@ var dump = function () {
       '--scrollTime=' + options.scrollTime,
       '--limit=' + options.limit,
       '--offset=' + options.offset,
-	    '--maxResults=' + options.maxResults
+      '--maxResults=' + options.maxResults
     ])
 
     dataChild.on('close', function (code) {
