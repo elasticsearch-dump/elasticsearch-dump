@@ -37,7 +37,8 @@ var defaults = {
   scrollTime: '10m',
   limit: 100,
   offset: 0,
-  direction: 'dump' // default to dump
+  direction: 'dump', // default to dump
+  maxResults: null
 }
 
 for (var i in defaults) {
@@ -196,7 +197,8 @@ var dump = function () {
       '--output=' + outputData,
       '--scrollTime=' + options.scrollTime,
       '--limit=' + options.limit,
-      '--offset=' + options.offset
+      '--offset=' + options.offset,
+      '--maxResults=' + options.maxResults
     ])
 
     dataChild.on('close', function (code) {
