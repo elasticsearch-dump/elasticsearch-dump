@@ -30,6 +30,7 @@ var defaults = {
   quiet:              false,
   awsAccessKeyId:     null,
   awsSecretAccessKey: null,
+  ignorePlainExtra:   false
 };
 
 var options = {};
