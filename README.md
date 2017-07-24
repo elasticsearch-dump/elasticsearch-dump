@@ -92,6 +92,12 @@ elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output=query.json \
   --searchBody '{"query":{"term":{"username": "admin"}}}'
+
+# Copy a single shard data:
+elasticdump \
+  --input=http://es.com:9200/api \
+  --output=http://es.com:9200/api2 \
+  --params='{"preference" : "_shards:0"}'
 ```
 
 ### Non-Standard Install
@@ -128,6 +134,7 @@ elasticdump \
   --output=http://es.com:9200/api/search \
   --output-index=my_index \
   --type=mapping
+
 ```
 
 ### Docker install
@@ -218,6 +225,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Add custom headers to Elastisearch requests (helpful when
                     your Elasticsearch instance sits behind a proxy)
                     (default: '{"User-Agent": "elasticdump"}')
+--params
+                    Add custom parameters to Elastisearch requests uri. Helpful when you for example
+                    want to use elasticsearch preference
+                    (default: null)
 --sourceOnly
                     Output only the json contained within the document _source
                     Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
