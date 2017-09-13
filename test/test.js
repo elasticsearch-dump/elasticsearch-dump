@@ -180,11 +180,12 @@ describe('ELASTICDUMP', function () {
     var opts = {
       index: 'source_index',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       }
     }
     var es = (new Elasticsearch(parent, baseUrl, opts))
     es.getData(1, 0, function (err, responseBody, response) {
+      should.not.exist(err)
       response.req.path.should.containEql('preference=_shards:0')
       done()
     })
