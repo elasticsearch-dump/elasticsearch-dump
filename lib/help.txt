@@ -97,6 +97,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --httpAuthFile      When using http auth provide credentials in ini file in form
                     `user=<username>
                     password=<password>`
+--insecure
+                    Do not verify the certificate of SSL connection when using
+                    https transport
+                    (default: false)
 
 --help
                     This page

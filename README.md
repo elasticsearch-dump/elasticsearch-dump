@@ -301,6 +301,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Override the default aws ini file name when using --awsIniFileProfile
                     Filename is relative to ~/.aws/ 
                     (default: config)
+--insecure
+                    Do not verify the certificate of SSL connection when using
+                    https transport
+                    (default: false)
 --help
                     This page
 ```

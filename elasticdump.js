@@ -55,6 +55,7 @@ var elasticdump = function (input, output, options) {
 
     var inputOpts = {
       index: self.options['input-index'],
+      insecure: self.options['insecure'],
       headers: self.options['headers']
     }
     InputProto = require(path.join(__dirname, 'lib', 'transports', self.inputType))[self.inputType]
