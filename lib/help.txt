@@ -35,7 +35,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --searchBody
                     Preform a partial extract based on search results
                     (when ES is the input,
-                    (default: '{"query": { "match_all": {} } }'))
+                    (default: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'))
 --sourceOnly
                     Output only the json contained within the document _source
                     Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
@@ -86,6 +86,17 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     When using Amazon Elasticsearch Service proteced by
                     AWS Identity and Access Management (IAM), provide
                     your Access Key ID and Secret Access Key
+--transform
+                    A javascript, which will be called to modify documents
+                    before writing it to destination. global variable 'doc'
+                    is available.
+                    Example script for computing a new field 'f2' as doubled
+                    value of field 'f1':
+                        doc._source["f2"] = doc._source.f1 * 2;
+
+--httpAuthFile      When using http auth provide credentials in ini file in form
+                    `user=<username>
+                    password=<password>`
 
 --help
                     This page
