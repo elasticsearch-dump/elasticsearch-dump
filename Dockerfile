@@ -1,5 +1,5 @@
 FROM alpine:3.6
-MAINTAINER evan@evantahler.com
+LABEL maintainer="evan@evantahler.com"
 
 RUN apk add --update nodejs nodejs-npm && \
     npm install elasticdump -g && \
