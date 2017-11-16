@@ -248,6 +248,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     you want to get most data as possible in the index
                     without concern for losing some rows in the process,
                     similar to the `timeout` option.
+                    breaking change - offfset is no longer allowed in scroll context
                     (default: 0)
 --noRefresh
                     Disable input index refresh.

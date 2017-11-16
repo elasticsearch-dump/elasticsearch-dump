@@ -15,6 +15,7 @@ var seedSize = 500
 var testTimeout = seedSize * 100
 var i = 0
 var indexesExistingBeforeSuite = 0
+var headers = {'Content-Type': 'application/json'}
 
 while (i < seedSize) {
   seeds[i] = { key: ('key' + i) }
@@ -22,7 +23,7 @@ while (i < seedSize) {
 }
 
 var seed = function (index, type, settings, callback) {
-  var payload = {url: baseUrl + '/' + index, body: JSON.stringify(settings)}
+  var payload = {url: baseUrl + '/' + index, body: JSON.stringify(settings), headers}
   request.put(payload, function (err, response) { // create the index first with potential custom analyzers before seeding
     should.not.exist(err)
     var started = 0
@@ -31,11 +32,11 @@ var seed = function (index, type, settings, callback) {
       var s = seeds[key]
       s['_uuid'] = key
       var url = baseUrl + '/' + index + '/' + type + '/' + key
-      request.put(url, {body: JSON.stringify(s)}, function (err, response, body) {
+      request.put({url, body: JSON.stringify(s), headers}, function (err, response, body) {
         should.not.exist(err)
         started--
         if (started === 0) {
-          request.post(baseUrl + '/' + index + '/_refresh', function (err, response) {
+          request.post({url: baseUrl + '/' + index + '/_refresh', headers}, function (err, response) {
             should.not.exist(err)
             callback()
           })
@@ -176,7 +177,7 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -192,32 +193,6 @@ describe('ELASTICDUMP', function () {
       })
     })
 
-    it('can provide offset', function (done) {
-      this.timeout(testTimeout)
-      var options = {
-        limit: 100,
-        debug: false,
-        type: 'data',
-        input: baseUrl + '/source_index',
-        output: baseUrl + '/destination_index',
-        scrollTime: '10m',
-        offset: 250,
-        headers: '{"Content-Type": "application/json"}'
-      }
-
-      var dumper = new Elasticdump(options.input, options.output, options)
-
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
-          should.not.exist(err)
-          body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize - 250)
-          done()
-        })
-      })
-    })
-
     it('works for index/types', function (done) {
       this.timeout(testTimeout)
       var options = {
@@ -228,7 +203,7 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index/seeds',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -256,7 +231,7 @@ describe('ELASTICDUMP', function () {
         output: baseUrl,
         'output-index': '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -283,7 +258,7 @@ describe('ELASTICDUMP', function () {
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
         searchBody: { 'query': { 'term': { 'key': 'key1' } } },
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -311,7 +286,7 @@ describe('ELASTICDUMP', function () {
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
         searchBody: { 'query': { 'range': { '_uuid': { 'lte': '2' } } } },
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -337,7 +312,7 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
       var dumper = new Elasticdump(options.input, options.output, options)
 
@@ -385,7 +360,7 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -417,7 +392,7 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -443,7 +418,7 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -469,7 +444,7 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumperA = new Elasticdump(options.input, options.output, options)
@@ -510,7 +485,7 @@ describe('ELASTICDUMP', function () {
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
         noRefresh: true,
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -545,7 +520,7 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -589,7 +564,7 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m',
         sourceOnly: false,
         jsonLines: false,
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       if (fs.existsSync('/tmp/out.json')) { fs.unlinkSync('/tmp/out.json') }
@@ -618,7 +593,7 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m',
         sourceOnly: true,
         jsonLines: false,
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       if (fs.existsSync('/tmp/out.sourceOnly')) { fs.unlinkSync('/tmp/out.sourceOnly') }
@@ -649,7 +624,7 @@ describe('ELASTICDUMP', function () {
         input: '/tmp/out.json',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -675,7 +650,7 @@ describe('ELASTICDUMP', function () {
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
         offset: 250,
-        headers: '{"Content-Type": "application/json"}'
+        headers
       }
 
       var dumper = new Elasticdump(options.input, options.output, options)
@@ -716,7 +691,7 @@ describe('ELASTICDUMP', function () {
           sourceOnly: false,
           jsonLines: false,
           all: true,
-          headers: '{"Content-Type": "application/json"}'
+          headers
         }
 
         if (fs.existsSync('/tmp/out.json')) { fs.unlinkSync('/tmp/out.json') }
