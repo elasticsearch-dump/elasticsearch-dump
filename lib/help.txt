@@ -136,4 +136,4 @@ elasticdump \
   --searchBody '{"query":{"term":{"username": "admin"}}}'
 
 ------------------------------------------------------------------------------
-Learn more @ https://github.com/taskrabbit/elasticsearch-dump
+Learn more @ https://github.com/node-packages/elasticsearch-dump

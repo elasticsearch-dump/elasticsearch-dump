@@ -6,16 +6,15 @@ Tools for moving and saving indicies.
 ![picture](https://raw.github.com/node-packages/elasticsearch-dump/master/elasticdump.jpg)
 
 
-[![Nodei stats](https://nodei.co/npm/elasticdump.png?downloads=true)](https://npmjs.org/package/elasticdump)
+[![Nodei stats](https://nodei.co/npm/elasticdump-next.png?downloads=true)](https://npmjs.org/package/elasticdump-next)
 
 [![Build Status](https://secure.travis-ci.org/node-packages/elasticsearch-dump.png?branch=master)](http://travis-ci.org/node-packages/elasticsearch-dump) 
 ## Version Warnings!
 
-- Version `1.0.0` of Elasticdump changes the format of the files created by the dump.  Files created with version `0.x.x` of this tool are likely not to work with versions going forward.  To learn more about the breaking changes, vist the release notes for version [`1.0.0`](https://github.com/node-packages/elasticsearch-dump/releases/tag/v1.0.0).  If you recive an "out of memory" error, this is probaly the cause.
-- Version `2.0.0` of Elasticdump removes the `bulk` options.  These options were buggy, and differ between versions of Elasticsearch.  If you need to export multiple indexes, look for the `multielasticdump` section of the tool.
-- Version `2.1.0` of Elasticdump moves from using `scan/scroll` (ES 1.x) to just `scan` (ES 2.x).  This is a backwards-compatible change within Elasticsearch, but performance may suffer on Elasticsearch versions prior to 2.x.
-- Version `3.0.0` of Elasticdump has the default queries updated to only work for ElasticSearch version 5+.  The tool *may* be compatible with earlier versions of Elasticsearch, but our version detection method may not work for all ES cluster topologies
-- Version `4.0.0` of Elasticdump now supports ES 6.0
+- For previous versions of Elasticsearch, use [elasticdump](https://github.com/taskrabbit/elasticsearch-dump)
+- Version `4.0.0` of elasticdump supports ES 6.0+. 
+
+> `elasticsearch-next` does not aim to be backward (or) compatible with `elasticdump`
 
 ## Installing
 
