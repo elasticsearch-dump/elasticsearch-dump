@@ -1,12 +1,12 @@
 {
   "author": "Evan Tahler <evantahler@gmail.com>",
-  "name": "elasticdump",
+  "name": "esdump",
   "description": "import and export tools for elasticsearch",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
+    "url": "git://github.com/node-packages/elasticsearch-dump.git"
   },
   "main": "elasticdump.js",
   "keywords": [

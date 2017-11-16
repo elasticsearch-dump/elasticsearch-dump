@@ -20,7 +20,9 @@ var defaults = {
   inputTransport: null,
   outputTransport: null,
   searchBody: null,
-  headers: null,
+  headers: {
+    'Content-Type': 'application/json'
+  },
   sourceOnly: false,
   jsonLines: false,
   format: '',
