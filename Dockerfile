@@ -1,8 +1,6 @@
-FROM alpine:3.6
-LABEL maintainer="evan@evantahler.com"
+FROM node:8.9-alpine
+LABEL maintainer="ferronrsmith@gmail.com"
 
-RUN apk add --update nodejs nodejs-npm && \
-    npm install elasticdump -g && \
-    rm -rf /var/cache/apk/*
+RUN npm install elasticdump -g
 
 ENTRYPOINT ["/usr/lib/node_modules/elasticdump/bin/elasticdump"]

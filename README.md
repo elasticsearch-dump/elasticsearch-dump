@@ -1,38 +1,33 @@
-elasticdump
+elasticdump-next
 ==================
 
 Tools for moving and saving indicies.
 
-![picture](https://raw.github.com/taskrabbit/elasticsearch-dump/master/elasticdump.jpg)
+![picture](https://raw.github.com/node-packages/elasticsearch-dump/master/elasticdump.jpg)
 
-# ElasticDump is looking for a new maintainer! 
-### [Learn more here.](https://github.com/taskrabbit/elasticsearch-dump/issues/333)
-
----
 
 [![Nodei stats](https://nodei.co/npm/elasticdump.png?downloads=true)](https://npmjs.org/package/elasticdump)
 
-[![Build Status](https://secure.travis-ci.org/taskrabbit/elasticsearch-dump.png?branch=master)](http://travis-ci.org/taskrabbit/elasticsearch-dump)  [![Code Climate](https://codeclimate.com/github/taskrabbit/elasticsearch-dump/badges/gpa.svg)](https://codeclimate.com/github/taskrabbit/elasticsearch-dump)
-[![Join the chat at https://gitter.im/taskrabbit/elasticsearch-dump](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/taskrabbit/elasticsearch-dump?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
+[![Build Status](https://secure.travis-ci.org/node-packages/elasticsearch-dump.png?branch=master)](http://travis-ci.org/node-packages/elasticsearch-dump) 
 ## Version Warnings!
 
-- Version `1.0.0` of Elasticdump changes the format of the files created by the dump.  Files created with version `0.x.x` of this tool are likely not to work with versions going forward.  To learn more about the breaking changes, vist the release notes for version [`1.0.0`](https://github.com/taskrabbit/elasticsearch-dump/releases/tag/v1.0.0).  If you recive an "out of memory" error, this is probaly the cause.
+- Version `1.0.0` of Elasticdump changes the format of the files created by the dump.  Files created with version `0.x.x` of this tool are likely not to work with versions going forward.  To learn more about the breaking changes, vist the release notes for version [`1.0.0`](https://github.com/node-packages/elasticsearch-dump/releases/tag/v1.0.0).  If you recive an "out of memory" error, this is probaly the cause.
 - Version `2.0.0` of Elasticdump removes the `bulk` options.  These options were buggy, and differ between versions of Elasticsearch.  If you need to export multiple indexes, look for the `multielasticdump` section of the tool.
 - Version `2.1.0` of Elasticdump moves from using `scan/scroll` (ES 1.x) to just `scan` (ES 2.x).  This is a backwards-compatible change within Elasticsearch, but performance may suffer on Elasticsearch versions prior to 2.x.
 - Version `3.0.0` of Elasticdump has the default queries updated to only work for ElasticSearch version 5+.  The tool *may* be compatible with earlier versions of Elasticsearch, but our version detection method may not work for all ES cluster topologies
+- Version `4.0.0` of Elasticdump now supports ES 6.0
 
 ## Installing
 
 (local)
 ```bash
-npm install elasticdump
+npm install elasticdump-next
 ./bin/elasticdump
 ```
 
 (global)
 ```bash
-npm install elasticdump -g
+npm install elasticdump-next -g
 elasticdump
 ```
 
@@ -133,26 +128,26 @@ elasticdump \
 ### Docker install
 If you prefer using docker to use elasticdump, you can download this project from docker hub :
 ```bash
-docker pull taskrabbit/elasticsearch-dump
+docker pull node-packages/elasticsearch-dump
 ```
 Then you can use it just by :
-- using `docker run --rm -ti taskrabbit/elasticsearch-dump`
+- using `docker run --rm -ti node-packages/elasticsearch-dump`
 - you'll need to mount your file storage dir `-v <your dumps dir>:<your mount point>` to your docker container
 
 Example:
 ```bash
 # Copy an index from production to staging with mappings:
-docker run --rm -ti taskrabbit/elasticsearch-dump \
+docker run --rm -ti node-packages/elasticsearch-dump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
   --type=mapping
-docker run --rm -ti taskrabbit/elasticsearch-dump \
+docker run --rm -ti node-packages/elasticsearch-dump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
   --type=data
 
 # Backup index data to a file:
-docker run --rm -ti -v /data:/tmp taskrabbit/elasticsearch-dump \
+docker run --rm -ti -v /data:/tmp node-packages/elasticsearch-dump \
   --input=http://production.es.com:9200/my_index \
   --output=/tmp/my_index_mapping.json \
   --type=mapping
@@ -160,7 +155,7 @@ docker run --rm -ti -v /data:/tmp taskrabbit/elasticsearch-dump \
 
 If you need to run using `localhost` as your ES host :
 ```bash
-docker run --net=host --rm -ti taskrabbit/elasticsearch-dump \
+docker run --net=host --rm -ti node-packages/elasticsearch-dump \
   --input=http://staging.es.com:9200/my_index \
   --output=http://localhost:9200/my_index \
   --type=data
@@ -359,7 +354,3 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index`
 - if you choose a stdio output (`--output=$`), you can also request a more human-readable output with `--format=human`
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
-
-Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
-
-Built at [TaskRabbit](https://www.taskrabbit.com)
