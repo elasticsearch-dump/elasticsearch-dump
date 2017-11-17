@@ -35,7 +35,7 @@
     "optimist": "latest",
     "request": "2.x.x",
     "decimal.js": "^7.3.0",
-    "lossless-json": "^1.0.1",
+    "lossless-json": "^1.0.1"
   },
   "devDependencies": {
     "mocha": "latest",
