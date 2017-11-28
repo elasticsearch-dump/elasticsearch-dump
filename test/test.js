@@ -165,6 +165,32 @@ describe('ELASTICDUMP', function () {
     })
   })
 
+  it('sets custom params', function (done) {
+    var Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    this.timeout(testTimeout)
+    var parent = {
+      options: {
+        searchBody: {},
+        scrollTime: '1m',
+        params: {
+          preference: '_shards:0'
+        }
+      }
+    }
+    var opts = {
+      index: 'source_index',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+    var es = (new Elasticsearch(parent, baseUrl, opts))
+    es.getData(1, 0, function (err, responseBody, response) {
+      should.not.exist(err)
+      response.req.path.should.containEql('preference=_shards:0')
+      done()
+    })
+  })
+
   describe('es to es', function () {
     it('works for a whole index', function (done) {
       this.timeout(testTimeout)
