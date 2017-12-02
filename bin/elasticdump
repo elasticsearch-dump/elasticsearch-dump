@@ -25,6 +25,7 @@ var defaults = {
   jsonLines: false,
   format: '',
   'ignore-errors': false,
+  'ignore-es-write-errors': true,
   scrollTime: '10m',
   timeout: null,
   toLog: null,

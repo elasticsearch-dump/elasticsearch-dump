@@ -80,7 +80,8 @@ var elasticdump = function (input, output, options) {
 
     var outputOpts = {
       index: self.options['output-index'],
-      headers: self.options['headers']
+      headers: self.options['headers'],
+      ignoreWriteErrors: self.options['ignore-es-write-errors']
     }
     OutputProto = require(path.join(__dirname, 'lib', 'transports', self.outputType))[self.outputType]
     self.output = (new OutputProto(self, self.options.output, outputOpts))

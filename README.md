@@ -237,6 +237,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --ignore-errors
                     Will continue the read/write loop on write error
                     (default: false)
+--ignore-es-write-errors
+                    Will continue the read/write loop on an write error from elasticsearch
+                    (default: true)
 --scrollTime
                     Time the nodes will hold the requested search in order.
                     (default: 10m)
