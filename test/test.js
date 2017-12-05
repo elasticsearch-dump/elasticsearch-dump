@@ -3,7 +3,6 @@ http.globalAgent.maxSockets = 10
 
 var path = require('path')
 var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
-var request = require('request')
 var should = require('should')
 var fs = require('fs')
 var os = require('os')
@@ -20,6 +19,12 @@ while (i < seedSize) {
   seeds[i] = { key: ('key' + i) }
   i++
 }
+
+var request = require('request').defaults({
+  headers: {
+    'User-Agent': 'elasticdump',
+    'Content-Type': 'application/json'
+  }})
 
 var seed = function (index, type, settings, callback) {
   var payload = {url: baseUrl + '/' + index, body: JSON.stringify(settings)}
