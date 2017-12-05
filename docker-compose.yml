@@ -1,0 +1,26 @@
+version: "2"
+
+services:
+
+  es_2:
+    image: elasticsearch:2.4
+    ports:
+    - 9200:9200
+
+  es_5:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.4
+    ports:
+    - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false
+      - xpack.watcher.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+
+  es_6:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.0.0
+    ports:
+    - 9200:9200
+    environment:
+      - discovery.type=single-node
