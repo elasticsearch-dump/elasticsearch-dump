@@ -242,6 +242,32 @@ describe('ELASTICDUMP', function () {
       })
     })
 
+    it('can provide limit', function (done) {
+      this.timeout(testTimeout)
+      var options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'data',
+        input: baseUrl + '/source_index/seeds',
+        output: baseUrl + '/destination_index',
+        size: 5,
+        scrollTime: '10m'
+      }
+
+      var dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(function () {
+        var url = baseUrl + '/destination_index/_search'
+        request.get(url, function (err, response, body) {
+          should.not.exist(err)
+          body = JSON.parse(body)
+          body.hits.total.should.equal(5)
+          done()
+        })
+      })
+    })
+
     it('works for index/types', function (done) {
       this.timeout(testTimeout)
       var options = {

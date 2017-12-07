@@ -204,6 +204,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     How many objects to move in batch per operation
                     limit is approximate for file streams
                     (default: 100)
+                    
+--size							How many objects to retrieve
+										(default: -1 -> no limit)
+                    
 --debug
                     Display the elasticsearch commands being used
                     (default: false)
