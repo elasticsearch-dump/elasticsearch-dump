@@ -14,7 +14,7 @@ Tools for moving and saving indicies.
 - For previous versions of Elasticsearch, use [elasticdump](https://github.com/taskrabbit/elasticsearch-dump)
 - Version `4.0.0` of elasticdump supports ES 6.0+. 
 
-> `elasticsearch-next` does not aim to be backward (or) compatible with `elasticdump`
+> `elasticdump-next` does not aim to be backward compatible with `elasticdump`. This will only support ES 6.0+
 
 ## Installing
 

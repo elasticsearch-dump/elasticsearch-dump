@@ -6,6 +6,7 @@ node_js:
   - "4"
   - "6"
   - "8"
+  - "9"
 branches:
   only:
     - master
@@ -24,7 +25,7 @@ script: npm run test
 
 env:
   matrix:
-    - "ES_VERSION=6.0.0 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0.deb"
+    - "ES_VERSION=6.1.1 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.deb"
 
 before_install:
   ## ES has different download locations for each version, so we'll download them both and then just use the one we want
