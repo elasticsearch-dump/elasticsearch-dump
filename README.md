@@ -3,8 +3,7 @@ elasticdump-next
 
 Tools for moving and saving indicies.
 
-![picture](https://raw.github.com/node-packages/elasticsearch-dump/master/elasticdump.jpg)
-
+<img src="https://raw.github.com/node-packages/elasticsearch-dump/master/elasticdump.jpg" width="50%">
 
 [![Nodei stats](https://nodei.co/npm/elasticdump-next.png?downloads=true)](https://npmjs.org/package/elasticdump-next)
 
@@ -12,9 +11,9 @@ Tools for moving and saving indicies.
 ## Version Warnings!
 
 - For previous versions of Elasticsearch, use [elasticdump](https://github.com/taskrabbit/elasticsearch-dump)
-- Version `4.0.0` of elasticdump supports ES 6.0+. 
+- Version `4.x.x` of elasticdump supports ES 6.0+. 
 
-> `elasticdump-next` does not aim to be backward compatible with `elasticdump`. This will only support ES 6.0+
+> `elasticdump-next` does not aim to be backward compatible with `elasticdump`. It will only support ES 6.0+
 
 ## Installing
 
