@@ -8,7 +8,7 @@
 
 var path = require('path')
 var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
-var request = require('request')
+
 var should = require('should')
 var fs = require('fs')
 var async = require('async')
@@ -21,6 +21,12 @@ var mapping = {
   city: {},
   person: { _parent: { type: 'city' } }
 }
+
+var request = require('request').defaults({
+  headers: {
+    'User-Agent': 'elasticdump',
+    'Content-Type': 'application/json'
+  }})
 
 var clear = function (callback) {
   var jobs = []
@@ -90,6 +96,7 @@ describe('parent child', function () {
     request.get(url, function (err, response, body) {
       should.not.exist(err)
       body = JSON.parse(body)
+
       // this confirms that there are no orphans too!
       body.hits.total.should.equal(cities.length + (cities.length * people.length))
       done()
