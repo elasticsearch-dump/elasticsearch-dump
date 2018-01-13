@@ -363,6 +363,16 @@ will load module `./transforms/my-transform.js', and execute the function with `
 
 An example transform for anonymizing data on-the-fly can be found in the `transforms` folder.
 
+## Bypassing self-sign certificate errors
+
+Set the environment `NODE_TLS_REJECT_UNAUTHORIZED=0` before running elasticdump
+
+```bash
+# An alternative method of passing environment variables before execution
+# NB : This only works with linux shells
+NODE_TLS_REJECT_UNAUTHORIZED=0 elasticdump --input="https://localhost:9200" --output myfile
+```
+
 ## Notes
 
 - this tool is likely to require Elasticsearch version 1.0.0 or higher
