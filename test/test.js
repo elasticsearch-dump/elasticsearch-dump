@@ -223,6 +223,9 @@ describe('ELASTICDUMP', function () {
     })
 
     it('can provide offset', function (done) {
+      if (process.env.ES_VERSION === '6.0.0') {
+        return this.skip()
+      }
       this.timeout(testTimeout)
       var options = {
         limit: 100,
@@ -707,6 +710,9 @@ describe('ELASTICDUMP', function () {
     })
 
     it('can provide offset', function (done) {
+      if (process.env.ES_VERSION === '6.0.0') {
+        return this.skip()
+      }
       this.timeout(testTimeout)
       var options = {
         limit: 100,
