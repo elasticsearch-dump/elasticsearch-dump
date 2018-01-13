@@ -374,6 +374,7 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index`
 - if you choose a stdio output (`--output=$`), you can also request a more human-readable output with `--format=human`
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
+- if you are using Elasticsearch version 6.0.0 or higher the `offset` parameter is no longer allowed in the scrollContext
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 
