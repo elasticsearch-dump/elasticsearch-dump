@@ -80,7 +80,15 @@ var setup = function (callback) {
   async.series(jobs, callback)
 }
 
-describe('parent child', function () {
+var describex = describe
+
+if (process.env.ES_VERSION === '6.0.0') {
+  // short-circuit the describex to skip-fast
+  // if the ES_VERSION is 6
+  describex = describe.skip
+}
+
+describex('parent child', function () {
   before(function (done) {
     this.timeout(15 * 1000)
     clear(function (error) {
@@ -103,7 +111,7 @@ describe('parent child', function () {
     })
   })
 
-  describe('each city should have children', function () {
+  describex('each city should have children', function () {
     cities.forEach(function (city) {
       it(city + ' should have children', function (done) {
         var url = baseUrl + '/source_index/_search'
@@ -131,7 +139,7 @@ describe('parent child', function () {
     })
   })
 
-  describe('ES to ES dump should maintain parent-child relationships', function () {
+  describex('ES to ES dump should maintain parent-child relationships', function () {
     before(function (done) {
       this.timeout(2000 * 10)
       var jobs = []
@@ -181,7 +189,7 @@ describe('parent child', function () {
       })
     })
 
-    describe('each city should have children', function () {
+    describex('each city should have children', function () {
       cities.forEach(function (city) {
         it(city + ' should have children', function (done) {
           var url = baseUrl + '/destination_index/_search'
@@ -210,7 +218,7 @@ describe('parent child', function () {
     })
   })
 
-  describe('ES to File and back to ES should work', function () {
+  describex('ES to File and back to ES should work', function () {
     before(function (done) {
       this.timeout(2000 * 10)
       var jobs = []
@@ -289,7 +297,7 @@ describe('parent child', function () {
       done()
     })
 
-    describe('can restore from a dumpfile', function () {
+    describex('can restore from a dumpfile', function () {
       before(function (done) {
         this.timeout(2000 * 10)
         var jobs = []
@@ -337,7 +345,7 @@ describe('parent child', function () {
         })
       })
 
-      describe('each city should have children', function () {
+      describex('each city should have children', function () {
         cities.forEach(function (city) {
           it(city + ' should have children', function (done) {
             var url = baseUrl + '/file_destination_index/_search'

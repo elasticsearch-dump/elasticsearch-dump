@@ -12,6 +12,7 @@ var path = require('path')
 var async = require('async')
 var crypto = require('crypto')
 var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
+var headers = {'Content-Type': 'application/json'}
 
 var clear = function (callback) {
   var jobs = []
@@ -28,13 +29,13 @@ var setup = function (callback) {
 
   jobs.push(function (done) {
     var url = baseUrl + '/source_index'
-    request.put(url, {body: JSON.stringify({mappings: {test: {}}})}, done)
+    request.put(url, {body: JSON.stringify({mappings: {test: {}}}), headers}, done)
   })
   ids.forEach(function (i) {
     jobs.push(function (done) {
       var url = baseUrl + '/source_index/test/' + i
       var payload = JSON.stringify({foo: i})
-      request.put(url, {body: payload}, done)
+      request.put(url, {body: payload, headers}, done)
     })
   })
 
