@@ -9,7 +9,6 @@ describe('aws4signer', function () {
     var r = {
       uri: 'http://127.0.0.1:9200/_search?q=test',
       method: 'GET',
-      headers: {'Content-Type': 'application/json'},
       body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
     }
 
