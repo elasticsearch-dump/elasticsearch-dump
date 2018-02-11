@@ -325,6 +325,16 @@ Elasticsearch provides a [scroll](https://www.elastic.co/guide/en/elasticsearch/
 
 NOTE: only works for `--output`
 
+## Bypassing self-sign certificate errors
+
+Set the environment `NODE_TLS_REJECT_UNAUTHORIZED=0` before running elasticdump
+
+```bash
+# An alternative method of passing environment variables before execution
+# NB : This only works with linux shells
+NODE_TLS_REJECT_UNAUTHORIZED=0 elasticdump --input="https://localhost:9200" --output myfile
+```
+
 ## MultiElasticDump
 This package also ships with a second binary, `multielasticdump`.  This is a wrapper for the normal elasticdump binary, which provides a limited option set, but will run elasticdump in parallel across many indexes at once.  It runs a process which forks into `n` (default your running host's # of CPUs) subprocesses running elasticdump.
 
@@ -362,16 +372,6 @@ with a module at `./transforms/my-transform.js` with the following:
 will load module `./transforms/my-transform.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
 
 An example transform for anonymizing data on-the-fly can be found in the `transforms` folder.
-
-## Bypassing self-sign certificate errors
-
-Set the environment `NODE_TLS_REJECT_UNAUTHORIZED=0` before running elasticdump
-
-```bash
-# An alternative method of passing environment variables before execution
-# NB : This only works with linux shells
-NODE_TLS_REJECT_UNAUTHORIZED=0 elasticdump --input="https://localhost:9200" --output myfile
-```
 
 ## Notes
 
