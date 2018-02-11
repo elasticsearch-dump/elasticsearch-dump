@@ -1,12 +1,10 @@
 var util = require('util')
 var http = require('http')
 var https = require('https')
-var path = require('path')
 var EventEmitter = require('events').EventEmitter
-var isUrl = require('./lib/is-url')
 var url = require('url')
 var vm = require('vm')
-var addAuth = require('./lib/add-auth')
+var ioHelper = require('./lib/ioHelper')
 
 var getParams = function (query) {
   if (!query) {
@@ -42,54 +40,8 @@ var elasticdump = function (input, output, options) {
     https.globalAgent.maxSockets = options.maxSockets
   }
 
-  var InputProto
-  if (self.options.input && !self.options.inputTransport) {
-    if (isUrl(self.options.input)) {
-      self.inputType = 'elasticsearch'
-      if (self.options.httpAuthFile) {
-        self.options.input = addAuth(self.options.input, self.options.httpAuthFile)
-      }
-    } else {
-      self.inputType = 'file'
-    }
-
-    var inputOpts = {
-      index: self.options['input-index'],
-      headers: self.options['headers']
-    }
-    InputProto = require(path.join(__dirname, 'lib', 'transports', self.inputType))[self.inputType]
-    self.input = (new InputProto(self, self.options.input, inputOpts))
-  } else if (self.options.inputTransport) {
-    self.inputType = String(self.options.inputTransport)
-    InputProto = require(self.options.inputTransport)
-    var inputProtoKeys = Object.keys(InputProto)
-    self.input = (new InputProto[inputProtoKeys[0]](self, self.options.input, self.options['input-index']))
-  }
-
-  var OutputProto
-  if (self.options.output && !self.options.outputTransport) {
-    if (isUrl(self.options.output)) {
-      self.outputType = 'elasticsearch'
-      if (self.options.httpAuthFile) {
-        self.options.output = addAuth(self.options.output, self.options.httpAuthFile)
-      }
-    } else {
-      self.outputType = 'file'
-      if (self.options.output === '$') { self.options.toLog = false }
-    }
-
-    var outputOpts = {
-      index: self.options['output-index'],
-      headers: self.options['headers']
-    }
-    OutputProto = require(path.join(__dirname, 'lib', 'transports', self.outputType))[self.outputType]
-    self.output = (new OutputProto(self, self.options.output, outputOpts))
-  } else if (self.options.outputTransport) {
-    self.outputType = String(self.options.outputTransport)
-    OutputProto = require(self.options.outputTransport)
-    var outputProtoKeys = Object.keys(OutputProto)
-    self.output = (new OutputProto[outputProtoKeys[0]](self, self.options.output, self.options['output-index']))
-  }
+  ioHelper(self, 'input')
+  ioHelper(self, 'output')
 
   if (self.options.type === 'data' && self.options.transform) {
     if (!(self.options.transform instanceof Array)) {
