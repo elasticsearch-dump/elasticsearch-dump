@@ -281,9 +281,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     where speed and system health in a higher priority
                     than recently added data.
 --inputTransport
-                    Provide a custom js file to us as the input transport
+                    Provide a custom js file to use as the input transport
 --outputTransport
-                    Provide a custom js file to us as the output transport
+                    Provide a custom js file to use as the output transport
 --toLog
                     When using a custom outputTransport, should log lines
                     be appended to the output stream?
