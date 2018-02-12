@@ -347,13 +347,18 @@ The limited option set includes:
 - `scrollTime`: `'10m'`,
 - `limit`:      `100`,
 - `offset`:     `0`,
-- `direction`:   `dump`
+- `direction`:   `dump`,
+- `ignoreType`:   ``
+- `interval`:     `1000`  
 
 If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (i.e. `http://localhost:9200`) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.
 
-For loading files that you have dumped from multielasticsearch, `--direction` should be set to `load`, `--input` MUST be a directory of a multielasticsearch dump and `--output` MUST be a Elasticsearch server URL.
+For loading files that you have dumped from multi-elasticsearch, `--direction` should be set to `load`, `--input` MUST be a directory of a multielasticsearch dump and `--output` MUST be a Elasticsearch server URL.
 
-The new options, `--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped/loaded (regex).
+`--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped/loaded (regex).
+
+New options, `--ignoreType` allows a type to be ignored from the dump/load. Three options are supported. `data,mapping,analyzer`. Multi-type support is available, when used each type must be comma(,)-separated
+and `interval` allows control over the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
 
 ## Module Transform
 
