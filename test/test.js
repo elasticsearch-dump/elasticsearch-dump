@@ -428,6 +428,53 @@ describe('ELASTICDUMP', function () {
       })
     })
 
+    it('can get and set settings', function (done) {
+      this.timeout(testTimeout)
+      var options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'settings',
+        input: baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      }
+      var dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(function () {
+        // Use async's whilst module to ensure that index is for sure opened after setting analyzers
+        // opening an index has a delay
+        var status = false
+        async.whilst(
+          function () { return !status },
+          function (callback) {
+            var url = baseUrl + '/destination_index/_search'
+            request.get(url, function (err, response, body) {
+              should.not.exist(err)
+              body = JSON.parse(body)
+              try {
+                body.hits.total.should.equal(0)
+                status = true
+              } catch (err) {
+                status = false
+              }
+              callback(null, status)
+            })
+          },
+          function (err, n) {
+            should.not.exist(err)
+            var url = baseUrl + '/destination_index/_settings'
+            request.get(url, function (err, response, body) {
+              should.not.exist(err)
+              body = JSON.parse(body)
+              body.destination_index.settings.index.analysis.analyzer.content.type.should.equal('custom')
+              done()
+            })
+          }
+        )
+      })
+    })
+
     it('can get and set mapping', function (done) {
       this.timeout(testTimeout)
       var options = {
