@@ -28,7 +28,7 @@ var elasticdump = function (input, output, options) {
   self.options = options
   self.modifiers = []
 
-  if (self.options.toLog === null || self.options.toLog === undefined) {
+  if (output !== '$' && (self.options.toLog === null || self.options.toLog === undefined)) {
     self.options.toLog = true
   }
 
