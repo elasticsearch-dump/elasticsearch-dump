@@ -223,8 +223,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
 --searchBody
                     Preform a partial extract based on search results
-                    (when ES is the input,
-                    (default: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'))
+                    when ES is the input, default values are
+                      if ES > 5 
+		        `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
+		      else 
+		        `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
 --headers
                     Add custom headers to Elastisearch requests (helpful when
                     your Elasticsearch instance sits behind a proxy)
