@@ -42,7 +42,9 @@ var defaults = {
   ignoreData:false,
   ignoreMapping: false,
   ignoreType: [],
-  interval : 1000
+  interval : 1000,
+  prefix : '',
+  suffix : ''
 }
 
 for (var i in defaults) {
@@ -306,7 +308,9 @@ var load = function () {
       '--output=' + output,
       '--scrollTime=' + options.scrollTime,
       '--limit=' + options.limit,
-      '--offset=' + options.offset
+      '--offset=' + options.offset,
+      '--prefix=' + options.prefix,
+      '--suffix=' + options.suffix
     ])
 
     dataChild.on('close', function (code) {

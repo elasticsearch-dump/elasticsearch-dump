@@ -352,6 +352,8 @@ The limited option set includes:
 - `offset`:     `0`,
 - `direction`:   `dump`,
 - `ignoreType`:   ``
+- `prefix`:   `'''`
+- `suffix`:   `''`
 - `interval`:     `1000`  
 
 If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (i.e. `http://localhost:9200`) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.
@@ -360,8 +362,11 @@ For loading files that you have dumped from multi-elasticsearch, `--direction` s
 
 `--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped/loaded (regex).
 
-New options, `--ignoreType` allows a type to be ignored from the dump/load. Three options are supported. `data,mapping,analyzer`. Multi-type support is available, when used each type must be comma(,)-separated
+`--ignoreType` allows a type to be ignored from the dump/load. Three options are supported. `data,mapping,analyzer`. Multi-type support is available, when used each type must be comma(,)-separated
 and `interval` allows control over the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
+
+New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
+`--prefix` allows you to add a prefix to the index name e.g. `$index}-backup-2018-03-13`
 
 ## Module Transform
 

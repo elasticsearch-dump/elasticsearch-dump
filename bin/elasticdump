@@ -39,6 +39,8 @@ var defaults = {
   transform: null,
   httpAuthFile: null,
   params: null,
+  prefix : '',
+  suffix : ''
 }
 var jsonParsedOpts = ['searchBody', 'headers', 'params']
 var options = {}
