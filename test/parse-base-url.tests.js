@@ -24,7 +24,7 @@ describe('parseBaseURL', function () {
     parseBaseURL('http://localhost:9200').should.eql({
       url: 'http://localhost:9200',
       host: 'http://localhost:9200',
-      index: undefined,
+      index: '',
       type: undefined
     })
   })
