@@ -5,9 +5,6 @@ Tools for moving and saving indicies.
 
 ![picture](https://raw.github.com/taskrabbit/elasticsearch-dump/master/elasticdump.jpg)
 
-# ElasticDump is looking for a new maintainer! 
-### [Learn more here.](https://github.com/taskrabbit/elasticsearch-dump/issues/333)
-
 ---
 
 [![Nodei stats](https://nodei.co/npm/elasticdump.png?downloads=true)](https://npmjs.org/package/elasticdump)
