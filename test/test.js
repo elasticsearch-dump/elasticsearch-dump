@@ -3,6 +3,7 @@ http.globalAgent.maxSockets = 10
 
 var path = require('path')
 var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
+var jsonParser = require('../lib/jsonparser.js')
 var should = require('should')
 var fs = require('fs')
 var os = require('os')
@@ -777,6 +778,32 @@ describe('ELASTICDUMP', function () {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(seedSize)
+          done()
+        })
+      })
+    })
+
+    it('big decimal', function (done) {
+      this.timeout(testTimeout)
+      var options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'data',
+        input: path.join(__dirname, 'bigint.json'),
+        output: baseUrl + '/bigint_index',
+        scrollTime: '10m'
+      }
+
+      var dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(function () {
+        var url = baseUrl + '/bigint_index/_search'
+        request.get(url, function (err, response, body) {
+          should.not.exist(err)
+          // body = jsonParser.parse(body)
+          // body.hits.total.should.equal(2)
+          // body.hits[0]['_source']['key'].should.equal(99926275868403174266);
           done()
         })
       })
