@@ -27,6 +27,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
 
 --quiet
+                    Suppress all messages except for errors & debug statements
+                    (default: false)
+
+--silence
                     Suppress all messages except for errors
                     (default: false)
 
