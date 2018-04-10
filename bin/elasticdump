@@ -28,6 +28,7 @@ var defaults = {
   jsonLines: false,
   format: '',
   'ignore-errors': false,
+  'enforce-numeric-fields': null,
   scrollTime: '10m',
   timeout: null,
   toLog: null,

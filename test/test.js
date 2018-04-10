@@ -801,8 +801,8 @@ describe('ELASTICDUMP', function () {
         var url = baseUrl + '/bigint_index/_search'
         request.get(url, function (err, response, body) {
           should.not.exist(err)
-          // body = jsonParser.parse(body)
-          // body.hits.total.should.equal(2)
+          body = jsonParser.parse(body)
+          body.hits.total.should.equal(2)
           // body.hits[0]['_source']['key'].should.equal(99926275868403174266);
           done()
         })
