@@ -102,7 +102,7 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
       self.log('starting dump')
 
       if (self.options.offset) {
-        self.log('Warning: offseting ' + self.options.offset + ' rows.')
+        self.log('Warning: offsetting ' + self.options.offset + ' rows.')
         self.log("  * Using an offset doesn't guarantee that the offset rows have already been written, please refer to the HELP text.")
       }
       if (self.modifiers.length) {
