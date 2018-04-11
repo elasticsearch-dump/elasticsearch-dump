@@ -9,6 +9,7 @@ var fs = require('fs')
 var os = require('os')
 var async = require('async')
 var Decimal = require('decimal.js')
+var _ = require('lodash')
 var baseUrl = 'http://127.0.0.1:9200'
 
 var seeds = {}
@@ -850,8 +851,13 @@ describe('ELASTICDUMP', function () {
             should.not.exist(err)
             body = jsonParser.parse(body)
             body.hits.hits.length.should.equal(2)
-            body.hits.hits[0]['_source']['key'].equals(new Decimal('1726275868403174266')).should.be.true()
-            body.hits.hits[1]['_source']['key'].equals(new Decimal('99926275868403174266')).should.be.true()
+            _.chain(body.hits.hits)
+              .reduce((result, value) => {
+                result.push(value['_source']['key'].toString())
+                return result
+              }, [])
+              .sort()
+              .value().should.deepEqual(['1726275868403174266', '99926275868403174266'])
             done()
           })
         })
