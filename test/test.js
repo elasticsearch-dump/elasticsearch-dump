@@ -839,7 +839,8 @@ describe('ELASTICDUMP', function () {
           type: 'data',
           input: path.join(__dirname, 'test-resources', 'bigint.json'),
           output: baseUrl + '/bigint_index',
-          scrollTime: '10m'
+          scrollTime: '10m',
+          'support-big-int': true
         }
 
         dumper = new Elasticdump(options.input, options.output, options)
@@ -848,7 +849,7 @@ describe('ELASTICDUMP', function () {
           var url = baseUrl + '/bigint_index/_search'
           request.get(url, function (err, response, body) {
             should.not.exist(err)
-            body = jsonParser.parse(body)
+            body = jsonParser.parse(body, options)
             body.hits.hits.length.should.equal(2)
             _.chain(body.hits.hits)
               .reduce((result, value) => {
