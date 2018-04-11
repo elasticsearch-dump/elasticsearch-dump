@@ -1,1 +1,1 @@
-{"bigint_index":{"mappings":{"seeds":{"properties":{"_uuid":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"key":{"type":"double"}}}}}}
+{"bigint_index":{"mappings":{"seeds":{"properties":{"key":{"type":"double"}}}}}}
