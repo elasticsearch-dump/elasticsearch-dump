@@ -784,33 +784,6 @@ describe('ELASTICDUMP', function () {
       })
     })
 
-    it('big decimal', function (done) {
-      this.timeout(testTimeout)
-      var options = {
-        limit: 100,
-        offset: 0,
-        debug: false,
-        type: 'data',
-        input: path.join(__dirname, 'bigint.json'),
-        output: baseUrl + '/bigint_index',
-        scrollTime: '10m'
-      }
-
-      var dumper = new Elasticdump(options.input, options.output, options)
-
-      dumper.dump(function () {
-        var url = baseUrl + '/bigint_index/_search'
-        request.get(url, function (err, response, body) {
-          should.not.exist(err)
-          body = jsonParser.parse(body)
-          body.hits.hits.length.should.equal(2)
-          body.hits.hits[0]['_source']['key'].equals(new Decimal('1726275868403174266')).should.be.true()
-          body.hits.hits[1]['_source']['key'].equals(new Decimal('99926275868403174266')).should.be.true()
-          done()
-        })
-      })
-    })
-
     it('can provide offset', function (done) {
       if (process.env.ES_VERSION === '6.0.0') {
         return this.skip()
@@ -836,6 +809,36 @@ describe('ELASTICDUMP', function () {
           body = JSON.parse(body)
           // skips 250 so 250 less in there
           body.hits.total.should.equal(seedSize - 250)
+          done()
+        })
+      })
+    })
+  })
+
+  describe('big int file to es', function () {
+
+    it('works', function (done) {
+      this.timeout(testTimeout)
+      var options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'data',
+        input: path.join(__dirname, 'bigint.json'),
+        output: baseUrl + '/bigint_index',
+        scrollTime: '10m'
+      }
+
+      var dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(function () {
+        var url = baseUrl + '/bigint_index/_search'
+        request.get(url, function (err, response, body) {
+          should.not.exist(err)
+          body = jsonParser.parse(body)
+          body.hits.hits.length.should.equal(2)
+          body.hits.hits[0]['_source']['key'].equals(new Decimal('1726275868403174266')).should.be.true()
+          body.hits.hits[1]['_source']['key'].equals(new Decimal('99926275868403174266')).should.be.true()
           done()
         })
       })
