@@ -28,7 +28,7 @@ var defaults = {
   jsonLines: false,
   format: '',
   'ignore-errors': false,
-  'enforce-numeric-fields': null,
+  'support-big-int': false,
   scrollTime: '10m',
   timeout: null,
   toLog: null,
