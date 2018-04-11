@@ -8,7 +8,6 @@ var should = require('should')
 var fs = require('fs')
 var os = require('os')
 var async = require('async')
-var Decimal = require('decimal.js')
 var _ = require('lodash')
 var baseUrl = 'http://127.0.0.1:9200'
 
