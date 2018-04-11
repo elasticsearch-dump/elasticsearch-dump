@@ -30,7 +30,6 @@ var defaults = {
   timeout: null,
   toLog: null,
   quiet: false,
-  silence: false,
   awsChain: false,
   awsAccessKeyId: null,
   awsSecretAccessKey: null,
@@ -60,7 +59,7 @@ for (var i of jsonParsedOpts) {
 }
 
 var log = function (type, message) {
-  if (type === 'debug' && !options.silence) {
+  if (type === 'debug') {
     if (options.debug === true) {
       message = new Date().toUTCString() + ' [debug] | ' + message
       console.log(message)
@@ -70,7 +69,7 @@ var log = function (type, message) {
   } else if (type === 'error') {
     message = (new Date().toUTCString()) + ' | ' + message
     console.error(message)
-  } else if (!options.quiet && !options.silence) {
+  } else if (options.quiet === false) {
     message = (new Date().toUTCString()) + ' | ' + message
     console.log(message)
   } else {

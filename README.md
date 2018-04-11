@@ -210,13 +210,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Display the elasticsearch commands being used
                     (default: false)
 --quiet
-                    Suppress all messages except for errors & debug statements
-                    (default: false)
-                    
---silence
                     Suppress all messages except for errors
                     (default: false)
-                    
 --type
                     What are we exporting?
                     (default: data, options: [settings, analyzer, data, mapping])
