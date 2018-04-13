@@ -2,8 +2,10 @@
 
 var argv = require('optimist').argv
 var path = require('path')
+var fs = require('fs')
 var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 var packageData = require(path.join(__dirname, '..', 'package.json'))
+var isUrl = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 var defaults = {
@@ -85,6 +87,11 @@ if (argv.help === true) {
 } else if (argv.version === true) {
   console.log(packageData.version)
 } else {
+
+  if(options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output)) {
+    throw new Error('File `' + options.output + '` already exists, quitting');
+  }
+
   var dumper = new Elasticdump(options.input, options.output, options)
 
   dumper.on('log', function (message) { log('log', message) })
