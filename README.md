@@ -96,6 +96,18 @@ elasticdump \
   --input=http://es.com:9200/api \
   --output=http://es.com:9200/api2 \
   --params='{"preference" : "_shards:0"}'
+  
+# Backup aliases to a file
+elasticdump \
+  --input=http://es.com:9200/index-name/alias-filter \
+  --output=alias.json \
+  --type=alias  
+  
+# Import aliases into ES
+elasticdump \
+  --input=./alias.json \
+  --output=http://es.com:9200 \
+  --type=alias
 ```
 
 ### Non-Standard Install
@@ -214,7 +226,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
 --type
                     What are we exporting?
-                    (default: data, options: [settings, analyzer, data, mapping])
+                    (default: data, options: [settings, analyzer, data, mapping, alias])
 --delete
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index

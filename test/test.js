@@ -506,6 +506,32 @@ describe('ELASTICDUMP', function () {
       })
     })
 
+    it('can set and get alias', function (done) {
+      this.timeout(testTimeout)
+      var aliasFilePath = path.join(__dirname, 'test-resources', 'alias.json')
+      var options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'alias',
+        input: aliasFilePath,
+        output: baseUrl
+      }
+
+      var dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(function () {
+        var url = baseUrl + '/source_index/_alias/*'
+        request.get(url, function (err, response, body) {
+          should.not.exist(err)
+          var raw = fs.readFileSync(aliasFilePath)
+          body = JSON.parse(body)
+          body.should.deepEqual(JSON.parse(JSON.parse(raw.toString())))
+          done()
+        })
+      })
+    })
+
     it('works with a small limit', function (done) {
       this.timeout(testTimeout)
       var options = {
