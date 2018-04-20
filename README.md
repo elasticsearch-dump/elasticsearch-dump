@@ -329,6 +329,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Override the default aws ini file name when using --awsIniFileProfile
                     Filename is relative to ~/.aws/ 
                     (default: config)
+--support-big-int   Support big integer numbers                    
 --help
                     This page
 ```

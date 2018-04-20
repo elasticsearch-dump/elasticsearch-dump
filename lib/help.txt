@@ -106,6 +106,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     `user=<username>
                     password=<password>`
 
+--support-big-int   Support big integer numbers
+
 --help
                     This page
 
