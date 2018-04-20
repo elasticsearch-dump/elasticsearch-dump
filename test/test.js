@@ -3,10 +3,12 @@ http.globalAgent.maxSockets = 10
 
 var path = require('path')
 var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
+var jsonParser = require('../lib/jsonparser.js')
 var should = require('should')
 var fs = require('fs')
 var os = require('os')
 var async = require('async')
+var _ = require('lodash')
 var baseUrl = 'http://127.0.0.1:9200'
 
 var seeds = {}
@@ -808,6 +810,56 @@ describe('ELASTICDUMP', function () {
           // skips 250 so 250 less in there
           body.hits.total.should.equal(seedSize - 250)
           done()
+        })
+      })
+    })
+  })
+
+  describe('big int file to es', function () {
+    it('works', function (done) {
+      this.timeout(testTimeout)
+
+      var options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'mapping',
+        input: path.join(__dirname, 'test-resources', 'bigint_mapping.json'),
+        output: baseUrl + '/bigint_index',
+        scrollTime: '10m'
+      }
+
+      var dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(function () {
+        options = {
+          limit: 100,
+          offset: 0,
+          debug: false,
+          type: 'data',
+          input: path.join(__dirname, 'test-resources', 'bigint.json'),
+          output: baseUrl + '/bigint_index',
+          scrollTime: '10m',
+          'support-big-int': true
+        }
+
+        dumper = new Elasticdump(options.input, options.output, options)
+
+        dumper.dump(function () {
+          var url = baseUrl + '/bigint_index/_search'
+          request.get(url, function (err, response, body) {
+            should.not.exist(err)
+            body = jsonParser.parse(body, {options})
+            body.hits.hits.length.should.equal(2)
+            _.chain(body.hits.hits)
+              .reduce((result, value) => {
+                result.push(value['_source']['key'].toString())
+                return result
+              }, [])
+              .sort()
+              .value().should.deepEqual(['1726275868403174266', '99926275868403174266'])
+            done()
+          })
         })
       })
     })
