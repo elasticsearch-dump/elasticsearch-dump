@@ -140,21 +140,21 @@ elasticdump.prototype.dump = function (callback, continuing, limit, offset, tota
           }
 
           if (data.length > 0 && toContinue) {
-            return self.dump(callback, true, limit, offset, totalWrites)
+            self.dump(callback, true, limit, offset, totalWrites)
           } else if (toContinue) {
             self.log('Total Writes: ' + totalWrites)
             self.log('dump complete')
-            if (typeof callback === 'function') { return callback(null, totalWrites) }
+            if (typeof callback === 'function') { callback(null, totalWrites) }
           } else if (toContinue === false) {
             self.log('Total Writes: ' + totalWrites)
             self.log('dump ended with error (set phase)  => ' + String(err))
-            if (typeof callback === 'function') { return callback(err, totalWrites) }
+            if (typeof callback === 'function') { callback(err, totalWrites) }
           }
         })
       } else {
         self.log('Total Writes: ' + totalWrites)
         self.log('dump ended with error (get phase) => ' + String(err))
-        if (typeof callback === 'function') { return callback(err, totalWrites) }
+        if (typeof callback === 'function') { callback(err, totalWrites) }
       }
     })
   }
