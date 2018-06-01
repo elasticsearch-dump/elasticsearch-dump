@@ -280,8 +280,8 @@ describex('parent child', function () {
       dataLines.forEach(function (d) {
         if (d._type === 'person') {
           var parent
-          if (d._parent) { parent = d._parent }  // ES 2.x
-          if (d.fields && d.fields._parent) { parent = d.fields._parent }  // ES 1.x
+          if (d._parent) { parent = d._parent } // ES 2.x
+          if (d.fields && d.fields._parent) { parent = d.fields._parent } // ES 1.x
           should.exist(parent)
           dumpedPeople.push(d)
         }
