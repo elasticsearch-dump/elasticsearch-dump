@@ -101,9 +101,7 @@ if (argv.help === true) {
 
   dumper.dump(function (error) {
     if (error) {
-      return () => process.exit(1)
-    } else {
-      return () => {}
+      process.exit(1)
     }
   })
 }
