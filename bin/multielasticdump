@@ -162,7 +162,7 @@ var dump = function () {
 
   indexCounter++
 
-  var input = options.input + '/' + encodeURIComponent(index)
+  var input = options.input + '/' + encodeURIComponent(index).toLowerCase()
   var outputData = options.output + '/' + index + '.json'
   var outputMapping = options.output + '/' + index + '.mapping.json'
   var outputAnalyzer = options.output + '/' + index + '.analyzer.json'
@@ -253,7 +253,7 @@ var load = function () {
 
   indexCounter++
 
-  var output = options.output + '/' + encodeURIComponent(index)
+  var output = options.output + '/' + encodeURIComponent(index).toLowerCase()
   var inputData = options.input + '/' + index + '.json'
   var inputMapping = options.input + '/' + index + '.mapping.json'
   var inputAnalyzer = options.input + '/' + index + '.analyzer.json'
