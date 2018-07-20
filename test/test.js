@@ -536,7 +536,13 @@ describe('ELASTICDUMP', function () {
 
     it('can set and get template', function (done) {
       this.timeout(testTimeout)
-      var templateFilePath = path.join(__dirname, 'test-resources', 'template.json')
+
+      var templateFile = 'template.json'
+      if (process.env.ES_VERSION === '6.0.0') {
+        templateFile = 'template_es6.json'
+      }
+
+      var templateFilePath = path.join(__dirname, 'test-resources', templateFile)
       var options = {
         limit: 100,
         offset: 0,
