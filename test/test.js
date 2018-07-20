@@ -534,6 +534,32 @@ describe('ELASTICDUMP', function () {
       })
     })
 
+    it('can set and get template', function (done) {
+      this.timeout(testTimeout)
+      var templateFilePath = path.join(__dirname, 'test-resources', 'template.json')
+      var options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'template',
+        input: templateFilePath,
+        output: baseUrl
+      }
+
+      var dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(function () {
+        var url = baseUrl + '/_template/template_1'
+        request.get(url, function (err, response, body) {
+          should.not.exist(err)
+          var raw = fs.readFileSync(templateFilePath)
+          body = JSON.parse(body)
+          body.should.deepEqual(JSON.parse(JSON.parse(raw.toString())))
+          done()
+        })
+      })
+    })
+
     it('works with a small limit', function (done) {
       this.timeout(testTimeout)
       var options = {
