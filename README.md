@@ -110,6 +110,20 @@ elasticdump \
   --type=alias
 ```
 
+# Backup templates to a file
+elasticdump \
+  --input=http://es.com:9200/template-filter \
+  --output=templates.json \
+  --type=template
+
+# Import templates into ES
+elasticdump \
+  --input=./templates.json \
+  --output=http://es.com:9200 \
+  --type=template
+```
+
+
 ### Non-Standard Install
 
 If Elasticsearch is not being served from the root directory the `--input-index` and
@@ -226,7 +240,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
 --type
                     What are we exporting?
-                    (default: data, options: [settings, analyzer, data, mapping, alias])
+                    (default: data, options: [settings, analyzer, data, mapping, alias, template])
 --delete
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
@@ -409,6 +423,7 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - if you choose a stdio output (`--output=$`), you can also request a more human-readable output with `--format=human`
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
 - if you are using Elasticsearch version 6.0.0 or higher the `offset` parameter is no longer allowed in the scrollContext
+- ES 6.0 & higher no longer support the `template` property for `_template` all templates prior to ES 6.0 has to be upgraded to use `index_patterns` 
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 
