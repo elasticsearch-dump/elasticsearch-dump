@@ -44,7 +44,8 @@ var defaults = {
   ignoreType: [],
   interval : 1000,
   prefix : '',
-  suffix : ''
+  suffix : '',
+  searchBody: '{}'
 }
 
 for (var i in defaults) {
@@ -217,7 +218,8 @@ var dump = function () {
       '--output=' + outputData,
       '--scrollTime=' + options.scrollTime,
       '--limit=' + options.limit,
-      '--offset=' + options.offset
+      '--offset=' + options.offset,
+      '--searchBody=' + options.searchBody
     ])
 
     dataChild.on('close', function (code) {
