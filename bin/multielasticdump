@@ -219,7 +219,7 @@ var dump = function () {
       '--scrollTime=' + options.scrollTime,
       '--limit=' + options.limit,
       '--offset=' + options.offset,
-      '--searchBody=' + options.searchBody
+      '--searchBody=' + JSON.stringify(options.searchBody)
     ])
 
     dataChild.on('close', function (code) {
