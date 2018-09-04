@@ -35,6 +35,7 @@ var defaults = {
   input: null,
   output: null,
   scrollTime: '10m',
+  timeout: null,
   limit: 100,
   offset: 0,
   direction: 'dump', // default to dump
@@ -307,6 +308,7 @@ var load = function () {
       '--input=' + inputData,
       '--output=' + output,
       '--scrollTime=' + options.scrollTime,
+      '--timeout=' + options.timeout,
       '--limit=' + options.limit,
       '--offset=' + options.offset,
       '--prefix=' + options.prefix,
