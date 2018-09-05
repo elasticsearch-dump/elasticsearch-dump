@@ -380,6 +380,7 @@ The limited option set includes:
 - `prefix`:   `'''`
 - `suffix`:   `''`
 - `interval`:     `1000`
+- `srearchBody`: `null`
 
 If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (i.e. `http://localhost:9200`) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.
 
@@ -392,6 +393,8 @@ and `interval` allows control over the interval for spawning a dump/load for a n
 
 New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
 `--prefix` allows you to add a prefix to the index name e.g. `$index}-backup-2018-03-13`
+
+`--searchBody` will be passed directly to elasticdump for filtering which docs get searched for.
 
 ## Module Transform
 
