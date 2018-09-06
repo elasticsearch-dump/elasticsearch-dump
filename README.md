@@ -394,8 +394,6 @@ and `interval` allows control over the interval for spawning a dump/load for a n
 New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
 `--prefix` allows you to add a prefix to the index name e.g. `$index}-backup-2018-03-13`.
 
-`--timeout` will be passed directly to the request library.
-
 ## Module Transform
 
 When specifying the `transform` option, prefix the value with `@` (a curl convention) to load the top-level function which is called with the document and the parsed arguments to the module.
