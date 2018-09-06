@@ -45,7 +45,7 @@ var defaults = {
   interval : 1000,
   prefix : '',
   suffix : '',
-  searchBody: '{}'
+  searchBody: null
 }
 
 for (var i in defaults) {
