@@ -44,7 +44,8 @@ var defaults = {
   ignoreType: [],
   interval : 1000,
   prefix : '',
-  suffix : ''
+  suffix : '',
+  searchBody: null
 }
 
 for (var i in defaults) {
@@ -54,10 +55,6 @@ for (var i in defaults) {
   }
   if (options[i] === 'true') { options[i] = true }
   if (options[i] === 'false') { options[i] = false }
-  // searchBody needs to go from JSON to object in order for size to be added later during elasticsearch query
-  if (i === 'searchBody') {
-    options[i] = JSON.parse(options[i])
-  }
   if(i === 'interval' && _.isNumber(argv[i])) {
     // special case to handle value == 0
     options[i] = argv[i];
@@ -217,7 +214,8 @@ var dump = function () {
       '--output=' + outputData,
       '--scrollTime=' + options.scrollTime,
       '--limit=' + options.limit,
-      '--offset=' + options.offset
+      '--offset=' + options.offset,
+      '--searchBody=' + options.searchBody
     ])
 
     dataChild.on('close', function (code) {
