@@ -36,7 +36,8 @@
     "lodash": "^4.17.5",
     "lossless-json": "^1.0.2",
     "optimist": "latest",
-    "request": "2.x.x"
+    "request": "2.x.x",
+    "requestretry": "^3.0.1"
   },
   "devDependencies": {
     "mocha": "latest",

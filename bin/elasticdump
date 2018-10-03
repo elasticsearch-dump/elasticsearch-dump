@@ -9,7 +9,7 @@ var isUrl = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 var defaults = {
-	size: -1,
+  size: -1,
   limit: 100,
   offset: 0,
   debug: false,
@@ -43,8 +43,10 @@ var defaults = {
   transform: null,
   httpAuthFile: null,
   params: null,
-  prefix : '',
-  suffix : ''
+  prefix: '',
+  suffix: '',
+  retryAttempts: 0,
+  retryDelay: 5000
 }
 var jsonParsedOpts = ['searchBody', 'headers', 'params']
 var options = {}
@@ -90,8 +92,8 @@ if (argv.help === true) {
   console.log(packageData.version)
 } else {
 
-  if(options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output)) {
-    throw new Error('File `' + options.output + '` already exists, quitting');
+  if (options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output)) {
+    throw new Error('File `' + options.output + '` already exists, quitting')
   }
 
   var dumper = new Elasticdump(options.input, options.output, options)
