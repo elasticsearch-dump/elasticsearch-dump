@@ -20,6 +20,7 @@ var defaults = {
   'input-index': null,
   output: null,
   'output-index': null,
+  noRefresh: false,
   inputTransport: null,
   outputTransport: null,
   searchBody: null,
