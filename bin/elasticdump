@@ -46,7 +46,8 @@ var defaults = {
   prefix: '',
   suffix: '',
   retryAttempts: 0,
-  retryDelay: 5000
+  retryDelay: 5000,
+  parseExtraFields: ''
 }
 var jsonParsedOpts = ['searchBody', 'headers', 'params']
 var options = {}
