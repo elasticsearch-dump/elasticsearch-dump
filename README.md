@@ -343,7 +343,17 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Override the default aws ini file name when using --awsIniFileProfile
                     Filename is relative to ~/.aws/
                     (default: config)
---support-big-int   Support big integer numbers
+--support-big-int   
+                    Support big integer numbers
+--retryAttempts  
+                    Integer indicating the number of times a request should be automatically re-attempted before failing
+                    when a connection fails with one of the following errors `ECONNRESET`, `ENOTFOUND`, `ESOCKETTIMEDOUT`,
+                    ETIMEDOUT`, `ECONNREFUSED`, `EHOSTUNREACH`, `EPIPE`, `EAI_AGAIN`
+                    (default: 0)
+                    
+--retryDelay   
+                    Integer indicating the back-off/break period between retry attempts (milliseconds)
+                    (default : 5000)                               
 --help
                     This page
 ```
