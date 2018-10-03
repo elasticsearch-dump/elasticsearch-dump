@@ -37,6 +37,14 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
                     (default: false)
+--headers
+                    Add custom headers to Elastisearch requests (helpful when
+                    your Elasticsearch instance sits behind a proxy)
+                    (default: '{"User-Agent": "elasticdump"}')
+--params
+                    Add custom parameters to Elastisearch requests uri. Helpful when you for example
+                    want to use elasticsearch preference
+                    (default: null)
 --searchBody
                     Preform a partial extract based on search results
                     (when ES is the input, default values are
@@ -81,6 +89,16 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     without concern for losing some rows in the process,
                     similar to the `timeout` option.
                     (default: 0)
+--noRefresh
+                    Disable input index refresh.
+                    Positive:
+                      1. Much increase index speed
+                      2. Much less hardware requirements
+                    Negative:
+                      1. Recently added data may not be indexed
+                    Recommended to use with big data indexing,
+                    where speed and system health in a higher priority
+                    than recently added data.
 --inputTransport
                     Provide a custom js file to use as the input transport
 --outputTransport
@@ -89,11 +107,20 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     When using a custom outputTransport, should log lines
                     be appended to the output stream?
                     (default: true, except for `$`)
+--awsChain
+                    Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) location and ordering for resolving credentials including environment variables, config files, EC2 and ECS metadata locations
+                    _Recommended option for use with AWS_
 --awsAccessKeyId
 --awsSecretAccessKey
                     When using Amazon Elasticsearch Service proteced by
                     AWS Identity and Access Management (IAM), provide
                     your Access Key ID and Secret Access Key
+--awsIniFileProfile
+                    Alternative to --awsAccessKeyId and --awsSecretAccessKey,
+                    loads credentials from a specified profile in aws ini file.
+                    For greater flexibility, consider using --awsChain
+                    and setting AWS_PROFILE and AWS_CONFIG_FILE
+                    environment variables to override defaults if needed
 --transform
                     A javascript, which will be called to modify documents
                     before writing it to destination. global variable 'doc'
