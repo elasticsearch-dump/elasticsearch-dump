@@ -329,7 +329,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     _Recommended option for use with AWS_
 --awsAccessKeyId
 --awsSecretAccessKey
-                    When using Amazon Elasticsearch Service proteced by
+                    When using Amazon Elasticsearch Service protected by
                     AWS Identity and Access Management (IAM), provide
                     your Access Key ID and Secret Access Key.
                     --sessionToken can also be optionally provided if using temporary credentials
@@ -353,7 +353,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     
 --retryDelay   
                     Integer indicating the back-off/break period between retry attempts (milliseconds)
-                    (default : 5000)                               
+                    (default : 5000)            
+--parseExtraFields
+                    Comma-separated list of meta-fields to be parsed                                       
 --help
                     This page
 ```
