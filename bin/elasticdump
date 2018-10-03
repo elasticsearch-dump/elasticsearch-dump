@@ -47,7 +47,8 @@ var defaults = {
   suffix: '',
   retryAttempts: 0,
   retryDelay: 5000,
-  parseExtraFields: ''
+  parseExtraFields: '',
+  fileSize: -1
 }
 var jsonParsedOpts = ['searchBody', 'headers', 'params']
 var options = {}
