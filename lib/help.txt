@@ -129,12 +129,22 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     value of field 'f1':
                         doc._source["f2"] = doc._source.f1 * 2;
 
---httpAuthFile      When using http auth provide credentials in ini file in form
+--httpAuthFile
+                    When using http auth provide credentials in ini file in form
                     `user=<username>
                     password=<password>`
 
---support-big-int   Support big integer numbers
+--support-big-int
+                    Support big integer numbers
+--retryAttempts
+                    Integer indicating the number of times a request should be automatically re-attempted before failing
+                    when a connection fails with one of the following errors `ECONNRESET`, `ENOTFOUND`, `ESOCKETTIMEDOUT`,
+                    ETIMEDOUT`, `ECONNREFUSED`, `EHOSTUNREACH`, `EPIPE`, `EAI_AGAIN`
+                    (default: 0)
 
+--retryDelay
+                    Integer indicating the back-off/break period between retry attempts (milliseconds)
+                    (default : 5000)    
 --help
                     This page
 

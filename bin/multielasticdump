@@ -26,7 +26,7 @@ function unique (arr, keepLast) {
   return arr.filter(function (value, index, array) {
     return keepLast ? array.indexOf(value, index + 1) < 0 : array.indexOf(value) === index
   })
-};
+}
 
 var defaults = {
   debug: true,
@@ -40,12 +40,12 @@ var defaults = {
   offset: 0,
   direction: 'dump', // default to dump
   ignoreAnalyzer: false,
-  ignoreData:false,
+  ignoreData: false,
   ignoreMapping: false,
   ignoreType: [],
-  interval : 1000,
-  prefix : '',
-  suffix : '',
+  interval: 1000,
+  prefix: '',
+  suffix: '',
   searchBody: null
 }
 
@@ -56,18 +56,18 @@ for (var i in defaults) {
   }
   if (options[i] === 'true') { options[i] = true }
   if (options[i] === 'false') { options[i] = false }
-  if(i === 'interval' && _.isNumber(argv[i])) {
+  if (i === 'interval' && _.isNumber(argv[i])) {
     // special case to handle value == 0
-    options[i] = argv[i];
+    options[i] = argv[i]
   }
 }
 
 _.split(options.ignoreType, ',').forEach(function (field) {
-    var key = `ignore${_.upperFirst(field)}`;
-    if (_.has(options, key)) {
-        options[key] = true;
-    }
-});
+  var key = `ignore${_.upperFirst(field)}`
+  if (_.has(options, key)) {
+    options[key] = true
+  }
+})
 
 var log = function (type, message) {
   if (type === 'debug') {
@@ -91,7 +91,10 @@ var matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
   if (!fs.existsSync(options.output)) { throw new Error('--output does not exist') }
   request.get(options.input + '/_aliases', function (err, response) {
-    if (err) { log('err', err); process.exit() }
+    if (err) {
+      log('err', err)
+      process.exit()
+    }
     response = JSON.parse(response.body)
     if (!Array.isArray(response)) {
       response = Object.keys(response)
@@ -107,7 +110,10 @@ if (options.direction === 'dump') {
 if (options.direction === 'load') {
   if (!fs.existsSync(options.input)) { throw new Error('--input() does not exist') }
   fs.readdir(options.input, function (err, data) {
-    if (err) { log('error', err); throw new Error('Something went wrong reading the list of files') }
+    if (err) {
+      log('error', err)
+      throw new Error('Something went wrong reading the list of files')
+    }
     // log('info', data);
     matchedIndexes = data.map(function (value) {
       return value.replace('.mapping.json', '').replace('.analyzer.json', '').replace('.json', '')
@@ -168,7 +174,7 @@ var dump = function () {
   var jobs = []
 
   jobs.push(function (done) {
-    if(options.ignoreMapping) return done();
+    if (options.ignoreMapping) return done()
     log('info', 'dumping ' + input + ' to ' + outputMapping)
 
     var mappingChild = fork(path.join(__dirname, 'elasticdump'), [
@@ -187,7 +193,7 @@ var dump = function () {
   })
 
   jobs.push(function (done) {
-    if(options.ignoreAnalyzer) return done();
+    if (options.ignoreAnalyzer) return done()
     log('info', 'analyzer ' + input + ' to ' + outputAnalyzer)
 
     var analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
@@ -206,7 +212,7 @@ var dump = function () {
   })
 
   jobs.push(function (done) {
-    if(options.ignoreData) return done();
+    if (options.ignoreData) return done()
     log('info', 'dumping ' + input + ' to ' + outputData)
 
     var dataChild = fork(path.join(__dirname, 'elasticdump'), [
@@ -260,7 +266,7 @@ var load = function () {
   var jobs = []
 
   jobs.push(function (done) {
-    if(options.ignoreAnalyzer) return done();
+    if (options.ignoreAnalyzer) return done()
     log('info', 'indexing analyzer ' + inputAnalyzer + ' to ' + output)
 
     var analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
@@ -279,7 +285,7 @@ var load = function () {
   })
 
   jobs.push(function (done) {
-    if(options.ignoreMapping) return done();
+    if (options.ignoreMapping) return done()
     log('info', 'indexing mapping ' + inputMapping + ' to ' + output)
 
     var mappingChild = fork(path.join(__dirname, 'elasticdump'), [
@@ -298,7 +304,7 @@ var load = function () {
   })
 
   jobs.push(function (done) {
-    if(options.ignoreData) return done();
+    if (options.ignoreData) return done()
     log('info', 'indexing data ' + inputData + ' to ' + output)
 
     var dataChild = fork(path.join(__dirname, 'elasticdump'), [
