@@ -355,7 +355,20 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Integer indicating the back-off/break period between retry attempts (milliseconds)
                     (default : 5000)            
 --parseExtraFields
-                    Comma-separated list of meta-fields to be parsed                                       
+                    Comma-separated list of meta-fields to be parsed  
+--fileSize
+                    supports file splitting.  This value must be a string supported by the **bytes** module.     
+                    The following abbreviations must be used to signify size in terms of units         
+                    b for bytes
+                    kb for kilobytes
+                    mb for megabytes
+                    gb for gigabytes
+                    tb for terabytes
+                    
+                    e.g. 10mb / 1gb / 1tb
+                    Partitioning helps to alleviate overflow/out of memory exceptions by efficiently segmenting files
+                    into smaller chunks that then be merged if needs be.
+                                                          
 --help
                     This page
 ```
