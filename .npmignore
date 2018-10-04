@@ -90,15 +90,14 @@ crashlytics-build.properties
 fabric.properties
 
 api/
-bin/
 configs/
 init.d/
-lib/
 test/
 utils/
 data/
 .github
 runlocal
+.idea
 
 Gruntfile.js
 processes.yml
@@ -106,7 +105,8 @@ Dockerfile
 supervisord.conf
 app.js
 .dockerignore
+.travis.yml
 README.md
 .editorconfig
 .eslintrc.json
-
+docker-compose*
