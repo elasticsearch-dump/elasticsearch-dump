@@ -69,11 +69,12 @@ class elasticdump extends EventEmitter {
   }
 
   validateOptions () {
+    const self = this
     const validationErrors = []
 
     const required = ['input', 'output']
-    required.forEach(function (v) {
-      if (!this.options[v]) {
+    required.forEach(v => {
+      if (!self.options[v]) {
         validationErrors.push('`' + v + '` is a required input')
       }
     })

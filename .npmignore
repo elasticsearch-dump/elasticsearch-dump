@@ -106,7 +106,6 @@ supervisord.conf
 app.js
 .dockerignore
 .travis.yml
-*.md
 .editorconfig
 .eslintrc.json
 docker-compose*
