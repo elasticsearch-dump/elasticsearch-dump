@@ -47,7 +47,8 @@ var defaults = {
   suffix: '',
   retryAttempts: 0,
   retryDelay: 5000,
-  parseExtraFields: ''
+  parseExtraFields: '',
+  fileSize: -1
 }
 var jsonParsedOpts = ['searchBody', 'headers', 'params']
 var options = {}
@@ -92,7 +93,6 @@ if (argv.help === true) {
 } else if (argv.version === true) {
   console.log(packageData.version)
 } else {
-
   if (options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output)) {
     throw new Error('File `' + options.output + '` already exists, quitting')
   }
