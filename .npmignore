@@ -106,7 +106,7 @@ supervisord.conf
 app.js
 .dockerignore
 .travis.yml
-README.md
 .editorconfig
 .eslintrc.json
 docker-compose*
+elasticdump.jpg
