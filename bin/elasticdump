@@ -93,7 +93,7 @@ if (argv.help === true) {
 } else if (argv.version === true) {
   console.log(packageData.version)
 } else {
-  if (options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output) && !fs.lstatSync(options.output).isDirectory()) {
+  if (options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output)) {
     throw new Error('File `' + options.output + '` already exists, quitting')
   }
 
