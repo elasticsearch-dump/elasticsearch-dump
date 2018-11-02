@@ -93,71 +93,71 @@ class elasticdump extends EventEmitter {
     if (self.validationErrors.length > 0) {
       self.emit('error', {errors: self.validationErrors})
       callback(new Error('There was an error starting this dump'))
-    } else {
-      if (!limit) { limit = self.options.limit }
-      if (!offset) { offset = self.options.offset }
-      if (!totalWrites) { totalWrites = 0 }
+      return
+    }
 
-      if (continuing !== true) {
-        self.log('starting dump')
+    if (!limit) { limit = self.options.limit }
+    if (!offset) { offset = self.options.offset }
+    if (!totalWrites) { totalWrites = 0 }
 
-        if (self.options.offset) {
-          self.log('Warning: offsetting ' + self.options.offset + ' rows.')
-          self.log('  * Using an offset doesn\'t guarantee that the offset rows have already been written, please refer to the HELP text.')
-        }
-        if (self.modifiers.length) {
-          self.log('Will modify documents using these scripts: ' + self.options.transform)
-        }
+    if (continuing !== true) {
+      self.log('starting dump')
+
+      if (self.options.offset) {
+        self.log('Warning: offsetting ' + self.options.offset + ' rows.')
+        self.log('  * Using an offset doesn\'t guarantee that the offset rows have already been written, please refer to the HELP text.')
       }
+      if (self.modifiers.length) {
+        self.log('Will modify documents using these scripts: ' + self.options.transform)
+      }
+    }
 
-      self.input.get(limit, offset, (err, data) => {
-        if (err) { self.emit('error', err) }
-        if (!err || (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
-          self.log('got ' + data.length + ' objects from source ' + self.inputType + ' (offset: ' + offset + ')')
-          if (self.modifiers.length) {
-            for (let i = 0; i < data.length; i++) {
-              self.modifiers.forEach(modifier => {
-                modifier(data[i])
-              })
-            }
-          }
-          self.output.set(data, limit, offset, (err, writes) => {
-            let toContinue = true
+    self.input.get(limit, offset, (err, data) => {
+      if (err) {
+        self.emit('error', err)
 
-            if (err) {
-              self.emit('error', err)
-              if (self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true') {
-                toContinue = true
-              } else {
-                toContinue = false
-              }
-            } else {
-              totalWrites += writes
-              if (data.length > 0) {
-                self.log('sent ' + data.length + ' objects to destination ' + self.outputType + ', wrote ' + writes)
-                offset = offset + data.length
-              }
-            }
-
-            if (data.length > 0 && toContinue) {
-              return self.dump(callback, true, limit, offset, totalWrites)
-            } else if (toContinue) {
-              self.log('Total Writes: ' + totalWrites)
-              self.log('dump complete')
-              if (typeof callback === 'function') { return callback(null, totalWrites) }
-            } else if (toContinue === false) {
-              self.log('Total Writes: ' + totalWrites)
-              self.log('dump ended with error (set phase)  => ' + String(err))
-              if (typeof callback === 'function') { return callback(err, totalWrites) }
-            }
-          })
-        } else {
+        if (!(self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
           self.log('Total Writes: ' + totalWrites)
           self.log('dump ended with error (get phase) => ' + String(err))
           if (typeof callback === 'function') { return callback(err, totalWrites) }
+          return
         }
+      }
+      self.log('got ' + data.length + ' objects from source ' + self.inputType + ' (offset: ' + offset + ')')
+      if (self.modifiers.length) {
+        for (let i = 0; i < data.length; i++) {
+          self.modifiers.forEach(modifier => {
+            modifier(data[i])
+          })
+        }
+      }
+      self.output.set(data, limit, offset, (err, writes) => {
+        if (err) {
+          self.emit('error', err)
+
+          if (!(self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
+            self.log('Total Writes: ' + totalWrites)
+            self.log('dump ended with error (set phase)  => ' + String(err))
+            if (typeof callback === 'function') { return callback(err, totalWrites) }
+            return
+          }
+        } else {
+          totalWrites += writes
+          if (data.length > 0) {
+            self.log('sent ' + data.length + ' objects to destination ' + self.outputType + ', wrote ' + writes)
+            offset = offset + data.length
+          }
+        }
+
+        if (data.length > 0) {
+          return self.dump(callback, true, limit, offset, totalWrites)
+        }
+
+        self.log('Total Writes: ' + totalWrites)
+        self.log('dump complete')
+        if (typeof callback === 'function') { return callback(null, totalWrites) }
       })
-    }
+    })
   }
 }
 
