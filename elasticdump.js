@@ -3,6 +3,7 @@ const https = require('https')
 const {EventEmitter} = require('events')
 const url = require('url')
 const vm = require('vm')
+const {promisify} = require('util')
 const ioHelper = require('./lib/ioHelper')
 
 const getParams = query => {
@@ -112,17 +113,34 @@ class elasticdump extends EventEmitter {
       }
     }
 
-    self.input.get(limit, offset, (err, data) => {
-      if (err) {
+    this._loop(limit, offset, totalWrites)
+      .then((totalWrites) => {
+        if (typeof callback === 'function') { return callback(null, totalWrites) }
+      }, (error) => {
+        if (typeof callback === 'function') { return callback(error/*, totalWrites */) }
+      })
+  }
+
+  async _loop (limit, offset, totalWrites) {
+    const self = this
+    const get = promisify(this.input.get).bind(this.input)
+    const set = promisify(this.output.set).bind(this.output)
+    const ignoreErrors = self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true'
+
+    for (;;) {
+      let data
+      try {
+        data = await get(limit, offset)
+      } catch (err) {
         self.emit('error', err)
 
-        if (!(self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
+        if (!ignoreErrors) {
           self.log('Total Writes: ' + totalWrites)
           self.log('dump ended with error (get phase) => ' + String(err))
-          if (typeof callback === 'function') { return callback(err, totalWrites) }
-          return
+          throw err
         }
       }
+
       self.log('got ' + data.length + ' objects from source ' + self.inputType + ' (offset: ' + offset + ')')
       if (self.modifiers.length) {
         for (let i = 0; i < data.length; i++) {
@@ -131,33 +149,32 @@ class elasticdump extends EventEmitter {
           })
         }
       }
-      self.output.set(data, limit, offset, (err, writes) => {
-        if (err) {
-          self.emit('error', err)
 
-          if (!(self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true')) {
-            self.log('Total Writes: ' + totalWrites)
-            self.log('dump ended with error (set phase)  => ' + String(err))
-            if (typeof callback === 'function') { return callback(err, totalWrites) }
-            return
-          }
-        } else {
-          totalWrites += writes
-          if (data.length > 0) {
-            self.log('sent ' + data.length + ' objects to destination ' + self.outputType + ', wrote ' + writes)
-            offset = offset + data.length
-          }
-        }
-
+      try {
+        const writes = await set(data, limit, offset)
+        totalWrites += writes
         if (data.length > 0) {
-          return self.dump(callback, true, limit, offset, totalWrites)
+          self.log('sent ' + data.length + ' objects to destination ' + self.outputType + ', wrote ' + writes)
+          offset = offset + data.length
         }
+      } catch (err) {
+        self.emit('error', err)
 
-        self.log('Total Writes: ' + totalWrites)
-        self.log('dump complete')
-        if (typeof callback === 'function') { return callback(null, totalWrites) }
-      })
-    })
+        if (!ignoreErrors) {
+          self.log('Total Writes: ' + totalWrites)
+          self.log('dump ended with error (set phase)  => ' + String(err))
+          throw err
+        }
+      }
+
+      if (data.length === 0) {
+        break
+      }
+    }
+
+    self.log('Total Writes: ' + totalWrites)
+    self.log('dump complete')
+    return totalWrites
   }
 }
 
