@@ -38,6 +38,8 @@ var defaults = {
   awsAccessKeyId: null,
   awsSecretAccessKey: null,
   awsIniFileProfile: null,
+  s3SecretAccessKey: null,
+  s3Bucket: null,
   awsIniFileName: null,
   sessionToken: null,
   transform: null,
