@@ -39,7 +39,7 @@ var defaults = {
   awsSecretAccessKey: null,
   awsIniFileProfile: null,
   s3Bucket: null,
-  s3RecordKey: 'elastic-output.jsonl',
+  s3RecordKey: null,
   awsIniFileName: null,
   sessionToken: null,
   transform: null,
