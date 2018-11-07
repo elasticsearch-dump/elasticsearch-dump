@@ -38,7 +38,8 @@
     "lossless-json": "^1.0.2",
     "optimist": "latest",
     "request": "2.x.x",
-    "requestretry": "^3.0.1"
+    "requestretry": "^3.0.1",
+    "s3-stream-upload": "2.0.2"
   },
   "devDependencies": {
     "mocha": "latest",
