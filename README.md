@@ -368,6 +368,15 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     e.g. 10mb / 1gb / 1tb
                     Partitioning helps to alleviate overflow/out of memory exceptions by efficiently segmenting files
                     into smaller chunks that then be merged if needs be.
+
+--s3AccessKeyId
+                    AWS access key ID
+--s3SecretAccessKey
+                    AWS secret access key
+--s3Bucket
+                    Name of the bucket to which the data will be uploaded
+--s3RecordKey
+                    Object key (filename) for the data to be uploaded
                                                           
 --help
                     This page
