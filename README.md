@@ -108,7 +108,6 @@ elasticdump \
   --input=./alias.json \
   --output=http://es.com:9200 \
   --type=alias
-```
 
 # Backup templates to a file
 elasticdump \
@@ -121,6 +120,14 @@ elasticdump \
   --input=./templates.json \
   --output=http://es.com:9200 \
   --type=template
+
+# Export ES data to S3
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --s3Bucket "${bucket_name}" \ 
+  --awsAccessKeyId "${access_key_id}" \ 
+  --awsSecretAccessKey "${access_key_secret}" \
+  --s3RecordKey "${file_name}"  
 ```
 
 
