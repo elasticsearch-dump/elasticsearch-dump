@@ -121,6 +121,12 @@ elasticdump \
   --output=http://es.com:9200 \
   --type=template
 
+# Split files into multiple parts
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=/data/my_index.json \
+  --fileSize=10mb
+
 # Export ES data to S3
 elasticdump \
   --input=http://production.es.com:9200/my_index \
