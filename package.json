@@ -2,31 +2,67 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "elasticdump",
   "description": "import and export tools for elasticsearch",
-  "version": "1.1.0",
+  "version": "4.1.2",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
   },
   "main": "elasticdump.js",
-  "keywords": ["elasticsearch", "dump", "elasticdump", "import", "export", "transfer", "migrate", "migartion", "elasitic", "cluster", "elastic-dump", "elastic dump"],
+  "keywords": [
+    "elasticsearch",
+    "dump",
+    "elasticdump",
+    "import",
+    "export",
+    "transfer",
+    "migrate",
+    "migration",
+    "elasitic",
+    "cluster",
+    "elastic-dump",
+    "elastic dump"
+  ],
   "engines": {
-    "node": ">=1.0.0"
+    "node": ">=8.0.0"
   },
   "dependencies": {
+    "JSONStream": "^1.2.0",
+    "async": "^2.0.1",
+    "aws-sdk": "^2.36.0",
+    "aws4": "^1.4.1",
+    "bytes": "^3.0.0",
+    "decimal.js": "^10.0.0",
+    "ini": "^1.3.4",
+    "lodash": "^4.17.5",
+    "lossless-json": "^1.0.2",
     "optimist": "latest",
     "request": "2.x.x",
-    "JSONStream": "0.9.x"
+    "requestretry": "^3.0.1",
+    "s3-stream-upload": "2.0.2"
   },
   "devDependencies": {
     "mocha": "latest",
     "should": "latest",
-    "async": "1.x.x"
+    "standard": "^10.0.0"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "describe",
+      "before",
+      "beforeEach",
+      "after",
+      "afterEach"
+    ]
   },
   "bin": {
     "elasticdump": "./bin/elasticdump",
     "multielasticdump": "./bin/multielasticdump"
   },
   "scripts": {
+    "pretest": "standard",
     "test": "mocha"
   }
 }

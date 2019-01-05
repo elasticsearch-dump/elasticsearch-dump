@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /* Test suite for parent-child relationships
  *
@@ -6,373 +6,372 @@
  * is rejected with an error.
  */
 
-var http = require('http');
-http.globalAgent.maxSockets = 9;
+var path = require('path')
+var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 
-var elasticdump                = require( __dirname + '/../elasticdump.js' ).elasticdump;
-var request                    = require('request');
-var should                     = require('should');
-var fs                         = require('fs');
-var baseUrl                    = 'http://127.0.0.1:9200/';
-
-var pcInitElementCount         = 250;
-var pcInitIndexName            = 'esdump-pcinit';
-var pcCopyIndexName            = 'esdump-pccopy';
-var pcRestoreIndexName         = 'esdump-pcrestored';
-var pcDumpMappingFile          = '/tmp/esdump.mapping.json';
-var pcDumpDataFile             = '/tmp/esdump.data.json';
-var pcInitIndexSettings        = {
-  index: {
-    number_of_shard: 2,
-    number_of_replicas: 0,
-    refresh: '1s'
-  }
-};
-var pcInitIndexMapping         = {
-  units: {
-    dynamic: 'strict',
-    properties: {},
-    _parent: {
-      type: 'tens'
-    },
-    _routing: {
-      required: true
-    }
-  },
-  tens: {
-    dynamic: 'strict',
-    properties: {}
-  }
-};
-
-var testTimeout                = pcInitElementCount * 100;
-
-/////////////// Suite ////////////////////////////
-describe('Parent-Child Test Suite', pcSuite);
-
-function pcSuite() {
-  describe('Initial index creation', function() {
-    before(pcInit);
-    after(pcCleanup);
-
-    it('exists', testIndexExists(pcInitIndexName));
-    it('has correct mappings', testIndexMappings(pcInitIndexName));
-    it('has correct # of elements', testIndexElements(pcInitIndexName));
-    it('has no orphans', testIndexNoOrphans(pcInitIndexName));
-  });
-
-  describe('Copy from ES to ES', function() {
-    before(pcInit);
-    after(pcCleanup);
-
-    it('can copy a whole index mappings',
-       testIndexCopy(pcInitIndexName, pcCopyIndexName, 'mapping'));
-
-    it('dest. exists',
-       testIndexExists(pcCopyIndexName));
-    it('dest. has correct mappings',
-       testIndexMappings(pcCopyIndexName));
-
-    it('can copy a whole index data',
-       testIndexCopy(pcInitIndexName, pcCopyIndexName, 'data'));
-
-    it('dest. has correct # of elements',
-       testIndexElements(pcCopyIndexName));
-    it('dest. has no orphans',
-       testIndexNoOrphans(pcCopyIndexName));
-  });
-
-  describe('Dump from ES to a file, then restore', function() {
-    before(pcInit);
-    after(pcCleanup);
-
-    describe('mappings', function() {
-      it('can dump an index mappings to a file',
-         testDumpIndex(pcInitIndexName, pcDumpMappingFile, 'mapping'));
-      it('can restore an index mappings from a file',
-         testRestoreIndex(pcDumpMappingFile, pcRestoreIndexName, 'mapping'));
-
-      it('restored index exists',
-         testIndexExists(pcRestoreIndexName));
-      it('restored index has correct mappings',
-         testIndexMappings(pcRestoreIndexName));
-    });
-
-    describe('data', function() {
-      it('can dump an index data to a file',
-         testDumpIndex(pcInitIndexName, pcDumpMappingFile, 'data'));
-      it('can restore an index data from a file',
-         testRestoreIndex(pcDumpMappingFile, pcRestoreIndexName, 'data'));
-
-      it('restored index has correct # of elements',
-         testIndexElements(pcRestoreIndexName));
-      it('restored index has no orphans',
-         testIndexNoOrphans(pcRestoreIndexName));
-    });
-  });
+var should = require('should')
+var fs = require('fs')
+var async = require('async')
+var baseUrl = 'http://127.0.0.1:9200'
+var indexes = ['source_index', 'destination_index', 'file_destination_index', 'another_index']
+var files = ['/tmp/mapping.json', '/tmp/data.json']
+var cities = ['new_york', 'san_francisco', 'london', 'tokyo']
+var people = ['evan', 'christina', 'pablo', 'brian', 'aaron']
+var mapping = {
+  city: {},
+  person: { _parent: { type: 'city' } }
 }
 
-/////////////// Hooks ////////////////////////////
-function pcInit(done) {
-  this.timeout(testTimeout);
-  var exist = false;
-  var setExist = function(bool) { exist = bool; }
-  var continuation = function(done) {
-    pathMustExists(pcInitIndexName + '/_refresh', false, done);
-  };
-  var fillIndex = function(done) {
-    var counter = {
-      count: pcInitElementCount,
-      dec: function() { return (--(this.count)); }
-    };
-    for (var i=0; i<pcInitElementCount; i++) {
-      insertElement(pcInitIndexName, i, done, counter, continuation);
-    }
-  };
+var request = require('request').defaults({
+  headers: {
+    'User-Agent': 'elasticdump',
+    'Content-Type': 'application/json'
+  }})
 
-  pathExists(pcInitIndexName, setExist, done);
+var clear = function (callback) {
+  var jobs = []
+  indexes.forEach(function (index) {
+    jobs.push(function (done) {
+      request.del(baseUrl + '/' + index, done)
+    })
+  })
 
-  if (exist)
-    return done(new Error(" Index '" + pcInitIndexName + "' already exists"));
+  files.forEach(function (file) {
+    jobs.push(function (done) {
+      try {
+        fs.unlinkSync(file)
+      } catch (e) { }
+      done()
+    })
+  })
 
-  putMappingThen(pcInitIndexName,
-                 { mappings: pcInitIndexMapping,
-                   settings: pcInitIndexSettings },
-                 done,
-                 fillIndex);
+  async.series(jobs, callback)
 }
 
-function pcCleanup(done) {
-  this.timeout(testTimeout);
-  request.del(baseUrl + pcInitIndexName,
-              function(err, resp, body) {
-                request.del(baseUrl + pcCopyIndexName,
-                            function(err, resp, body) {
-                              request.del(baseUrl + pcRestoreIndexName,
-                                          function(err, resp, body) {
-                                            done();
-                                          });
-                            });
-              });
-  fs.unlink(pcDumpMappingFile, function(ex) {});
-  fs.unlink(pcDumpDataFile, function(ex) {});
+var setup = function (callback) {
+  var jobs = []
+
+  jobs.push(function (done) {
+    var url = baseUrl + '/source_index'
+    var payload = {mappings: mapping}
+    request.put(url, {body: JSON.stringify(payload)}, done)
+  })
+
+  cities.forEach(function (city) {
+    jobs.push(function (done) {
+      var url = baseUrl + '/source_index/city/' + city
+      var payload = {name: city}
+      request.put(url, {body: JSON.stringify(payload)}, done)
+    })
+
+    people.forEach(function (person) {
+      jobs.push(function (done) {
+        var url = baseUrl + '/source_index/person/' + person + '_' + city + '?parent=' + city
+        var payload = {name: person, city: city}
+        request.put(url, {body: JSON.stringify(payload)}, done)
+      })
+    })
+  })
+
+  jobs.push(function (done) {
+    setTimeout(done, 6000)
+  })
+
+  async.series(jobs, callback)
 }
 
-/////////////// Tests ////////////////////////////
-function testIndexExists(index) {
-  return (function(done) {
-    this.timeout(testTimeout);
-    pathMustExists(index, false, done);
-  });
+var describex = describe
+
+if (process.env.ES_VERSION === '6.0.0') {
+  // short-circuit the describex to skip-fast
+  // if the ES_VERSION is 6
+  describex = describe.skip
 }
 
-function testIndexMappings(index) {
-  var checkMapping = function(body, done) {
-    should.deepEqual(body[index], { mappings: pcInitIndexMapping});
-    done();
-  };
-  return (function(done) {
-    this.timeout(testTimeout);
-    pathMustExists(index + '/_mapping', checkMapping, done);
-  });
-}
+describex('parent child', function () {
+  before(function (done) {
+    this.timeout(15 * 1000)
+    clear(function (error) {
+      if (error) { return done(error) }
+      setup(done)
+    })
+  })
 
-function testIndexElements(index) {
-  var checkElements = function(body, done) {
-    should.equal(body.hits.total, pcInitElementCount);
-    done();
-  };
-  return (function(done) {
-    this.timeout(testTimeout);
-    pathMustExists(index + '/_search?search_type=count', checkElements, done);
-  });
-}
+  after(clear)
 
-function testIndexNoOrphans(index) {
-  var checkCount = function(body, done) {
-    should.equal(body.hits.total, 0);
-    done();
-  };
-  return (function(done) {
-    this.timeout(testTimeout);
-    esCountOrphans(index, 'units', 'tens', checkCount, done);
-  });
-}
+  it('did the setup properly and parents + children are loaded', function (done) {
+    var url = baseUrl + '/source_index/_search'
+    request.get(url, function (err, response, body) {
+      should.not.exist(err)
+      body = JSON.parse(body)
 
-function testIndexCopy(src, dst, type) {
-  var options = {
-    limit:  100,
-    offset: 0,
-    debug:  true,
-    type:   type,
-    input:  baseUrl + src,
-    output: baseUrl + dst,
-    scrollTime: '10m'
-  };
-  var dumper = new elasticdump(options.input, options.output, options);
+      // this confirms that there are no orphans too!
+      body.hits.total.should.equal(cities.length + (cities.length * people.length))
+      done()
+    })
+  })
 
-  return (function(done) {
-    this.timeout(testTimeout);
-    dumper.dump(function(err, writes) {
-      should.not.exists(err);
-      pathMustExists(dst + '/_refresh', false, done);
-    });
-  });
-}
-
-function testDumpIndex(index, file, type) {
-  var options = {
-    limit:  100,
-    offset: 0,
-    debug:  true,
-    type:   type,
-    input:  baseUrl + index,
-    output: file,
-    scrollTime: '10m'
-  };
-
-  var dumper = new elasticdump(options.input, options.output, options);
-
-  return (function(done) {
-    this.timeout(testTimeout);
-    if(fs.existsSync(file)){ fs.unlinkSync(file); }
-    dumper.dump(function(err, writes) {
-      should.not.exists(err);
-      done();
-    });
-  });
-}
-
-function testRestoreIndex(file, index, type) {
-  var options = {
-    limit:  100,
-    offset: 0,
-    debug:  true,
-    type:   type,
-    input:  file,
-    output: baseUrl + index,
-    scrollTime: '10m'
-  };
-  var dumper = new elasticdump(options.input, options.output, options);
-
-  return (function(done) {
-    this.timeout(testTimeout);
-    dumper.dump(function(err, writes) {
-      should.not.exists(err);
-      pathMustExists(index + '/_refresh', false, done);
-    });
-  });
-}
-
-/////////////// Utils ////////////////////////////
-function requestCont(callback, done) {
-  return function(err, resp, body) {
-    if (err) return done(err);
-    callback(resp, body, done);
-  };
-}
-
-function pathMustExists(path, callback, done) {
-  var exists = function(resp, body, done) {
-    if (resp.statusCode == 200) {
-      if (callback)
-        callback(JSON.parse(body), done);
-      else
-        done();
-    } else if (resp.statusCode == 404) {
-      done(new Error("Path '" + path + "' does not exist."));
-    } else {
-      done(new Error(body));
-    }
-  };
-  request.get(baseUrl + '/' + path, requestCont(exists, done));
-}
-
-function pathExists(path, callback, done) {
-  var exists = function(resp, body, done) {
-    if (resp.statusCode == 200) {
-      callback(true);
-    } else if (resp.statusCode == 404) {
-      callback(false);
-    } else {
-      console.log("pathExists for '" + path + "' returned " + resp.statusCode);
-      done(body);
-    }
-  };
-  request.get(baseUrl + '/' + path, requestCont(exists, done));
-}
-
-function putMappingThen(path, mapping, done, then) {
-  request.put(baseUrl + path,
-              { body: JSON.stringify(mapping) },
-              function(err, resp, body) {
-                if (err) return done(err);
-                if (resp.statusCode == 400) {
-                  return done(new Error("Put Mapping failed for '" + path + "': " + body));
+  describex('each city should have children', function () {
+    cities.forEach(function (city) {
+      it(city + ' should have children', function (done) {
+        var url = baseUrl + '/source_index/_search'
+        var payload = {
+          'query': {
+            'has_parent': {
+              'parent_type': 'city',
+              'query': {
+                'wildcard': {
+                  'name': ''
                 }
-                then(done);
-              });
-}
-
-function insertElement(index, element, done, counter, continuation) {
-  var routing = '', parent, type;
-  var putURI, putParams = '';
-
-  if (element % 10 == 0) {
-    type = 'tens';
-  } else {
-    type = 'units';
-    parent = parseInt(Math.floor(element/10)*10);
-    routing = parent;
-  }
-
-  putURI = baseUrl + index + '/' + type + '/' + element;
-
-  if (parent !== undefined) {
-    putParams = '?routing=' + encodeURIComponent(routing)
-      + '&parent=' + encodeURIComponent(parent);
-  }
-
-  request.put(putURI + putParams,
-              { body: JSON.stringify({}) },
-              function(err, resp, body) {
-                if(err) return done(err);
-                if (resp.statusCode == 400) {
-                  return done(new Error("Index failed for '" + putURI + "': " + body));
-                }
-                if(counter.dec() == 0) {
-                  continuation(done);
-                }
-              });
-}
-
-function esCountOrphans(index, type, ptype, callback, done) {
-  var uri = baseUrl + index + '/' + type + '/_search?search_type=count';
-  var body = {
-    filter: {
-        not: {
-          filter: {
-            has_parent: {
-              parent_type: ptype,
-              query: {
-                match_all: {}
               }
             }
           }
         }
-    }
-  };
-  var continuation = function(resp, body, done) {
-    if (resp.statusCode == 400) {
-      return done(new Error("Query failed for '" + uri + "': " + body));
-    }
-    if (resp.statusCode == 404) {
-      return done(new Error("No such index '" + index + "': " + body));
-    }
-    callback(JSON.parse(body), done);
-  };
+        payload.query.has_parent.query.wildcard.name = '*' + city + '*'
 
-  request.post(uri,
-               { body: JSON.stringify(body) },
-               requestCont(continuation, done));
-}
+        request.get(url, {body: JSON.stringify(payload)}, function (err, response, body) {
+          should.not.exist(err)
+          body = JSON.parse(body)
+          body.hits.total.should.equal(people.length)
+          done()
+        })
+      })
+    })
+  })
+
+  describex('ES to ES dump should maintain parent-child relationships', function () {
+    before(function (done) {
+      this.timeout(2000 * 10)
+      var jobs = []
+
+      var mappingOptions = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'mapping',
+        input: baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      }
+
+      var dataOptions = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'data',
+        input: baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      }
+
+      var mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
+      var dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
+
+      mappingDumper.on('error', function (error) { throw (error) })
+      dataDumper.on('error', function (error) { throw (error) })
+
+      jobs.push(function (next) { mappingDumper.dump(next) })
+      jobs.push(function (next) { setTimeout(next, 5001) })
+      jobs.push(function (next) { dataDumper.dump(next) })
+      jobs.push(function (next) { setTimeout(next, 5001) })
+
+      async.series(jobs, done)
+    })
+
+    it('the dump transfered', function (done) {
+      var url = baseUrl + '/destination_index/_search'
+      request.get(url, function (err, response, body) {
+        should.not.exist(err)
+        body = JSON.parse(body)
+        // this confirms that there are no orphans too!
+        body.hits.total.should.equal(cities.length + (cities.length * people.length))
+        done()
+      })
+    })
+
+    describex('each city should have children', function () {
+      cities.forEach(function (city) {
+        it(city + ' should have children', function (done) {
+          var url = baseUrl + '/destination_index/_search'
+          var payload = {
+            'query': {
+              'has_parent': {
+                'parent_type': 'city',
+                'query': {
+                  'wildcard': {
+                    'name': ''
+                  }
+                }
+              }
+            }
+          }
+          payload.query.has_parent.query.wildcard.name = '*' + city + '*'
+
+          request.get(url, {body: JSON.stringify(payload)}, function (err, response, body) {
+            should.not.exist(err)
+            body = JSON.parse(body)
+            body.hits.total.should.equal(people.length)
+            done()
+          })
+        })
+      })
+    })
+  })
+
+  describex('ES to File and back to ES should work', function () {
+    before(function (done) {
+      this.timeout(2000 * 10)
+      var jobs = []
+
+      var mappingOptions = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'mapping',
+        input: baseUrl + '/source_index',
+        output: '/tmp/mapping.json',
+        scrollTime: '10m'
+      }
+
+      var dataOptions = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'data',
+        input: baseUrl + '/source_index',
+        output: '/tmp/data.json',
+        scrollTime: '10m'
+      }
+
+      var mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
+      var dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
+
+      mappingDumper.on('error', function (error) { throw (error) })
+      dataDumper.on('error', function (error) { throw (error) })
+
+      jobs.push(function (next) { mappingDumper.dump(next) })
+      jobs.push(function (next) { setTimeout(next, 5001) })
+      jobs.push(function (next) { dataDumper.dump(next) })
+      jobs.push(function (next) { setTimeout(next, 5001) })
+
+      async.series(jobs, done)
+    })
+
+    it('the dump files should have worked', function (done) {
+      var mapping = String(fs.readFileSync('/tmp/mapping.json'))
+      var data = String(fs.readFileSync('/tmp/data.json'))
+      var mappingLines = []
+      var dataLines = []
+
+      mapping.split('\n').forEach(function (line) {
+        if (line.length > 2) { mappingLines.push(JSON.parse(line)) }
+      })
+      data.split('\n').forEach(function (line) {
+        if (line.length > 2) { dataLines.push(JSON.parse(line)) }
+      })
+
+      mappingLines.length.should.equal(1)
+      Object.keys(mappingLines[0].source_index.mappings).length.should.equal(2)
+      should.not.exist(mappingLines[0].source_index.mappings.city._parent)
+      mappingLines[0].source_index.mappings.person._parent.type.should.equal('city')
+
+      var dumpedPeople = []
+      var dumpedCties = []
+      dataLines.forEach(function (d) {
+        if (d._type === 'person') {
+          var parent
+          if (d._parent) { parent = d._parent } // ES 2.x
+          if (d.fields && d.fields._parent) { parent = d.fields._parent } // ES 1.x
+          should.exist(parent)
+          dumpedPeople.push(d)
+        }
+        if (d._type === 'city') {
+          should.not.exist(d._parent)
+          dumpedCties.push(d)
+        }
+      })
+
+      dumpedPeople.length.should.equal(cities.length * people.length)
+      dumpedCties.length.should.equal(cities.length)
+
+      done()
+    })
+
+    describex('can restore from a dumpfile', function () {
+      before(function (done) {
+        this.timeout(2000 * 10)
+        var jobs = []
+
+        var mappingOptions = {
+          limit: 100,
+          offset: 0,
+          debug: true,
+          type: 'mapping',
+          input: '/tmp/mapping.json',
+          output: baseUrl + '/file_destination_index'
+        }
+
+        var dataOptions = {
+          limit: 100,
+          offset: 0,
+          debug: true,
+          type: 'data',
+          input: '/tmp/data.json',
+          output: baseUrl + '/file_destination_index'
+        }
+
+        var mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
+        var dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
+
+        mappingDumper.on('error', function (error) { throw (error) })
+        dataDumper.on('error', function (error) { throw (error) })
+
+        jobs.push(function (next) { mappingDumper.dump(next) })
+        jobs.push(function (next) { setTimeout(next, 5001) })
+        jobs.push(function (next) { dataDumper.dump(next) })
+        jobs.push(function (next) { setTimeout(next, 5001) })
+
+        async.series(jobs, done)
+      })
+
+      it('the dump transfered', function (done) {
+        var url = baseUrl + '/file_destination_index/_search'
+        request.get(url, function (err, response, body) {
+          should.not.exist(err)
+          body = JSON.parse(body)
+          // this confirms that there are no orphans too!
+          body.hits.total.should.equal(cities.length + (cities.length * people.length))
+          done()
+        })
+      })
+
+      describex('each city should have children', function () {
+        cities.forEach(function (city) {
+          it(city + ' should have children', function (done) {
+            var url = baseUrl + '/file_destination_index/_search'
+            var payload = {
+              'query': {
+                'has_parent': {
+                  'parent_type': 'city',
+                  'query': {
+                    'wildcard': {
+                      'name': ''
+                    }
+                  }
+                }
+              }
+            }
+            payload.query.has_parent.query.wildcard.name = '*' + city + '*'
+
+            request.get(url, {body: JSON.stringify(payload)}, function (err, response, body) {
+              should.not.exist(err)
+              body = JSON.parse(body)
+              body.hits.total.should.equal(people.length)
+              done()
+            })
+          })
+        })
+      })
+    })
+  })
+})
