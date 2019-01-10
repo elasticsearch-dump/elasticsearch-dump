@@ -1,7 +1,7 @@
 elasticdump
 ==================
 
-Tools for moving and saving indicies.
+Tools for moving and saving indices.
 
 ![picture](https://raw.github.com/taskrabbit/elasticsearch-dump/master/elasticdump.jpg)
 
