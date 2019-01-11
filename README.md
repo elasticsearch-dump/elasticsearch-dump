@@ -253,7 +253,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
 --type
                     What are we exporting?
-                    (default: data, options: [settings, analyzer, data, mapping, alias, template])
+                    (default: data, options: [settings, analyzer, mapping, data, alias, template])
+		    Note: If running elasticdump separately for each of these, ensure that 'mapping' is
+		    imported first and then 'data'. 	    
+		    
+		    
 --delete
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
