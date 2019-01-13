@@ -164,6 +164,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     AWS access key ID
 --s3SecretAccessKey
                     AWS secret access key
+--s3Region          
+                    AWS region
 --s3Bucket
                     Name of the bucket to which the data will be uploaded
 --s3RecordKey

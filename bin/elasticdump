@@ -40,6 +40,7 @@ var defaults = {
   awsIniFileProfile: null,
   s3AccessKeyId: null,
   s3SecretAccessKey: null,
+  s3Region: null,
   s3Bucket: null,
   s3RecordKey: null,
   awsIniFileName: null,
