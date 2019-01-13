@@ -391,8 +391,22 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --s3Bucket
                     Name of the bucket to which the data will be uploaded
 --s3RecordKey
-                    Object key (filename) for the data to be uploaded
-                                                          
+                    Object key (filename) for the data to be uploaded 
+--tlsAuth
+                    Enable TLS X509 client authentication
+--cert, --input-cert, --output-cert
+                    Client certificate file. Use --cert if source and destination are identical.
+                    Otherwise, use the one prefixed with --input or --output as needed.
+--key, --input-key, --output-key
+                    Private key file. Use --key if source and destination are identical.
+                    Otherwise, use the one prefixed with --input or --output as needed.
+--pass, --input-pass, --output-pass
+                    Pass phrase for the private key. Use --pass if source and destination are identical.
+                    Otherwise, use the one prefixed with --input or --output as needed.
+--ca, --input-ca, --output-ca
+                    CA certificate. Use --ca if source and destination are identical.
+                    Otherwise, use the one prefixed with --input or --output as needed.
+
 --help
                     This page
 ```

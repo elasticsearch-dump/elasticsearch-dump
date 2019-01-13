@@ -53,7 +53,20 @@ var defaults = {
   retryAttempts: 0,
   retryDelay: 5000,
   parseExtraFields: '',
-  fileSize: -1
+  fileSize: -1,
+  cert: null,
+  key: null,
+  pass: null,
+  ca: null,
+  tlsAuth: false,
+  'input-cert': null,
+  'input-key': null,
+  'input-pass': null,
+  'input-ca': null,
+  'output-cert': null,
+  'output-key': null,
+  'output-pass': null,
+  'output-ca': null
 }
 var jsonParsedOpts = ['searchBody', 'headers', 'params']
 var options = {}
