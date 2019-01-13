@@ -57,6 +57,7 @@ var defaults = {
   key: null,
   pass: null,
   ca: null,
+  tlsAuth: false,
   'input-cert': null,
   'input-key': null,
   'input-pass': null,
