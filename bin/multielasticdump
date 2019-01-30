@@ -45,6 +45,7 @@ const defaults = {
   interval: 1000,
   prefix: '',
   suffix: '',
+  transform: null,
   searchBody: null
 }
 
@@ -71,25 +72,25 @@ _.split(options.ignoreType, ',').forEach(field => {
 const log = (type, message) => {
   if (type === 'debug') {
     if (options.debug === true) {
-      message = '[debug] | ' + message
+      message = `[debug] | ${message}`
     } else {
       return false
     }
   } else {
-    message = (new Date().toUTCString()) + ' | ' + message
+    message = `${new Date().toUTCString()} | ${message}`
   }
   console.log(message)
 }
 
 if (!options.input) { throw new Error('--input is required') }
 if (!options.output) { throw new Error('--output is required') }
-log('info', 'We are performing : ' + options.direction)
-log('info', 'options: ' + JSON.stringify(options))
+log('info', `We are performing : ${options.direction}`)
+log('info', `options: ${JSON.stringify(options)}`)
 
 const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
   if (!fs.existsSync(options.output)) { throw new Error('--output does not exist') }
-  request.get(options.input + '/_aliases', (err, response) => {
+  request.get(`${options.input}/_aliases`, (err, response) => {
     if (err) {
       log('err', err)
       process.exit()
@@ -118,7 +119,7 @@ if (options.direction === 'load') {
       .replace('.alias.json', '')
       .replace('.json', '')).filter(item => matchRegExp.test(item))
     matchedIndexes = unique(matchedIndexes)
-    log('info', 'list of indexes' + JSON.stringify(matchedIndexes))
+    log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
     loadWork()
   })
@@ -163,22 +164,22 @@ const dump = () => {
 
   indexCounter++
 
-  const input = options.input + '/' + encodeURIComponent(index).toLowerCase()
-  const outputData = options.output + '/' + index + '.json'
-  const outputMapping = options.output + '/' + index + '.mapping.json'
-  const outputAnalyzer = options.output + '/' + index + '.analyzer.json'
-  const outputAlias = options.output + '/' + index + '.alias.json'
+  const input = `${options.input}/${encodeURIComponent(index).toLowerCase()}`
+  const outputData = `${options.output}/${index}.json`
+  const outputMapping = `${options.output}/${index}.mapping.json`
+  const outputAnalyzer = `${options.output}/${index}.analyzer.json`
+  const outputAlias = `${options.output}/${index}.alias.json`
 
   const jobs = []
 
   jobs.push(done => {
     if (options.ignoreMapping) return done()
-    log('info', 'dumping ' + input + ' to ' + outputMapping)
+    log('info', `dumping ${input} to ${outputMapping}`)
 
     const mappingChild = fork(path.join(__dirname, 'elasticdump'), [
-      '--type=' + 'mapping',
-      '--input=' + input,
-      '--output=' + outputMapping
+      '--type=mapping',
+      `--input=${input}`,
+      `--output=${outputMapping}`
     ])
 
     mappingChild.on('close', code => {
@@ -192,12 +193,12 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreAnalyzer) return done()
-    log('info', 'analyzer ' + input + ' to ' + outputAnalyzer)
+    log('info', `analyzer ${input} to ${outputAnalyzer}`)
 
     const analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
-      '--type=' + 'analyzer',
-      '--input=' + input,
-      '--output=' + outputAnalyzer
+      '--type=analyzer',
+      `--input=${input}`,
+      `--output=${outputAnalyzer}`
     ])
 
     analyzerChild.on('close', code => {
@@ -211,12 +212,12 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreAlias) return done()
-    log('info', 'analyzer ' + input + ' to ' + outputAlias)
+    log('info', `analyzer ${input} to ${outputAlias}`)
 
     const analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
-      '--type=' + 'alias',
-      '--input=' + input,
-      '--output=' + outputAlias
+      '--type=alias',
+      `--input=${input}`,
+      `--output=${outputAlias}`
     ])
 
     analyzerChild.on('close', code => {
@@ -230,16 +231,16 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreData) return done()
-    log('info', 'dumping ' + input + ' to ' + outputData)
+    log('info', `dumping ${input} to ${outputData}`)
 
     const dataChild = fork(path.join(__dirname, 'elasticdump'), [
-      '--type=' + 'data',
-      '--input=' + input,
-      '--output=' + outputData,
-      '--scrollTime=' + options.scrollTime,
-      '--limit=' + options.limit,
-      '--offset=' + options.offset,
-      '--searchBody=' + options.searchBody
+      '--type=data',
+      `--input=${input}`,
+      `--output=${outputData}`,
+      `--scrollTime=${options.scrollTime}`,
+      `--limit=${options.limit}`,
+      `--offset=${options.offset}`,
+      `--searchBody=${options.searchBody}`
     ])
 
     dataChild.on('close', code => {
@@ -271,26 +272,26 @@ const load = () => {
     return
   }
 
-  log('info', 'Working on ' + index)
+  log('info', `Working on ${index}`)
 
   indexCounter++
 
-  const output = options.output + '/' + encodeURIComponent(index).toLowerCase()
-  const inputData = options.input + '/' + index + '.json'
-  const inputMapping = options.input + '/' + index + '.mapping.json'
-  const inputAnalyzer = options.input + '/' + index + '.analyzer.json'
-  const inputAlias = options.input + '/' + index + '.alias.json'
+  const output = `${options.output}/${encodeURIComponent(index).toLowerCase()}`
+  const inputData = `${options.input}/${index}.json`
+  const inputMapping = `${options.input}/${index}.mapping.json`
+  const inputAnalyzer = `${options.input}/${index}.analyzer.json`
+  const inputAlias = `${options.input}/${index}.alias.json`
 
   const jobs = []
 
   jobs.push(done => {
     if (options.ignoreAnalyzer) return done()
-    log('info', 'indexing analyzer ' + inputAnalyzer + ' to ' + output)
+    log('info', `indexing analyzer ${inputAnalyzer} to ${output}`)
 
     const analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
-      '--type=' + 'analyzer',
-      '--input=' + inputAnalyzer,
-      '--output=' + output
+      '--type=analyzer',
+      `--input=${inputAnalyzer}`,
+      `--output=${output}`
     ])
 
     analyzerChild.on('close', code => {
@@ -304,12 +305,12 @@ const load = () => {
 
   jobs.push(done => {
     if (options.ignoreMapping) return done()
-    log('info', 'indexing mapping ' + inputMapping + ' to ' + output)
+    log('info', `indexing mapping ${inputMapping} to ${output}`)
 
     const mappingChild = fork(path.join(__dirname, 'elasticdump'), [
-      '--type=' + 'mapping',
-      '--input=' + inputMapping,
-      '--output=' + output
+      '--type=mapping',
+      `--input=${inputMapping}`,
+      `--output=${output}`
     ])
 
     mappingChild.on('close', code => {
@@ -323,12 +324,12 @@ const load = () => {
 
   jobs.push(done => {
     if (options.ignoreAlias) return done()
-    log('info', 'indexing alias ' + inputAlias + ' to ' + output)
+    log('info', `indexing alias ${inputAlias} to ${output}`)
 
     const mappingChild = fork(path.join(__dirname, 'elasticdump'), [
-      '--type=' + 'alias',
-      '--input=' + inputAlias,
-      '--output=' + output
+      '--type=alias',
+      `--input=${inputAlias}`,
+      `--output=${output}`
     ])
 
     mappingChild.on('close', code => {
@@ -342,19 +343,31 @@ const load = () => {
 
   jobs.push(done => {
     if (options.ignoreData) return done()
-    log('info', 'indexing data ' + inputData + ' to ' + output)
+    log('info', `indexing data ${inputData} to ${output}`)
+
+    let _transform = []
+
+    if (options.transform) {
+      _transform = _.chain(options.transform)
+        .castArray()
+        .filter(_.negate(_.isEmpty))
+        .map(t => {
+          return `--transform=${t}`
+        })
+        .value()
+    }
 
     const dataChild = fork(path.join(__dirname, 'elasticdump'), [
-      '--type=' + 'data',
-      '--input=' + inputData,
-      '--output=' + output,
-      '--scrollTime=' + options.scrollTime,
-      '--timeout=' + options.timeout,
-      '--limit=' + options.limit,
-      '--offset=' + options.offset,
-      '--prefix=' + options.prefix,
-      '--suffix=' + options.suffix
-    ])
+      '--type=data',
+      `--input=${inputData}`,
+      `--output=${output}`,
+      `--scrollTime=${options.scrollTime}`,
+      `--timeout=${options.timeout}`,
+      `--limit=${options.limit}`,
+      `--offset=${options.offset}`,
+      `--prefix=${options.prefix}`,
+      `--suffix=${options.suffix}`
+    ].concat(_transform))
 
     dataChild.on('close', code => {
       if (code !== 0) {
