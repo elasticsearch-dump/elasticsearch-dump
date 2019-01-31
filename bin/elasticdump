@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-var argv = require('optimist').argv
-var path = require('path')
-var fs = require('fs')
-var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
-var packageData = require(path.join(__dirname, '..', 'package.json'))
-var isUrl = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
+const argv = require('optimist').argv
+const path = require('path')
+const fs = require('fs')
+const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
+const packageData = require(path.join(__dirname, '..', 'package.json'))
+const isUrl = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
-var defaults = {
+const defaults = {
   size: -1,
   limit: 100,
   offset: 0,
@@ -68,8 +68,8 @@ var defaults = {
   'output-pass': null,
   'output-ca': null
 }
-var jsonParsedOpts = ['searchBody', 'headers', 'params']
-var options = {}
+const jsonParsedOpts = ['searchBody', 'headers', 'params']
+const options = {}
 
 // parse passed options & use defaults otherwise
 for (var i in defaults) {
@@ -84,19 +84,19 @@ for (var i of jsonParsedOpts) {
   if (options[i]) { options[i] = JSON.parse(options[i]) }
 }
 
-var log = function (type, message) {
+const log = function (type, message) {
   if (type === 'debug') {
     if (options.debug === true) {
-      message = new Date().toUTCString() + ' [debug] | ' + message
+      message = `${new Date().toUTCString()} [debug] | ${message}`
       console.log(message)
     } else {
       return false
     }
   } else if (type === 'error') {
-    message = (new Date().toUTCString()) + ' | ' + message
+    message = `${new Date().toUTCString()} | ${message}`
     console.error(message)
   } else if (options.quiet === false) {
-    message = (new Date().toUTCString()) + ' | ' + message
+    message = `${new Date().toUTCString()} | ${message}`
     console.log(message)
   } else {
     return false
@@ -104,7 +104,7 @@ var log = function (type, message) {
 }
 
 if (argv.help === true) {
-  var helpText = require('fs').readFileSync(path.join(__dirname, '..', 'lib', 'help.txt'))
+  let helpText = require('fs').readFileSync(path.join(__dirname, '..', 'lib', 'help.txt'))
   helpText = helpText.toString()
   helpText = helpText.replace('%%version%%', packageData.version)
   console.log(helpText)
@@ -112,14 +112,14 @@ if (argv.help === true) {
   console.log(packageData.version)
 } else {
   if (options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output)) {
-    throw new Error('File `' + options.output + '` already exists, quitting')
+    throw new Error(`File \`${options.output}\` already exists, quitting`)
   }
 
-  var dumper = new Elasticdump(options.input, options.output, options)
+  const dumper = new Elasticdump(options.input, options.output, options)
 
   dumper.on('log', function (message) { log('log', message) })
   dumper.on('debug', function (message) { log('debug', message) })
-  dumper.on('error', function (error) { log('error', 'Error Emitted => ' + (error.message || JSON.stringify(error))) })
+  dumper.on('error', function (error) { log('error', `Error Emitted => ${error.message || JSON.stringify(error)}`) })
 
   dumper.dump(function (error) {
     if (error) {
