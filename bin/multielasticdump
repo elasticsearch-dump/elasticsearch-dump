@@ -37,6 +37,7 @@ const defaults = {
   limit: 100,
   offset: 0,
   direction: 'dump', // default to dump
+  'support-big-int': false,
   ignoreAnalyzer: false,
   ignoreData: false,
   ignoreMapping: false,
@@ -366,7 +367,8 @@ const load = () => {
       `--limit=${options.limit}`,
       `--offset=${options.offset}`,
       `--prefix=${options.prefix}`,
-      `--suffix=${options.suffix}`
+      `--suffix=${options.suffix}`,
+      `--support-big-int=${options['support-big-int']}`
     ].concat(_transform))
 
     dataChild.on('close', code => {

@@ -446,6 +446,7 @@ The limited option set includes:
 - `interval`:     `1000`
 - `searchbody`: `null`
 - `transform`: `null`
+- `support-big-int`: `false`
 
 If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (i.e. `http://localhost:9200`) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.
 
