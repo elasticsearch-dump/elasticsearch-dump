@@ -184,6 +184,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --ca, --input-ca, --output-ca
                     CA certificate. Use --ca if source and destination are identical.
                     Otherwise, use the one prefixed with --input or --output as needed.
+--inputSocksProxy, --outputSocksProxy
+                    Socks5 host address
+--inputSocksPort, --outputSocksPort
+                    Socks5 host port
 --help
                     This page
 
