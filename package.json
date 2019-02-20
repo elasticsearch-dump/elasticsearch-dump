@@ -39,7 +39,9 @@
     "optimist": "latest",
     "request": "2.x.x",
     "requestretry": "^3.0.1",
-    "s3-stream-upload": "2.0.2"
+    "s3-stream-upload": "2.0.2",
+    "socks5-http-client": "^1.0.4",
+    "socks5-https-client": "^1.2.1"
   },
   "devDependencies": {
     "mocha": "latest",
