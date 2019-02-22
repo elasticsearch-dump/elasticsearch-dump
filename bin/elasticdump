@@ -43,6 +43,7 @@ const defaults = {
   s3Region: null,
   s3Bucket: null,
   s3RecordKey: null,
+  s3Compress: false,
   awsIniFileName: null,
   sessionToken: null,
   transform: null,
