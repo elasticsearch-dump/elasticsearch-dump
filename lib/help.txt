@@ -170,6 +170,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Name of the bucket to which the data will be uploaded
 --s3RecordKey
                     Object key (filename) for the data to be uploaded
+--s3Compress
+                    gzip data before sending to s3
 --tlsAuth
                     Enable TLS X509 client authentication
 --cert, --input-cert, --output-cert
