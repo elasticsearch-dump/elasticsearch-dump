@@ -33,8 +33,12 @@ before_install:
   - curl $ES_DOWNLOAD_URL > elasticsearch_package.deb
   ## Now, use the ENV to choose the version
   - sudo dpkg -i --force-confnew elasticsearch_package.deb
+  ## only serive discovery type for v7
+  - >
+    if [ "$ES_VERSION" == "7.0.0" ]; then echo "discovery.type: single-node" | sudo tee -a /etc/elasticsearch/elasticsearch.yml; else echo 0; fi
   - sudo service elasticsearch restart
   # ES needs some time to start
-  - sleep 15
+  - >
+    if [ "$ES_VERSION" == "7.0.0" ]; then sleep 60; else sleep 15; fi
   - curl http://localhost:9200
   # - curl -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{"index.number_of_replicas" : "0","index.number_of_shards" : "1"}'
