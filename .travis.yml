@@ -26,6 +26,7 @@ env:
     - "ES_VERSION=2.3.4 ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.4/elasticsearch-2.3.4.deb"
     - "ES_VERSION=5.6.4 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.4.deb"
     - "ES_VERSION=6.0.0 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0.deb"
+    - "ES_VERSION=7.0.0 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.0.0-beta1-amd64.deb"
 
 before_install:
   ## ES has different download locations for each version, so we'll download them both and then just use the one we want
