@@ -66,6 +66,8 @@ const clear = callback => {
   })
 }
 
+const getTotal = (body) => _.get(body, 'body.hits.total.value', body.hits.total)
+
 describe('ELASTICDUMP', () => {
   before(done => {
     request(baseUrl + '/_cat/indices', (err, response, body) => {
@@ -123,7 +125,7 @@ describe('ELASTICDUMP', () => {
     request.get(url, (err, response, body) => {
       should.not.exist(err)
       body = JSON.parse(body)
-      body.hits.total.should.equal(seedSize)
+      getTotal(body).should.equal(seedSize)
       done()
     })
   })
@@ -219,7 +221,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize)
+          getTotal(body).should.equal(seedSize)
           done()
         })
       })
@@ -247,7 +249,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize - 250)
+          getTotal(body).should.equal(seedSize - 250)
           done()
         })
       })
@@ -273,7 +275,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(5)
+          getTotal(body).should.equal(5)
           done()
         })
       })
@@ -298,7 +300,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize)
+          getTotal(body).should.equal(seedSize)
           done()
         })
       })
@@ -325,7 +327,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize)
+          getTotal(body).should.equal(seedSize)
           done()
         })
       })
@@ -351,7 +353,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(1)
+          getTotal(body).should.equal(1)
           done()
         })
       })
@@ -378,7 +380,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(113)
+          getTotal(body).should.equal(113)
           done()
         })
       })
@@ -409,7 +411,7 @@ describe('ELASTICDUMP', () => {
               should.not.exist(err)
               body = JSON.parse(body)
               try {
-                body.hits.total.should.equal(0)
+                getTotal(body).should.equal(0)
                 status = true
               } catch (err) {
                 status = false
@@ -456,7 +458,7 @@ describe('ELASTICDUMP', () => {
               should.not.exist(err)
               body = JSON.parse(body)
               try {
-                body.hits.total.should.equal(0)
+                getTotal(body).should.equal(0)
                 status = true
               } catch (err) {
                 status = false
@@ -497,7 +499,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(0)
+          getTotal(body).should.equal(0)
           const url = baseUrl + '/destination_index/_mapping'
           request.get(url, (err, response, body) => {
             should.not.exist(err)
@@ -588,8 +590,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          const total = _.get(body, 'body.hits.total.value', body.hits.total)
-          total.should.equal(seedSize)
+          getTotal(body).should.equal(seedSize)
           done()
         })
       })
@@ -614,8 +615,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          const total = _.get(body, 'body.hits.total.value', body.hits.total)
-          total.should.equal(seedSize)
+          getTotal(body).should.equal(seedSize)
           done()
         })
       })
@@ -642,7 +642,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize)
+          getTotal(body).should.equal(seedSize)
           totalWrites.should.equal(seedSize)
 
           dumperB.dump((err, totalWrites) => {
@@ -651,8 +651,7 @@ describe('ELASTICDUMP', () => {
             request.get(url, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
-              const total = _.get(body, 'body.hits.total.value', body.hits.total)
-              total.should.equal(seedSize)
+              getTotal(body).should.equal(seedSize)
               totalWrites.should.equal(seedSize)
               done()
             })
@@ -715,7 +714,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, destinationBody) => {
           should.not.exist(err)
           destinationBody = JSON.parse(destinationBody)
-          destinationBody.hits.total.should.equal(seedSize)
+          getTotal(destinationBody).should.equal(seedSize)
           dumper.input.reindex(() => {
             // Note: Depending on the speed of your ES server
             // all the elements might not be deleted when the HTTP response returns
@@ -726,8 +725,7 @@ describe('ELASTICDUMP', () => {
               request.get(url, (err, response, sourceBody) => {
                 should.not.exist(err)
                 sourceBody = JSON.parse(sourceBody)
-                const total = _.get(sourceBody, 'body.hits.total.value', sourceBody.hits.total)
-                total.should.equal(0)
+                getTotal(sourceBody).should.equal(0)
                 done()
               })
             }, 5 * seedSize)
@@ -817,8 +815,7 @@ describe('ELASTICDUMP', () => {
         request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          const total = _.get(body, 'body.hits.total.value', body.hits.total)
-          total.should.equal(seedSize)
+          getTotal(body).should.equal(seedSize)
           done()
         })
       })
@@ -848,8 +845,7 @@ describe('ELASTICDUMP', () => {
           should.not.exist(err)
           body = JSON.parse(body)
           // skips 250 so 250 less in there
-          const total = _.get(body, 'body.hits.total.value', body.hits.total)
-          total.should.equal(seedSize - 250)
+          getTotal(body).should.equal(seedSize - 250)
           done()
         })
       })
