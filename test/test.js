@@ -472,6 +472,7 @@ describe('ELASTICDUMP', () => {
             request.get(url, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
+              console.log('>>>>', body)
               body.destination_index.settings.index.analysis.analyzer.content.type.should.equal('custom')
               done()
             })
