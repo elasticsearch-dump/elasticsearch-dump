@@ -66,7 +66,7 @@ const clear = callback => {
   })
 }
 
-const getTotal = (body) => _.get(body, 'body.hits.total.value', body.hits.total)
+const getTotal = (body) => _.get(body, 'hits.total.value', body.hits.total)
 
 describe('ELASTICDUMP', () => {
   before(done => {
