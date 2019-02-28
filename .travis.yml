@@ -22,23 +22,17 @@ script: npm run test
 
 env:
   matrix:
-    - "ES_VERSION=1.5.0 ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.5.0.deb"
-    - "ES_VERSION=2.3.4 ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.3.4/elasticsearch-2.3.4.deb"
-    - "ES_VERSION=5.6.4 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.4.deb"
-    - "ES_VERSION=6.0.0 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0.deb"
-    - "ES_VERSION=7.0.0 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.0.0-beta1-amd64.deb"
+    - "ES_VERSION=1.5.0 ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz"
+    - "ES_VERSION=2.3.4 ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz"
+    - "ES_VERSION=5.6.4 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz"
+    - "ES_VERSION=6.0.0 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz"
+    - "ES_VERSION=7.0.0-beta1 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}-linux-x86_64.tar.gz"
 
 before_install:
   ## ES has different download locations for each version, so we'll download them both and then just use the one we want
-  - curl $ES_DOWNLOAD_URL > elasticsearch_package.deb
+  - curl -o elasticsearch.tar.gz ${ES_DOWNLOAD_URL}
   ## Now, use the ENV to choose the version
-  - sudo dpkg -i --force-confnew elasticsearch_package.deb
-  ## only serive discovery type for v7
-  - >
-    if [ "$ES_VERSION" == "7.0.0" ]; then echo "discovery.type: single-node" | sudo tee -a /etc/elasticsearch/elasticsearch.yml; else echo 0; fi
-  - sudo service elasticsearch restart
+  - tar -xzf elasticsearch.tar.gz
+  - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
   # ES needs some time to start
-  - >
-    if [ "$ES_VERSION" == "7.0.0" ]; then sleep 60; else sleep 15; fi
-  - curl http://localhost:9200
-  # - curl -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{"index.number_of_replicas" : "0","index.number_of_shards" : "1"}'
+  - wget -q --waitretry=1 --retry-connrefused -T 15 -O - http://127.0.0.1:9200
