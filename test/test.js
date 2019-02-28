@@ -9,6 +9,7 @@ const fs = require('fs')
 const os = require('os')
 const async = require('async')
 const _ = require('lodash')
+const jq = require('jsonpath')
 const baseUrl = 'http://127.0.0.1:9200'
 
 const seeds = {}
@@ -472,7 +473,6 @@ describe('ELASTICDUMP', () => {
             request.get(url, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
-              console.log('>>>>', body)
               body.destination_index.settings.index.analysis.analyzer.content.type.should.equal('custom')
               done()
             })
@@ -505,7 +505,7 @@ describe('ELASTICDUMP', () => {
           request.get(url, (err, response, body) => {
             should.not.exist(err)
             body = JSON.parse(body);
-            ['string', 'text'].should.containEql(body.destination_index.mappings.seeds.properties.key.type)
+            ['string', 'text'].should.containEql(jq.value(body, 'destination_index.mappings..properties.key.type'))
             done()
           })
         })
@@ -544,8 +544,10 @@ describe('ELASTICDUMP', () => {
       let templateFile = 'template_2x.json'
       if (process.env.ES_VERSION === '1.5.0') {
         templateFile = 'template_1x.json'
-      } else if (/[6-9]\.\d+\..+/.test(process.env.ES_VERSION)) {
+      } else if (process.env.ES_VERSION === '6.0.0') {
         templateFile = 'template_6x.json'
+      } else if (/[7-9]\.\d+\..+/.test(process.env.ES_VERSION)) {
+        templateFile = 'template_7x.json'
       }
 
       const templateFilePath = path.join(__dirname, 'test-resources', templateFile)
