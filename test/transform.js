@@ -46,6 +46,8 @@ var setup = function (callback) {
   async.series(jobs, callback)
 }
 
+const getTotal = (body) => _.get(body, 'hits.total.value', body.hits.total)
+
 describe('multiple transform scripts should be executed for written documents', function () {
   before(function (done) {
     this.timeout(1000 * 20)
@@ -88,7 +90,7 @@ describe('multiple transform scripts should be executed for written documents', 
     request.get(url, function (err, response, body) {
       should.not.exist(err)
       body = JSON.parse(body)
-      body.hits.total.should.equal(2)
+      getTotal(body).should.equal(2)
       body.hits.hits.forEach(function (doc) {
         doc._source.bar.should.equal(doc._source.foo * 2)
         doc._source.baz.should.equal(doc._source.bar + 3)
@@ -137,7 +139,7 @@ describe('external transform module should be executed for written documents', f
     request.get(url, function (err, response, body) {
       should.not.exist(err)
       body = JSON.parse(body)
-      body.hits.total.should.equal(2)
+      getTotal(body).should.equal(2)
       body.hits.hits.forEach(function (doc) {
         doc._source.bar.should.equal(
           crypto
