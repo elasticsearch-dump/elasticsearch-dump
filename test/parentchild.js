@@ -6,38 +6,39 @@
  * is rejected with an error.
  */
 
-var path = require('path')
-var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
+const path = require('path')
+const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 
-var should = require('should')
-var fs = require('fs')
-var async = require('async')
-var baseUrl = 'http://127.0.0.1:9200'
-var indexes = ['source_index', 'destination_index', 'file_destination_index', 'another_index']
-var files = ['/tmp/mapping.json', '/tmp/data.json']
-var cities = ['new_york', 'san_francisco', 'london', 'tokyo']
-var people = ['evan', 'christina', 'pablo', 'brian', 'aaron']
-var mapping = {
+const should = require('should')
+const fs = require('fs')
+const async = require('async')
+const baseUrl = 'http://127.0.0.1:9200'
+const indexes = ['source_index', 'destination_index', 'file_destination_index', 'another_index']
+const files = ['/tmp/mapping.json', '/tmp/data.json']
+const cities = ['new_york', 'san_francisco', 'london', 'tokyo']
+const people = ['evan', 'christina', 'pablo', 'brian', 'aaron']
+const mapping = {
   city: {},
-  person: { _parent: { type: 'city' } }
+  person: {_parent: {type: 'city'}}
 }
 
-var request = require('request').defaults({
+const request = require('request').defaults({
   headers: {
     'User-Agent': 'elasticdump',
     'Content-Type': 'application/json'
-  }})
+  }
+})
 
-var clear = function (callback) {
-  var jobs = []
-  indexes.forEach(function (index) {
-    jobs.push(function (done) {
+const clear = callback => {
+  const jobs = []
+  indexes.forEach(index => {
+    jobs.push(done => {
       request.del(baseUrl + '/' + index, done)
     })
   })
 
-  files.forEach(function (file) {
-    jobs.push(function (done) {
+  files.forEach(file => {
+    jobs.push(done => {
       try {
         fs.unlinkSync(file)
       } catch (e) { }
@@ -48,50 +49,50 @@ var clear = function (callback) {
   async.series(jobs, callback)
 }
 
-var setup = function (callback) {
-  var jobs = []
+const setup = callback => {
+  const jobs = []
 
-  jobs.push(function (done) {
-    var url = baseUrl + '/source_index'
-    var payload = {mappings: mapping}
+  jobs.push(done => {
+    const url = baseUrl + '/source_index'
+    const payload = {mappings: mapping}
     request.put(url, {body: JSON.stringify(payload)}, done)
   })
 
-  cities.forEach(function (city) {
-    jobs.push(function (done) {
-      var url = baseUrl + '/source_index/city/' + city
-      var payload = {name: city}
+  cities.forEach(city => {
+    jobs.push(done => {
+      const url = baseUrl + '/source_index/city/' + city
+      const payload = {name: city}
       request.put(url, {body: JSON.stringify(payload)}, done)
     })
 
-    people.forEach(function (person) {
-      jobs.push(function (done) {
-        var url = baseUrl + '/source_index/person/' + person + '_' + city + '?parent=' + city
-        var payload = {name: person, city: city}
+    people.forEach(person => {
+      jobs.push(done => {
+        const url = baseUrl + '/source_index/person/' + person + '_' + city + '?parent=' + city
+        const payload = {name: person, city: city}
         request.put(url, {body: JSON.stringify(payload)}, done)
       })
     })
   })
 
-  jobs.push(function (done) {
+  jobs.push(done => {
     setTimeout(done, 6000)
   })
 
   async.series(jobs, callback)
 }
 
-var describex = describe
+let describex = describe
 
-if (process.env.ES_VERSION === '6.0.0') {
+if (/[6-9]\.\d+\..+/.test(process.env.ES_VERSION)) {
   // short-circuit the describex to skip-fast
   // if the ES_VERSION is 6
   describex = describe.skip
 }
 
-describex('parent child', function () {
+describex('parent child', () => {
   before(function (done) {
     this.timeout(15 * 1000)
-    clear(function (error) {
+    clear(error => {
       if (error) { return done(error) }
       setup(done)
     })
@@ -99,9 +100,9 @@ describex('parent child', function () {
 
   after(clear)
 
-  it('did the setup properly and parents + children are loaded', function (done) {
-    var url = baseUrl + '/source_index/_search'
-    request.get(url, function (err, response, body) {
+  it('did the setup properly and parents + children are loaded', done => {
+    const url = baseUrl + '/source_index/_search'
+    request.get(url, (err, response, body) => {
       should.not.exist(err)
       body = JSON.parse(body)
 
@@ -111,11 +112,11 @@ describex('parent child', function () {
     })
   })
 
-  describex('each city should have children', function () {
-    cities.forEach(function (city) {
-      it(city + ' should have children', function (done) {
-        var url = baseUrl + '/source_index/_search'
-        var payload = {
+  describex('each city should have children', () => {
+    cities.forEach(city => {
+      it(city + ' should have children', done => {
+        const url = baseUrl + '/source_index/_search'
+        const payload = {
           'query': {
             'has_parent': {
               'parent_type': 'city',
@@ -129,7 +130,7 @@ describex('parent child', function () {
         }
         payload.query.has_parent.query.wildcard.name = '*' + city + '*'
 
-        request.get(url, {body: JSON.stringify(payload)}, function (err, response, body) {
+        request.get(url, {body: JSON.stringify(payload)}, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(people.length)
@@ -139,12 +140,12 @@ describex('parent child', function () {
     })
   })
 
-  describex('ES to ES dump should maintain parent-child relationships', function () {
+  describex('ES to ES dump should maintain parent-child relationships', () => {
     before(function (done) {
       this.timeout(2000 * 10)
-      var jobs = []
+      const jobs = []
 
-      var mappingOptions = {
+      const mappingOptions = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -154,7 +155,7 @@ describex('parent child', function () {
         scrollTime: '10m'
       }
 
-      var dataOptions = {
+      const dataOptions = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -164,23 +165,23 @@ describex('parent child', function () {
         scrollTime: '10m'
       }
 
-      var mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
-      var dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
+      const mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
+      const dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
 
-      mappingDumper.on('error', function (error) { throw (error) })
-      dataDumper.on('error', function (error) { throw (error) })
+      mappingDumper.on('error', error => { throw (error) })
+      dataDumper.on('error', error => { throw (error) })
 
-      jobs.push(function (next) { mappingDumper.dump(next) })
-      jobs.push(function (next) { setTimeout(next, 5001) })
-      jobs.push(function (next) { dataDumper.dump(next) })
-      jobs.push(function (next) { setTimeout(next, 5001) })
+      jobs.push(next => { mappingDumper.dump(next) })
+      jobs.push(next => { setTimeout(next, 5001) })
+      jobs.push(next => { dataDumper.dump(next) })
+      jobs.push(next => { setTimeout(next, 5001) })
 
       async.series(jobs, done)
     })
 
-    it('the dump transfered', function (done) {
-      var url = baseUrl + '/destination_index/_search'
-      request.get(url, function (err, response, body) {
+    it('the dump transfered', done => {
+      const url = baseUrl + '/destination_index/_search'
+      request.get(url, (err, response, body) => {
         should.not.exist(err)
         body = JSON.parse(body)
         // this confirms that there are no orphans too!
@@ -189,11 +190,11 @@ describex('parent child', function () {
       })
     })
 
-    describex('each city should have children', function () {
-      cities.forEach(function (city) {
-        it(city + ' should have children', function (done) {
-          var url = baseUrl + '/destination_index/_search'
-          var payload = {
+    describex('each city should have children', () => {
+      cities.forEach(city => {
+        it(city + ' should have children', done => {
+          const url = baseUrl + '/destination_index/_search'
+          const payload = {
             'query': {
               'has_parent': {
                 'parent_type': 'city',
@@ -207,7 +208,7 @@ describex('parent child', function () {
           }
           payload.query.has_parent.query.wildcard.name = '*' + city + '*'
 
-          request.get(url, {body: JSON.stringify(payload)}, function (err, response, body) {
+          request.get(url, {body: JSON.stringify(payload)}, (err, response, body) => {
             should.not.exist(err)
             body = JSON.parse(body)
             body.hits.total.should.equal(people.length)
@@ -218,12 +219,12 @@ describex('parent child', function () {
     })
   })
 
-  describex('ES to File and back to ES should work', function () {
+  describex('ES to File and back to ES should work', () => {
     before(function (done) {
       this.timeout(2000 * 10)
-      var jobs = []
+      const jobs = []
 
-      var mappingOptions = {
+      const mappingOptions = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -233,7 +234,7 @@ describex('parent child', function () {
         scrollTime: '10m'
       }
 
-      var dataOptions = {
+      const dataOptions = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -243,30 +244,30 @@ describex('parent child', function () {
         scrollTime: '10m'
       }
 
-      var mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
-      var dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
+      const mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
+      const dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
 
-      mappingDumper.on('error', function (error) { throw (error) })
-      dataDumper.on('error', function (error) { throw (error) })
+      mappingDumper.on('error', error => { throw (error) })
+      dataDumper.on('error', error => { throw (error) })
 
-      jobs.push(function (next) { mappingDumper.dump(next) })
-      jobs.push(function (next) { setTimeout(next, 5001) })
-      jobs.push(function (next) { dataDumper.dump(next) })
-      jobs.push(function (next) { setTimeout(next, 5001) })
+      jobs.push(next => { mappingDumper.dump(next) })
+      jobs.push(next => { setTimeout(next, 5001) })
+      jobs.push(next => { dataDumper.dump(next) })
+      jobs.push(next => { setTimeout(next, 5001) })
 
       async.series(jobs, done)
     })
 
-    it('the dump files should have worked', function (done) {
-      var mapping = String(fs.readFileSync('/tmp/mapping.json'))
-      var data = String(fs.readFileSync('/tmp/data.json'))
-      var mappingLines = []
-      var dataLines = []
+    it('the dump files should have worked', done => {
+      const mapping = String(fs.readFileSync('/tmp/mapping.json'))
+      const data = String(fs.readFileSync('/tmp/data.json'))
+      const mappingLines = []
+      const dataLines = []
 
-      mapping.split('\n').forEach(function (line) {
+      mapping.split('\n').forEach(line => {
         if (line.length > 2) { mappingLines.push(JSON.parse(line)) }
       })
-      data.split('\n').forEach(function (line) {
+      data.split('\n').forEach(line => {
         if (line.length > 2) { dataLines.push(JSON.parse(line)) }
       })
 
@@ -275,11 +276,11 @@ describex('parent child', function () {
       should.not.exist(mappingLines[0].source_index.mappings.city._parent)
       mappingLines[0].source_index.mappings.person._parent.type.should.equal('city')
 
-      var dumpedPeople = []
-      var dumpedCties = []
-      dataLines.forEach(function (d) {
+      const dumpedPeople = []
+      const dumpedCties = []
+      dataLines.forEach(d => {
         if (d._type === 'person') {
-          var parent
+          let parent
           if (d._parent) { parent = d._parent } // ES 2.x
           if (d.fields && d.fields._parent) { parent = d.fields._parent } // ES 1.x
           should.exist(parent)
@@ -297,12 +298,12 @@ describex('parent child', function () {
       done()
     })
 
-    describex('can restore from a dumpfile', function () {
+    describex('can restore from a dumpfile', () => {
       before(function (done) {
         this.timeout(2000 * 10)
-        var jobs = []
+        const jobs = []
 
-        var mappingOptions = {
+        const mappingOptions = {
           limit: 100,
           offset: 0,
           debug: true,
@@ -311,7 +312,7 @@ describex('parent child', function () {
           output: baseUrl + '/file_destination_index'
         }
 
-        var dataOptions = {
+        const dataOptions = {
           limit: 100,
           offset: 0,
           debug: true,
@@ -320,23 +321,23 @@ describex('parent child', function () {
           output: baseUrl + '/file_destination_index'
         }
 
-        var mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
-        var dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
+        const mappingDumper = new Elasticdump(mappingOptions.input, mappingOptions.output, mappingOptions)
+        const dataDumper = new Elasticdump(dataOptions.input, dataOptions.output, dataOptions)
 
-        mappingDumper.on('error', function (error) { throw (error) })
-        dataDumper.on('error', function (error) { throw (error) })
+        mappingDumper.on('error', error => { throw (error) })
+        dataDumper.on('error', error => { throw (error) })
 
-        jobs.push(function (next) { mappingDumper.dump(next) })
-        jobs.push(function (next) { setTimeout(next, 5001) })
-        jobs.push(function (next) { dataDumper.dump(next) })
-        jobs.push(function (next) { setTimeout(next, 5001) })
+        jobs.push(next => { mappingDumper.dump(next) })
+        jobs.push(next => { setTimeout(next, 5001) })
+        jobs.push(next => { dataDumper.dump(next) })
+        jobs.push(next => { setTimeout(next, 5001) })
 
         async.series(jobs, done)
       })
 
-      it('the dump transfered', function (done) {
-        var url = baseUrl + '/file_destination_index/_search'
-        request.get(url, function (err, response, body) {
+      it('the dump transfered', done => {
+        const url = baseUrl + '/file_destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           // this confirms that there are no orphans too!
@@ -345,11 +346,11 @@ describex('parent child', function () {
         })
       })
 
-      describex('each city should have children', function () {
-        cities.forEach(function (city) {
-          it(city + ' should have children', function (done) {
-            var url = baseUrl + '/file_destination_index/_search'
-            var payload = {
+      describex('each city should have children', () => {
+        cities.forEach(city => {
+          it(city + ' should have children', done => {
+            const url = baseUrl + '/file_destination_index/_search'
+            const payload = {
               'query': {
                 'has_parent': {
                   'parent_type': 'city',
@@ -363,7 +364,7 @@ describex('parent child', function () {
             }
             payload.query.has_parent.query.wildcard.name = '*' + city + '*'
 
-            request.get(url, {body: JSON.stringify(payload)}, function (err, response, body) {
+            request.get(url, {body: JSON.stringify(payload)}, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
               body.hits.total.should.equal(people.length)

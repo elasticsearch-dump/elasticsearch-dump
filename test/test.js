@@ -1,48 +1,49 @@
-var http = require('http')
+const http = require('http')
 http.globalAgent.maxSockets = 10
 
-var path = require('path')
-var Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
-var jsonParser = require('../lib/jsonparser.js')
-var should = require('should')
-var fs = require('fs')
-var os = require('os')
-var async = require('async')
-var _ = require('lodash')
-var baseUrl = 'http://127.0.0.1:9200'
+const path = require('path')
+const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
+const jsonParser = require('../lib/jsonparser.js')
+const should = require('should')
+const fs = require('fs')
+const os = require('os')
+const async = require('async')
+const _ = require('lodash')
+const baseUrl = 'http://127.0.0.1:9200'
 
-var seeds = {}
-var seedSize = 500
-var testTimeout = seedSize * 100
-var i = 0
-var indexesExistingBeforeSuite = 0
+const seeds = {}
+const seedSize = 500
+const testTimeout = seedSize * 100
+let i = 0
+let indexesExistingBeforeSuite = 0
 
 while (i < seedSize) {
-  seeds[i] = { key: ('key' + i) }
+  seeds[i] = {key: ('key' + i)}
   i++
 }
 
-var request = require('request').defaults({
+const request = require('request').defaults({
   headers: {
     'User-Agent': 'elasticdump',
     'Content-Type': 'application/json'
-  }})
+  }
+})
 
-var seed = function (index, type, settings, callback) {
-  var payload = {url: baseUrl + '/' + index, body: JSON.stringify(settings)}
-  request.put(payload, function (err, response) { // create the index first with potential custom analyzers before seeding
+const seed = (index, type, settings, callback) => {
+  const payload = {url: baseUrl + '/' + index, body: JSON.stringify(settings)}
+  request.put(payload, (err, response) => { // create the index first with potential custom analyzers before seeding
     should.not.exist(err)
-    var started = 0
-    for (var key in seeds) {
+    let started = 0
+    for (let key in seeds) {
       started++
-      var s = seeds[key]
+      const s = seeds[key]
       s['_uuid'] = key
-      var url = baseUrl + '/' + index + '/' + type + '/' + key
-      request.put(url, {body: JSON.stringify(s)}, function (err, response, body) {
+      const url = baseUrl + '/' + index + '/' + type + '/' + key
+      request.put(url, {body: JSON.stringify(s)}, (err, response, body) => {
         should.not.exist(err)
         started--
         if (started === 0) {
-          request.post(baseUrl + '/' + index + '/_refresh', function (err, response) {
+          request.post(baseUrl + '/' + index + '/_refresh', (err, response) => {
             should.not.exist(err)
             callback()
           })
@@ -52,12 +53,12 @@ var seed = function (index, type, settings, callback) {
   })
 }
 
-var clear = function (callback) {
-  request.del(baseUrl + '/destination_index', function (err, response, body) {
+const clear = callback => {
+  request.del(baseUrl + '/destination_index', (err, response, body) => {
     should.not.exist(err)
-    request.del(baseUrl + '/source_index', function (err, response, body) {
+    request.del(baseUrl + '/source_index', (err, response, body) => {
       should.not.exist(err)
-      request.del(baseUrl + '/another_index', function (err, response, body) {
+      request.del(baseUrl + '/another_index', (err, response, body) => {
         should.not.exist(err)
         callback()
       })
@@ -65,14 +66,14 @@ var clear = function (callback) {
   })
 }
 
-describe('ELASTICDUMP', function () {
-  before(function (done) {
-    request(baseUrl + '/_cat/indices', function (err, response, body) {
+describe('ELASTICDUMP', () => {
+  before(done => {
+    request(baseUrl + '/_cat/indices', (err, response, body) => {
       should.not.exist(err)
-      var lines = body.split('\n')
-      lines.forEach(function (line) {
-        var words = line.split(' ')
-        var index = words[2]
+      const lines = body.split('\n')
+      lines.forEach(line => {
+        const words = line.split(' ')
+        const index = words[2]
         if (line.length > 0 && ['source_index', 'another_index', 'destination_index'].indexOf(index) < 0) {
           indexesExistingBeforeSuite++
         }
@@ -83,8 +84,8 @@ describe('ELASTICDUMP', function () {
 
   beforeEach(function (done) {
     this.timeout(testTimeout)
-    clear(function () {
-      var settings = {
+    clear(() => {
+      const settings = {
         'settings': {
           'analysis': {
             'analyzer': {
@@ -96,9 +97,9 @@ describe('ELASTICDUMP', function () {
           }
         }
       } // settings for index to be created with
-      seed('source_index', 'seeds', settings, function () {
-        seed('another_index', 'seeds', undefined, function () {
-          setTimeout(function () {
+      seed('source_index', 'seeds', settings, () => {
+        seed('another_index', 'seeds', undefined, () => {
+          setTimeout(() => {
             done()
           }, 500)
         })
@@ -108,7 +109,7 @@ describe('ELASTICDUMP', function () {
 
   it('can connect', function (done) {
     this.timeout(testTimeout)
-    request(baseUrl, function (err, response, body) {
+    request(baseUrl, (err, response, body) => {
       should.not.exist(err)
       body = JSON.parse(body)
       body.tagline.should.equal('You Know, for Search')
@@ -118,8 +119,8 @@ describe('ELASTICDUMP', function () {
 
   it('source_index starts filled', function (done) {
     this.timeout(testTimeout)
-    var url = baseUrl + '/source_index/_search'
-    request.get(url, function (err, response, body) {
+    const url = baseUrl + '/source_index/_search'
+    request.get(url, (err, response, body) => {
       should.not.exist(err)
       body = JSON.parse(body)
       body.hits.total.should.equal(seedSize)
@@ -129,8 +130,8 @@ describe('ELASTICDUMP', function () {
 
   it('destination_index starts non-existant', function (done) {
     this.timeout(testTimeout)
-    var url = baseUrl + '/destination_index/_search'
-    request.get(url, function (err, response, body) {
+    const url = baseUrl + '/destination_index/_search'
+    request.get(url, (err, response, body) => {
       should.not.exist(err)
       body = JSON.parse(body)
       body.status.should.equal(404)
@@ -139,11 +140,11 @@ describe('ELASTICDUMP', function () {
   })
 
   it('sets User-Agent', function (done) {
-    var Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
     this.timeout(testTimeout)
-    var parent = { options: { searchBody: 'none' } }
-    var es = (new Elasticsearch(parent, baseUrl, 'source_index'))
-    es.baseRequest(baseUrl, function (err, response, body) {
+    const parent = {options: {searchBody: 'none'}}
+    const es = (new Elasticsearch(parent, baseUrl, 'source_index'))
+    es.baseRequest(baseUrl, (err, response, body) => {
       should.not.exist(err)
       response.req._headers['user-agent'].should.equal('elasticdump')
       done()
@@ -151,10 +152,10 @@ describe('ELASTICDUMP', function () {
   })
 
   it('sets custom headers', function (done) {
-    var Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
     this.timeout(testTimeout)
-    var parent = { options: { searchBody: 'none' } }
-    var opts = {
+    const parent = {options: {searchBody: 'none'}}
+    const opts = {
       index: 'source_index',
       headers: {
         'User-Agent': 'testbot',
@@ -162,8 +163,8 @@ describe('ELASTICDUMP', function () {
         'X-Something': 'anotherheader'
       }
     }
-    var es = (new Elasticsearch(parent, baseUrl, opts))
-    es.baseRequest(baseUrl, function (err, response, body) {
+    const es = (new Elasticsearch(parent, baseUrl, opts))
+    es.baseRequest(baseUrl, (err, response, body) => {
       should.not.exist(err)
       response.req._headers['user-agent'].should.equal('testbot')
       response.req._headers['alt-auth'].should.equal('SomeBearerToken')
@@ -173,9 +174,9 @@ describe('ELASTICDUMP', function () {
   })
 
   it('sets custom params', function (done) {
-    var Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
     this.timeout(testTimeout)
-    var parent = {
+    const parent = {
       options: {
         searchBody: {},
         scrollTime: '1m',
@@ -184,24 +185,24 @@ describe('ELASTICDUMP', function () {
         }
       }
     }
-    var opts = {
+    const opts = {
       index: 'source_index',
       headers: {
         'Content-Type': 'application/json'
       }
     }
-    var es = (new Elasticsearch(parent, baseUrl, opts))
-    es.getData(1, 0, function (err, responseBody, response) {
+    const es = (new Elasticsearch(parent, baseUrl, opts))
+    es.getData(1, 0, (err, responseBody, response) => {
       should.not.exist(err)
       response.req.path.should.containEql('preference=_shards:0')
       done()
     })
   })
 
-  describe('es to es', function () {
+  describe('es to es', () => {
     it('works for a whole index', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -211,11 +212,11 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(seedSize)
@@ -225,11 +226,11 @@ describe('ELASTICDUMP', function () {
     })
 
     it('can provide offset', function (done) {
-      if (process.env.ES_VERSION === '6.0.0') {
+      if (/[6-9]\.\d+\..+/.test(process.env.ES_VERSION)) {
         return this.skip()
       }
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         debug: false,
         type: 'data',
@@ -239,11 +240,11 @@ describe('ELASTICDUMP', function () {
         offset: 250
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(seedSize - 250)
@@ -254,7 +255,7 @@ describe('ELASTICDUMP', function () {
 
     it('can provide limit', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -265,11 +266,11 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(5)
@@ -280,7 +281,7 @@ describe('ELASTICDUMP', function () {
 
     it('works for index/types', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -290,11 +291,11 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(seedSize)
@@ -305,7 +306,7 @@ describe('ELASTICDUMP', function () {
 
     it('works for index/types in separate option', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -317,11 +318,11 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(seedSize)
@@ -332,7 +333,7 @@ describe('ELASTICDUMP', function () {
 
     it('works with searchBody', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -340,14 +341,14 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index/seeds',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        searchBody: { 'query': { 'term': { 'key': 'key1' } } }
+        searchBody: {'query': {'term': {'key': 'key1'}}}
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(1)
@@ -359,7 +360,7 @@ describe('ELASTICDUMP', function () {
     it('works with searchBody range', function (done) {
       // Test Note: Since UUID is ordered as string, lte: 2 should return _uuids 0,1,2,    10-19,  100-199 for a total of 113
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -367,14 +368,14 @@ describe('ELASTICDUMP', function () {
         input: baseUrl + '/source_index/seeds',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        searchBody: { 'query': { 'range': { '_uuid': { 'lte': '2' } } } }
+        searchBody: {'query': {'range': {'_uuid': {'lte': '2'}}}}
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(113)
@@ -385,7 +386,7 @@ describe('ELASTICDUMP', function () {
 
     it('can get and set analyzer', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -394,17 +395,17 @@ describe('ELASTICDUMP', function () {
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
       }
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
+      dumper.dump(() => {
         // Use async's whilst module to ensure that index is for sure opened after setting analyzers
         // opening an index has a delay
-        var status = false
+        let status = false
         async.whilst(
-          function () { return !status },
-          function (callback) {
-            var url = baseUrl + '/destination_index/_search'
-            request.get(url, function (err, response, body) {
+          () => !status,
+          callback => {
+            const url = baseUrl + '/destination_index/_search'
+            request.get(url, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
               try {
@@ -416,10 +417,10 @@ describe('ELASTICDUMP', function () {
               callback(null, status)
             })
           },
-          function (err, n) {
+          (err, n) => {
             should.not.exist(err)
-            var url = baseUrl + '/destination_index/_settings'
-            request.get(url, function (err, response, body) {
+            const url = baseUrl + '/destination_index/_settings'
+            request.get(url, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
               body.destination_index.settings.index.analysis.analyzer.content.type.should.equal('custom')
@@ -432,7 +433,7 @@ describe('ELASTICDUMP', function () {
 
     it('can get and set settings', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -441,17 +442,17 @@ describe('ELASTICDUMP', function () {
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
       }
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
+      dumper.dump(() => {
         // Use async's whilst module to ensure that index is for sure opened after setting analyzers
         // opening an index has a delay
-        var status = false
+        let status = false
         async.whilst(
-          function () { return !status },
-          function (callback) {
-            var url = baseUrl + '/destination_index/_search'
-            request.get(url, function (err, response, body) {
+          () => !status,
+          callback => {
+            const url = baseUrl + '/destination_index/_search'
+            request.get(url, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
               try {
@@ -463,10 +464,10 @@ describe('ELASTICDUMP', function () {
               callback(null, status)
             })
           },
-          function (err, n) {
+          (err, n) => {
             should.not.exist(err)
-            var url = baseUrl + '/destination_index/_settings'
-            request.get(url, function (err, response, body) {
+            const url = baseUrl + '/destination_index/_settings'
+            request.get(url, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
               body.destination_index.settings.index.analysis.analyzer.content.type.should.equal('custom')
@@ -479,7 +480,7 @@ describe('ELASTICDUMP', function () {
 
     it('can get and set mapping', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -489,16 +490,16 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(0)
-          var url = baseUrl + '/destination_index/_mapping'
-          request.get(url, function (err, response, body) {
+          const url = baseUrl + '/destination_index/_mapping'
+          request.get(url, (err, response, body) => {
             should.not.exist(err)
             body = JSON.parse(body);
             ['string', 'text'].should.containEql(body.destination_index.mappings.seeds.properties.key.type)
@@ -510,8 +511,8 @@ describe('ELASTICDUMP', function () {
 
     it('can set and get alias', function (done) {
       this.timeout(testTimeout)
-      var aliasFilePath = path.join(__dirname, 'test-resources', 'alias.json')
-      var options = {
+      const aliasFilePath = path.join(__dirname, 'test-resources', 'alias.json')
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -520,13 +521,13 @@ describe('ELASTICDUMP', function () {
         output: baseUrl
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/source_index/_alias/*'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/source_index/_alias/*'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
-          var raw = fs.readFileSync(aliasFilePath)
+          const raw = fs.readFileSync(aliasFilePath)
           body = JSON.parse(body)
           body.should.deepEqual(JSON.parse(JSON.parse(raw.toString())))
           done()
@@ -537,15 +538,15 @@ describe('ELASTICDUMP', function () {
     it('can set and get template', function (done) {
       this.timeout(testTimeout)
 
-      var templateFile = 'template_2x.json'
+      let templateFile = 'template_2x.json'
       if (process.env.ES_VERSION === '1.5.0') {
         templateFile = 'template_1x.json'
       } else if (process.env.ES_VERSION === '6.0.0') {
         templateFile = 'template_6x.json'
       }
 
-      var templateFilePath = path.join(__dirname, 'test-resources', templateFile)
-      var options = {
+      const templateFilePath = path.join(__dirname, 'test-resources', templateFile)
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -554,13 +555,13 @@ describe('ELASTICDUMP', function () {
         output: baseUrl
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/_template/template_1'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/_template/template_1'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
-          var raw = fs.readFileSync(templateFilePath)
+          const raw = fs.readFileSync(templateFilePath)
           body = JSON.parse(body)
           body.should.deepEqual(JSON.parse(JSON.parse(raw.toString())))
           done()
@@ -570,7 +571,7 @@ describe('ELASTICDUMP', function () {
 
     it('works with a small limit', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 10,
         offset: 0,
         debug: false,
@@ -580,14 +581,15 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize)
+          const total = _.get(body, 'body.hits.total.value', body.hits.total)
+          total.should.equal(seedSize)
           done()
         })
       })
@@ -595,7 +597,7 @@ describe('ELASTICDUMP', function () {
 
     it('works with a large limit', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: (10000 - 1),
         offset: 0,
         debug: false,
@@ -605,14 +607,15 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize)
+          const total = _.get(body, 'body.hits.total.value', body.hits.total)
+          total.should.equal(seedSize)
           done()
         })
       })
@@ -620,7 +623,7 @@ describe('ELASTICDUMP', function () {
 
     it('counts updates as writes', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -630,25 +633,26 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumperA = new Elasticdump(options.input, options.output, options)
-      var dumperB = new Elasticdump(options.input, options.output, options)
+      const dumperA = new Elasticdump(options.input, options.output, options)
+      const dumperB = new Elasticdump(options.input, options.output, options)
 
-      dumperA.dump(function (err, totalWrites) {
+      dumperA.dump((err, totalWrites) => {
         should.not.exist(err)
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(seedSize)
           totalWrites.should.equal(seedSize)
 
-          dumperB.dump(function (err, totalWrites) {
+          dumperB.dump((err, totalWrites) => {
             should.not.exist(err)
-            var url = baseUrl + '/destination_index/_search'
-            request.get(url, function (err, response, body) {
+            const url = baseUrl + '/destination_index/_search'
+            request.get(url, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
-              body.hits.total.should.equal(seedSize)
+              const total = _.get(body, 'body.hits.total.value', body.hits.total)
+              total.should.equal(seedSize)
               totalWrites.should.equal(seedSize)
               done()
             })
@@ -659,7 +663,7 @@ describe('ELASTICDUMP', function () {
 
     it('noRefresh option', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: true,
@@ -670,12 +674,12 @@ describe('ELASTICDUMP', function () {
         noRefresh: true
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
-      var inputProto = Object.getPrototypeOf(dumper.input)
-      var originalReindex = inputProto.reindex
+      const dumper = new Elasticdump(options.input, options.output, options)
+      const inputProto = Object.getPrototypeOf(dumper.input)
+      const originalReindex = inputProto.reindex
       inputProto.reindex = function (callback) {
         inputProto.reindex = originalReindex
-        originalReindex.call(this, function (err, response) {
+        originalReindex.call(this, (err, response) => {
           if (err) {
             done(err)
           } else if (response) {
@@ -686,14 +690,14 @@ describe('ELASTICDUMP', function () {
         })
       }
 
-      dumper.dump(function () {
+      dumper.dump(() => {
         done()
       })
     })
 
     it('can also delete documents from the source index', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -704,25 +708,26 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, destinationBody) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, destinationBody) => {
           should.not.exist(err)
           destinationBody = JSON.parse(destinationBody)
           destinationBody.hits.total.should.equal(seedSize)
-          dumper.input.reindex(function () {
+          dumper.input.reindex(() => {
             // Note: Depending on the speed of your ES server
             // all the elements might not be deleted when the HTTP response returns
             // sleeping is required, but the duration is based on your CPU, disk, etc.
             // lets guess 1ms per entry in the index
-            setTimeout(function () {
-              var url = baseUrl + '/source_index/_search'
-              request.get(url, function (err, response, sourceBody) {
+            setTimeout(() => {
+              const url = baseUrl + '/source_index/_search'
+              request.get(url, (err, response, sourceBody) => {
                 should.not.exist(err)
                 sourceBody = JSON.parse(sourceBody)
-                sourceBody.hits.total.should.equal(0)
+                const total = _.get(sourceBody, 'body.hits.total.value', sourceBody.hits.total)
+                total.should.equal(0)
                 done()
               })
             }, 5 * seedSize)
@@ -732,10 +737,10 @@ describe('ELASTICDUMP', function () {
     })
   })
 
-  describe('es to file', function () {
+  describe('es to file', () => {
     it('works', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -749,21 +754,21 @@ describe('ELASTICDUMP', function () {
 
       if (fs.existsSync('/tmp/out.json')) { fs.unlinkSync('/tmp/out.json') }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var raw = fs.readFileSync('/tmp/out.json')
-        var lineCount = String(raw).split('\n').length
+      dumper.dump(() => {
+        const raw = fs.readFileSync('/tmp/out.json')
+        const lineCount = String(raw).split('\n').length
         lineCount.should.equal(seedSize + 1)
         done()
       })
     })
   })
 
-  describe('es to file sourceOnly', function () {
+  describe('es to file sourceOnly', () => {
     it('works', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -777,25 +782,25 @@ describe('ELASTICDUMP', function () {
 
       if (fs.existsSync('/tmp/out.sourceOnly')) { fs.unlinkSync('/tmp/out.sourceOnly') }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var raw = fs.readFileSync('/tmp/out.sourceOnly')
-        var lines = String(raw).split('\n')
+      dumper.dump(() => {
+        const raw = fs.readFileSync('/tmp/out.sourceOnly')
+        const lines = String(raw).split('\n')
         lines.length.should.equal(seedSize + 1)
 
         // "key" should be immediately available
-        var first = JSON.parse(lines[0])
+        const first = JSON.parse(lines[0])
         first['key'].length.should.be.above(0)
         done()
       })
     })
   })
 
-  describe('file to es', function () {
+  describe('file to es', () => {
     it('works', function (done) {
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -805,25 +810,26 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
-          body.hits.total.should.equal(seedSize)
+          const total = _.get(body, 'body.hits.total.value', body.hits.total)
+          total.should.equal(seedSize)
           done()
         })
       })
     })
 
     it('can provide offset', function (done) {
-      if (process.env.ES_VERSION === '6.0.0') {
+      if (/[6-9]\.\d+\..+/.test(process.env.ES_VERSION)) {
         return this.skip()
       }
       this.timeout(testTimeout)
-      var options = {
+      const options = {
         limit: 100,
         debug: false,
         type: 'data',
@@ -833,27 +839,28 @@ describe('ELASTICDUMP', function () {
         offset: 250
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function (error) {
+      dumper.dump(error => {
         should.not.exist(error)
-        var url = baseUrl + '/destination_index/_search'
-        request.get(url, function (err, response, body) {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           // skips 250 so 250 less in there
-          body.hits.total.should.equal(seedSize - 250)
+          const total = _.get(body, 'body.hits.total.value', body.hits.total)
+          total.should.equal(seedSize - 250)
           done()
         })
       })
     })
   })
 
-  describe('big int file to es', function () {
+  describe('big int file to es', () => {
     it('works', function (done) {
       this.timeout(testTimeout)
 
-      var options = {
+      let options = {
         limit: 100,
         offset: 0,
         debug: false,
@@ -863,9 +870,9 @@ describe('ELASTICDUMP', function () {
         scrollTime: '10m'
       }
 
-      var dumper = new Elasticdump(options.input, options.output, options)
+      let dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(function () {
+      dumper.dump(() => {
         options = {
           limit: 100,
           offset: 0,
@@ -879,9 +886,9 @@ describe('ELASTICDUMP', function () {
 
         dumper = new Elasticdump(options.input, options.output, options)
 
-        dumper.dump(function () {
-          var url = baseUrl + '/bigint_index/_search'
-          request.get(url, function (err, response, body) {
+        dumper.dump(() => {
+          const url = baseUrl + '/bigint_index/_search'
+          request.get(url, (err, response, body) => {
             should.not.exist(err)
             body = jsonParser.parse(body, {options})
             body.hits.hits.length.should.equal(4)
@@ -903,7 +910,7 @@ describe('ELASTICDUMP', function () {
     })
   })
 
-  describe('all es to file', function () {
+  describe('all es to file', () => {
     it('works', function (done) {
       if (indexesExistingBeforeSuite > 0) {
         console.log('')
@@ -914,7 +921,7 @@ describe('ELASTICDUMP', function () {
         done()
       } else {
         this.timeout(testTimeout)
-        var options = {
+        const options = {
           limit: 100,
           offset: 0,
           debug: false,
@@ -929,20 +936,20 @@ describe('ELASTICDUMP', function () {
 
         if (fs.existsSync('/tmp/out.json')) { fs.unlinkSync('/tmp/out.json') }
 
-        var dumper = new Elasticdump(options.input, options.output, options)
+        const dumper = new Elasticdump(options.input, options.output, options)
 
-        dumper.dump(function () {
-          var raw = fs.readFileSync('/tmp/out.json')
-          var output = []
-          raw.toString().split(os.EOL).forEach(function (line) {
+        dumper.dump(() => {
+          const raw = fs.readFileSync('/tmp/out.json')
+          const output = []
+          raw.toString().split(os.EOL).forEach(line => {
             if (line.length > 0) {
               output.push(JSON.parse(line))
             }
           })
 
-          var count = 0
-          for (var i in output) {
-            var elem = output[i]
+          let count = 0
+          for (let i in output) {
+            const elem = output[i]
             if (elem['_index'] === 'source_index' || elem['_index'] === 'another_index') {
               count++
             }
@@ -955,11 +962,11 @@ describe('ELASTICDUMP', function () {
     })
   })
 
-  describe('es to stdout', function () {
+  describe('es to stdout', () => {
     it('works')
   })
 
-  describe('stdin to es', function () {
+  describe('stdin to es', () => {
     it('works')
   })
 })
