@@ -30,7 +30,7 @@ env:
 
 before_install:
   ## ES has different download locations for each version, so we'll download them both and then just use the one we want
-  - curl -o elasticsearch.tar.gz ${ES_DOWNLOAD_URL}
+  - curl -Lo elasticsearch.tar.gz ${ES_DOWNLOAD_URL}
   ## Now, use the ENV to choose the version
   - tar -xzf elasticsearch.tar.gz
   - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
