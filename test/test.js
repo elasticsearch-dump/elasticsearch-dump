@@ -884,14 +884,18 @@ describe('ELASTICDUMP', function () {
           request.get(url, function (err, response, body) {
             should.not.exist(err)
             body = jsonParser.parse(body, {options})
-            body.hits.hits.length.should.equal(2)
+            body.hits.hits.length.should.equal(4)
             _.chain(body.hits.hits)
               .reduce((result, value) => {
                 result.push(value['_source']['key'].toString())
                 return result
               }, [])
               .sort()
-              .value().should.deepEqual(['1726275868403174266', '99926275868403174266'])
+              .value().should.deepEqual([
+                '-99926275868403174266',
+                '1726275868403174266',
+                '99926275868403174266',
+                '99926275868403174267'])
             done()
           })
         })
