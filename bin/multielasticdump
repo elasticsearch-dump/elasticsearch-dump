@@ -215,13 +215,13 @@ const dump = () => {
     if (options.ignoreAlias) return done()
     log('info', `analyzer ${input} to ${outputAlias}`)
 
-    const analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
+    const aliasChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=alias',
       `--input=${input}`,
       `--output=${outputAlias}`
     ])
 
-    analyzerChild.on('close', code => {
+    aliasChild.on('close', code => {
       if (code !== 0) {
         return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
       } else {
@@ -234,6 +234,18 @@ const dump = () => {
     if (options.ignoreData) return done()
     log('info', `dumping ${input} to ${outputData}`)
 
+    let _transform = []
+
+    if (options.transform) {
+      _transform = _.chain(options.transform)
+          .castArray()
+          .filter(_.negate(_.isEmpty))
+          .map(t => {
+            return `--transform=${t}`
+          })
+          .value()
+    }
+
     const dataChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=data',
       `--input=${input}`,
@@ -241,8 +253,11 @@ const dump = () => {
       `--scrollTime=${options.scrollTime}`,
       `--limit=${options.limit}`,
       `--offset=${options.offset}`,
-      `--searchBody=${options.searchBody}`
-    ])
+      `--searchBody=${options.searchBody}`,
+      `--prefix=${options.prefix}`,
+      `--suffix=${options.suffix}`,
+      `--support-big-int=${options['support-big-int']}`
+    ].concat(_transform))
 
     dataChild.on('close', code => {
       if (code !== 0) {
@@ -327,13 +342,13 @@ const load = () => {
     if (options.ignoreAlias) return done()
     log('info', `indexing alias ${inputAlias} to ${output}`)
 
-    const mappingChild = fork(path.join(__dirname, 'elasticdump'), [
+    const aliasChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=alias',
       `--input=${inputAlias}`,
       `--output=${output}`
     ])
 
-    mappingChild.on('close', code => {
+    aliasChild.on('close', code => {
       if (code !== 0) {
         return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
       } else {
