@@ -127,13 +127,15 @@ elasticdump \
   --output=/data/my_index.json \
   --fileSize=10mb
 
-# Export ES data to S3
+# Import dat from S3 ES (using s3-urls)
+elasticdump \
+  --input "s3://${bucket_name}/${file_name}.json" \
+  --output=http://production.es.com:9200/my_index
+
+# Export ES data to S3 (using s3-urls)
 elasticdump \
   --input=http://production.es.com:9200/my_index \
-  --s3Bucket "${bucket_name}" \
-  --s3AccessKeyId "${access_key_id}" \
-  --s3SecretAccessKey "${access_key_secret}" \
-  --s3RecordKey "${file_name}"  
+  --output "s3://${bucket_name}/${file_name}.json"
 ```
 
 
@@ -388,10 +390,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     AWS secret access key
 --s3Region
                     AWS region
---s3Bucket
-                    Name of the bucket to which the data will be uploaded
---s3RecordKey
-                    Object key (filename) for the data to be uploaded 
 --s3Compress
                     gzip data before sending to s3  
 --tlsAuth
@@ -496,6 +494,7 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
 - if you are using Elasticsearch version 6.0.0 or higher the `offset` parameter is no longer allowed in the scrollContext
 - ES 6.0 & higher no longer support the `template` property for `_template` all templates prior to ES 6.0 has to be upgraded to use `index_patterns` 
+- **Version 4.8.0 contains a breaking change for the s3 transport. _s3Bucket_ and _s3RecordKey_ params are no longer supported please use s3urls instead**
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 
