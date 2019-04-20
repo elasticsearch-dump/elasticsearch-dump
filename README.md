@@ -494,7 +494,7 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - if you choose a stdio output (`--output=$`), all logging output will be suppressed
 - if you are using Elasticsearch version 6.0.0 or higher the `offset` parameter is no longer allowed in the scrollContext
 - ES 6.0 & higher no longer support the `template` property for `_template` all templates prior to ES 6.0 has to be upgraded to use `index_patterns` 
-- **Version 4.8.0 contains a breaking change for the s3 transport. _s3Bucket_ and _s3RecordKey_ params are no longer supported please use s3urls instead**
+- **Elasticdump v5.0.0 contains a breaking change for the s3 transport. _s3Bucket_ and _s3RecordKey_ params are no longer supported please use s3urls instead**
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 
