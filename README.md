@@ -127,12 +127,12 @@ elasticdump \
   --output=/data/my_index.json \
   --fileSize=10mb
 
-# Import dat from S3 ES (using s3-urls)
+# Import data from S3 into ES (using s3urls)
 elasticdump \
   --input "s3://${bucket_name}/${file_name}.json" \
   --output=http://production.es.com:9200/my_index
 
-# Export ES data to S3 (using s3-urls)
+# Export ES data to S3 (using s3urls)
 elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output "s3://${bucket_name}/${file_name}.json"
