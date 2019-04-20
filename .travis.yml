@@ -11,8 +11,8 @@ branches:
 addons:
   apt:
     packages:
-      - oracle-java8-installer
-      - oracle-java8-set-default
+      - oracle-java9-installer
+      - oracle-java9-set-default
 
 # We'll manually install versions of ES ourselves
 # services:
