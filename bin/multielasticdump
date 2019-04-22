@@ -41,6 +41,7 @@ const defaults = {
   ignoreAnalyzer: false,
   ignoreData: false,
   ignoreMapping: false,
+  ignoreSettings: false,
   ignoreAlias: true,
   ignoreType: [],
   interval: 1000,
@@ -118,6 +119,7 @@ if (options.direction === 'load') {
       .replace('.mapping.json', '')
       .replace('.analyzer.json', '')
       .replace('.alias.json', '')
+	  .replace('.settings.json', '')		 
       .replace('.json', '')).filter(item => matchRegExp.test(item))
     matchedIndexes = unique(matchedIndexes)
     log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
@@ -170,9 +172,28 @@ const dump = () => {
   const outputMapping = `${options.output}/${index}.mapping.json`
   const outputAnalyzer = `${options.output}/${index}.analyzer.json`
   const outputAlias = `${options.output}/${index}.alias.json`
-
+  const outputSettings = `${options.output}/${index}.settings.json`
   const jobs = []
 
+  jobs.push(done => {
+    if (options.ignoreSettings) return done()
+    log('info', `dumping ${input} to ${outputSettings}`)
+
+    const mappingSettings = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=settings',
+      `--input=${input}`,
+      `--output=${outputSettings}`
+    ])
+
+    mappingSettings.on('close', code => {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
+      }
+    })
+  })
+  
   jobs.push(done => {
     if (options.ignoreMapping) return done()
     log('info', `dumping ${input} to ${outputMapping}`)
@@ -296,9 +317,29 @@ const load = () => {
   const inputData = `${options.input}/${index}.json`
   const inputMapping = `${options.input}/${index}.mapping.json`
   const inputAnalyzer = `${options.input}/${index}.analyzer.json`
-  const inputAlias = `${options.input}/${index}.alias.json`
+  const inputAlias = `${options.input}/${index}.alias.json`													 
+  const inputSettings = `${options.input}/${index}.settings.json`
 
   const jobs = []
+  
+  jobs.push(done => {
+	if (options.ignoreSettings) return done()
+    log('info', `indexing settings ${inputSettings} to ${output}`)
+
+    const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=settings',
+      `--input=${inputSettings}`,
+      `--output=${output}`
+    ])
+
+    settingsChild.on('close', code => {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
+      }
+    })
+  })
 
   jobs.push(done => {
     if (options.ignoreAnalyzer) return done()
