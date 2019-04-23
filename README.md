@@ -458,7 +458,7 @@ For loading files that you have dumped from multi-elasticsearch, `--direction` s
 
 `--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped/loaded (regex).
 
-`--ignoreType` allows a type to be ignored from the dump/load. Three options are supported. `data,mapping,analyzer`. Multi-type support is available, when used each type must be comma(,)-separated
+`--ignoreType` allows a type to be ignored from the dump/load. Six options are supported. `data,mapping,analyzer,alias,settings,template`. Multi-type support is available, when used each type must be comma(,)-separated
 and `interval` allows control over the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
 
 New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
