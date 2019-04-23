@@ -77,7 +77,7 @@ const jsonParsedOpts = ['searchBody', 'headers', 'params']
 const options = {}
 
 // parse passed options & use defaults otherwise
-for (var i in defaults) {
+for (const i in defaults) {
   options[i] = argv[i] || defaults[i]
 
   if (options[i] === 'true') { options[i] = true }
@@ -85,7 +85,7 @@ for (var i in defaults) {
 }
 
 // parse whitelisted json formatted options
-for (var i of jsonParsedOpts) {
+for (const i of jsonParsedOpts) {
   if (options[i]) { options[i] = JSON.parse(options[i]) }
 }
 

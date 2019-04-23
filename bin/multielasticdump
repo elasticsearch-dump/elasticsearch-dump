@@ -42,6 +42,7 @@ const defaults = {
   ignoreData: false,
   ignoreMapping: false,
   ignoreSettings: false,
+  ignoreTemplate: false,
   ignoreAlias: true,
   ignoreType: [],
   interval: 1000,
@@ -116,11 +117,12 @@ if (options.direction === 'load') {
     }
     // log('info', data);
     matchedIndexes = data.map(value => value
-      .replace('.mapping.json', '')
-      .replace('.analyzer.json', '')
-      .replace('.alias.json', '')
-	  .replace('.settings.json', '')		 
-      .replace('.json', '')).filter(item => matchRegExp.test(item))
+        .replace('.mapping.json', '')
+        .replace('.analyzer.json', '')
+        .replace('.alias.json', '')
+        .replace('.settings.json', '')
+        .replace('.template.json', '')
+        .replace('.json', '')).filter(item => matchRegExp.test(item))
     matchedIndexes = unique(matchedIndexes)
     log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
@@ -173,7 +175,27 @@ const dump = () => {
   const outputAnalyzer = `${options.output}/${index}.analyzer.json`
   const outputAlias = `${options.output}/${index}.alias.json`
   const outputSettings = `${options.output}/${index}.settings.json`
+  const outputTemplate = `${options.output}/${index}.template.json`
   const jobs = []
+
+  jobs.push(done => {
+    if (options.ignoreTemplate) return done()
+    log('info', `dumping ${input} to ${outputTemplate}`)
+
+    const mappingSettings = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=template',
+      `--input=${input}`,
+      `--output=${outputTemplate}`
+    ])
+
+    mappingSettings.on('close', code => {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
+      }
+    })
+  })
 
   jobs.push(done => {
     if (options.ignoreSettings) return done()
@@ -193,7 +215,7 @@ const dump = () => {
       }
     })
   })
-  
+
   jobs.push(done => {
     if (options.ignoreMapping) return done()
     log('info', `dumping ${input} to ${outputMapping}`)
@@ -317,13 +339,33 @@ const load = () => {
   const inputData = `${options.input}/${index}.json`
   const inputMapping = `${options.input}/${index}.mapping.json`
   const inputAnalyzer = `${options.input}/${index}.analyzer.json`
-  const inputAlias = `${options.input}/${index}.alias.json`													 
+  const inputAlias = `${options.input}/${index}.alias.json`
   const inputSettings = `${options.input}/${index}.settings.json`
+  const inputTemplate = `${options.input}/${index}.template.json`
 
   const jobs = []
-  
+
   jobs.push(done => {
-	if (options.ignoreSettings) return done()
+    if (options.ignoreTemplate) return done()
+    log('info', `indexing template ${inputTemplate} to ${output}`)
+
+    const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
+      '--type=template',
+      `--input=${inputTemplate}`,
+      `--output=${output}`
+    ])
+
+    settingsChild.on('close', code => {
+      if (code !== 0) {
+        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return done()
+      }
+    })
+  })
+
+  jobs.push(done => {
+    if (options.ignoreSettings) return done()
     log('info', `indexing settings ${inputSettings} to ${output}`)
 
     const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
