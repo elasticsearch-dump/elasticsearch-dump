@@ -1,0 +1,1 @@
+"{\"template_1\":{\"order\":0,\"index_patterns\":[\"te*\"],\"settings\":{\"index\":{\"number_of_shards\":\"1\"}},\"mappings\":{\"_source\":{\"enabled\":false}},\"aliases\":{}}}"
