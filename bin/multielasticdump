@@ -49,7 +49,20 @@ const defaults = {
   prefix: '',
   suffix: '',
   transform: null,
-  searchBody: null
+  searchBody: null,
+  cert: null,
+  key: null,
+  pass: null,
+  ca: null,
+  tlsAuth: false,
+  'input-cert': null,
+  'input-key': null,
+  'input-pass': null,
+  'input-ca': null,
+  'output-cert': null,
+  'output-key': null,
+  'output-pass': null,
+  'output-ca': null
 }
 
 for (let i in defaults) {
@@ -185,7 +198,20 @@ const dump = () => {
     const mappingSettings = fork(path.join(__dirname, 'elasticdump'), [
       '--type=template',
       `--input=${input}`,
-      `--output=${outputTemplate}`
+      `--output=${outputTemplate}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     mappingSettings.on('close', code => {
@@ -204,7 +230,20 @@ const dump = () => {
     const mappingSettings = fork(path.join(__dirname, 'elasticdump'), [
       '--type=settings',
       `--input=${input}`,
-      `--output=${outputSettings}`
+      `--output=${outputSettings}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     mappingSettings.on('close', code => {
@@ -223,7 +262,20 @@ const dump = () => {
     const mappingChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=mapping',
       `--input=${input}`,
-      `--output=${outputMapping}`
+      `--output=${outputMapping}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     mappingChild.on('close', code => {
@@ -242,7 +294,20 @@ const dump = () => {
     const analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=analyzer',
       `--input=${input}`,
-      `--output=${outputAnalyzer}`
+      `--output=${outputAnalyzer}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     analyzerChild.on('close', code => {
@@ -261,7 +326,20 @@ const dump = () => {
     const aliasChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=alias',
       `--input=${input}`,
-      `--output=${outputAlias}`
+      `--output=${outputAlias}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     aliasChild.on('close', code => {
@@ -299,7 +377,20 @@ const dump = () => {
       `--searchBody=${options.searchBody}`,
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
-      `--support-big-int=${options['support-big-int']}`
+      `--support-big-int=${options['support-big-int']}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ].concat(_transform))
 
     dataChild.on('close', code => {
@@ -352,7 +443,20 @@ const load = () => {
     const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=template',
       `--input=${inputTemplate}`,
-      `--output=${output}`
+      `--output=${output}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     settingsChild.on('close', code => {
@@ -371,7 +475,20 @@ const load = () => {
     const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=settings',
       `--input=${inputSettings}`,
-      `--output=${output}`
+      `--output=${output}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     settingsChild.on('close', code => {
@@ -390,7 +507,20 @@ const load = () => {
     const analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=analyzer',
       `--input=${inputAnalyzer}`,
-      `--output=${output}`
+      `--output=${output}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     analyzerChild.on('close', code => {
@@ -409,7 +539,20 @@ const load = () => {
     const mappingChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=mapping',
       `--input=${inputMapping}`,
-      `--output=${output}`
+      `--output=${output}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     mappingChild.on('close', code => {
@@ -428,7 +571,20 @@ const load = () => {
     const aliasChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=alias',
       `--input=${inputAlias}`,
-      `--output=${output}`
+      `--output=${output}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ])
 
     aliasChild.on('close', code => {
@@ -466,7 +622,20 @@ const load = () => {
       `--offset=${options.offset}`,
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
-      `--support-big-int=${options['support-big-int']}`
+      `--support-big-int=${options['support-big-int']}`,
+      `--cert=${options.cert}`,
+      `--key=${options.key}`,
+      `--pass=${options.pass}`,
+      `--ca=${options.ca}`,
+      `--tlsAuth=${options.tlsAuth}`,
+      `--input-cert=${options['input-cert']}`,
+      `--input-key=${options['input-key']}`,
+      `--input-pass=${options['input-pass']}`,
+      `--input-ca=${options['input-ca']}`,
+      `--output-cert=${options['output-cert']}`,
+      `--output-key=${options['output-key']}`,
+      `--output-pass=${options['output-pass']}`,
+      `--output-ca=${options['output-ca']}`
     ].concat(_transform))
 
     dataChild.on('close', code => {
