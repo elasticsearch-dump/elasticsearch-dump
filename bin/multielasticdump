@@ -328,7 +328,7 @@ const dump = () => {
       `--searchBody=${options.searchBody}`,
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
-      `--support-big-int=${options['support-big-int']}`,
+      `--support-big-int=${options['support-big-int']}`
     ].concat(_transform).concat(commonParams))
 
     dataChild.on('close', code => {
