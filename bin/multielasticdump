@@ -72,6 +72,7 @@ for (let i in defaults) {
   }
   if (options[i] === 'true') { options[i] = true }
   if (options[i] === 'false') { options[i] = false }
+  if (options[i] === 'null') { options[i] = null }
   if (i === 'interval' && _.isNumber(argv[i])) {
     // special case to handle value == 0
     options[i] = argv[i]
