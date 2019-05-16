@@ -99,7 +99,7 @@ const commonParams = [
   `--output-key=${options['output-key']}`,
   `--output-pass=${options['output-pass']}`,
   `--output-ca=${options['output-ca']}`
-];
+]
 
 const log = (type, message) => {
   if (type === 'debug') {
