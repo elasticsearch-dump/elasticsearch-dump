@@ -233,7 +233,7 @@ const dump = () => {
     const mappingSettings = fork(path.join(__dirname, 'elasticdump'), [
       '--type=settings',
       `--input=${input}`,
-      `--output=${outputSettings}`,
+      `--output=${outputSettings}`
     ].concat(commonParams))
 
     mappingSettings.on('close', code => {
