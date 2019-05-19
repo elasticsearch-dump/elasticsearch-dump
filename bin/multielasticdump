@@ -49,7 +49,20 @@ const defaults = {
   prefix: '',
   suffix: '',
   transform: null,
-  searchBody: null
+  searchBody: null,
+  cert: null,
+  key: null,
+  pass: null,
+  ca: null,
+  tlsAuth: false,
+  'input-cert': null,
+  'input-key': null,
+  'input-pass': null,
+  'input-ca': null,
+  'output-cert': null,
+  'output-key': null,
+  'output-pass': null,
+  'output-ca': null
 }
 
 for (let i in defaults) {
@@ -59,6 +72,7 @@ for (let i in defaults) {
   }
   if (options[i] === 'true') { options[i] = true }
   if (options[i] === 'false') { options[i] = false }
+  if (options[i] === 'null') { options[i] = null }
   if (i === 'interval' && _.isNumber(argv[i])) {
     // special case to handle value == 0
     options[i] = argv[i]
@@ -71,6 +85,22 @@ _.split(options.ignoreType, ',').forEach(field => {
     options[key] = true
   }
 })
+
+const commonParams = [
+  `--cert=${options.cert}`,
+  `--key=${options.key}`,
+  `--pass=${options.pass}`,
+  `--ca=${options.ca}`,
+  `--tlsAuth=${options.tlsAuth}`,
+  `--input-cert=${options['input-cert']}`,
+  `--input-key=${options['input-key']}`,
+  `--input-pass=${options['input-pass']}`,
+  `--input-ca=${options['input-ca']}`,
+  `--output-cert=${options['output-cert']}`,
+  `--output-key=${options['output-key']}`,
+  `--output-pass=${options['output-pass']}`,
+  `--output-ca=${options['output-ca']}`
+]
 
 const log = (type, message) => {
   if (type === 'debug') {
@@ -186,7 +216,7 @@ const dump = () => {
       '--type=template',
       `--input=${input}`,
       `--output=${outputTemplate}`
-    ])
+    ].concat(commonParams))
 
     mappingSettings.on('close', code => {
       if (code !== 0) {
@@ -205,7 +235,7 @@ const dump = () => {
       '--type=settings',
       `--input=${input}`,
       `--output=${outputSettings}`
-    ])
+    ].concat(commonParams))
 
     mappingSettings.on('close', code => {
       if (code !== 0) {
@@ -224,7 +254,7 @@ const dump = () => {
       '--type=mapping',
       `--input=${input}`,
       `--output=${outputMapping}`
-    ])
+    ].concat(commonParams))
 
     mappingChild.on('close', code => {
       if (code !== 0) {
@@ -243,7 +273,7 @@ const dump = () => {
       '--type=analyzer',
       `--input=${input}`,
       `--output=${outputAnalyzer}`
-    ])
+    ].concat(commonParams))
 
     analyzerChild.on('close', code => {
       if (code !== 0) {
@@ -262,7 +292,7 @@ const dump = () => {
       '--type=alias',
       `--input=${input}`,
       `--output=${outputAlias}`
-    ])
+    ].concat(commonParams))
 
     aliasChild.on('close', code => {
       if (code !== 0) {
@@ -300,7 +330,7 @@ const dump = () => {
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
       `--support-big-int=${options['support-big-int']}`
-    ].concat(_transform))
+    ].concat(_transform).concat(commonParams))
 
     dataChild.on('close', code => {
       if (code !== 0) {
@@ -349,13 +379,13 @@ const load = () => {
     if (options.ignoreTemplate) return done()
     log('info', `indexing template ${inputTemplate} to ${output}`)
 
-    const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
+    const templateChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=template',
       `--input=${inputTemplate}`,
       `--output=${output}`
-    ])
+    ].concat(commonParams))
 
-    settingsChild.on('close', code => {
+    templateChild.on('close', code => {
       if (code !== 0) {
         return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
       } else {
@@ -372,7 +402,7 @@ const load = () => {
       '--type=settings',
       `--input=${inputSettings}`,
       `--output=${output}`
-    ])
+    ].concat(commonParams))
 
     settingsChild.on('close', code => {
       if (code !== 0) {
@@ -391,7 +421,7 @@ const load = () => {
       '--type=analyzer',
       `--input=${inputAnalyzer}`,
       `--output=${output}`
-    ])
+    ].concat(commonParams))
 
     analyzerChild.on('close', code => {
       if (code !== 0) {
@@ -410,7 +440,7 @@ const load = () => {
       '--type=mapping',
       `--input=${inputMapping}`,
       `--output=${output}`
-    ])
+    ].concat(commonParams))
 
     mappingChild.on('close', code => {
       if (code !== 0) {
@@ -429,7 +459,7 @@ const load = () => {
       '--type=alias',
       `--input=${inputAlias}`,
       `--output=${output}`
-    ])
+    ].concat(commonParams))
 
     aliasChild.on('close', code => {
       if (code !== 0) {
@@ -467,7 +497,7 @@ const load = () => {
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
       `--support-big-int=${options['support-big-int']}`
-    ].concat(_transform))
+    ].concat(_transform).concat(commonParams))
 
     dataChild.on('close', code => {
       if (code !== 0) {
