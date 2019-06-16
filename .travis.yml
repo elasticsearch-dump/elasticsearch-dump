@@ -1,3 +1,6 @@
+# lock distribution
+dist: trusty
+
 sudo: true
 
 language: node_js
@@ -8,17 +11,13 @@ branches:
   only:
     - master
 
-addons:
-  apt:
-    packages:
-      - oracle-java9-installer
-      - oracle-java9-set-default
+jdk:
+  oraclejdk9
 
-# We'll manually install versions of ES ourselves
-# services:
-#   - elasticsearch
-
-script: npm run test
+script:
+  # switch to jdk 9
+  - jdk_switcher use oraclejdk9 
+  - npm run test
 
 env:
   matrix:
@@ -34,4 +33,4 @@ before_install:
   - tar -xzf elasticsearch.tar.gz
   - ./elasticsearch-${ES_VERSION}/bin/elasticsearch ${ES_FLAGS} &
   # ES needs some time to start
-  - wget -q --waitretry=1 --retry-connrefused -T 25 -O - http://127.0.0.1:9200
+  - wget -q --waitretry=1 --retry-connrefused -T 60 -O - http://127.0.0.1:9200
