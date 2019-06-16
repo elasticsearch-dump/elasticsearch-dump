@@ -19,7 +19,7 @@ const cities = ['new_york', 'san_francisco', 'london', 'tokyo']
 const people = ['evan', 'christina', 'pablo', 'brian', 'aaron']
 const mapping = {
   city: {},
-  person: {_parent: {type: 'city'}}
+  person: { _parent: { type: 'city' } }
 }
 
 const request = require('request').defaults({
@@ -54,22 +54,22 @@ const setup = callback => {
 
   jobs.push(done => {
     const url = baseUrl + '/source_index'
-    const payload = {mappings: mapping}
-    request.put(url, {body: JSON.stringify(payload)}, done)
+    const payload = { mappings: mapping }
+    request.put(url, { body: JSON.stringify(payload) }, done)
   })
 
   cities.forEach(city => {
     jobs.push(done => {
       const url = baseUrl + '/source_index/city/' + city
-      const payload = {name: city}
-      request.put(url, {body: JSON.stringify(payload)}, done)
+      const payload = { name: city }
+      request.put(url, { body: JSON.stringify(payload) }, done)
     })
 
     people.forEach(person => {
       jobs.push(done => {
         const url = baseUrl + '/source_index/person/' + person + '_' + city + '?parent=' + city
-        const payload = {name: person, city: city}
-        request.put(url, {body: JSON.stringify(payload)}, done)
+        const payload = { name: person, city: city }
+        request.put(url, { body: JSON.stringify(payload) }, done)
       })
     })
   })
@@ -130,7 +130,7 @@ describex('parent child', () => {
         }
         payload.query.has_parent.query.wildcard.name = '*' + city + '*'
 
-        request.get(url, {body: JSON.stringify(payload)}, (err, response, body) => {
+        request.get(url, { body: JSON.stringify(payload) }, (err, response, body) => {
           should.not.exist(err)
           body = JSON.parse(body)
           body.hits.total.should.equal(people.length)
@@ -208,7 +208,7 @@ describex('parent child', () => {
           }
           payload.query.has_parent.query.wildcard.name = '*' + city + '*'
 
-          request.get(url, {body: JSON.stringify(payload)}, (err, response, body) => {
+          request.get(url, { body: JSON.stringify(payload) }, (err, response, body) => {
             should.not.exist(err)
             body = JSON.parse(body)
             body.hits.total.should.equal(people.length)
@@ -364,7 +364,7 @@ describex('parent child', () => {
             }
             payload.query.has_parent.query.wildcard.name = '*' + city + '*'
 
-            request.get(url, {body: JSON.stringify(payload)}, (err, response, body) => {
+            request.get(url, { body: JSON.stringify(payload) }, (err, response, body) => {
               should.not.exist(err)
               body = JSON.parse(body)
               body.hits.total.should.equal(people.length)

@@ -19,7 +19,7 @@ let i = 0
 let indexesExistingBeforeSuite = 0
 
 while (i < seedSize) {
-  seeds[i] = {key: ('key' + i)}
+  seeds[i] = { key: ('key' + i) }
   i++
 }
 
@@ -31,7 +31,7 @@ const request = require('request').defaults({
 })
 
 const seed = (index, type, settings, callback) => {
-  const payload = {url: baseUrl + '/' + index, body: JSON.stringify(settings)}
+  const payload = { url: baseUrl + '/' + index, body: JSON.stringify(settings) }
   request.put(payload, (err, response) => { // create the index first with potential custom analyzers before seeding
     should.not.exist(err)
     let started = 0
@@ -40,7 +40,7 @@ const seed = (index, type, settings, callback) => {
       const s = seeds[key]
       s['_uuid'] = key
       const url = baseUrl + '/' + index + '/' + type + '/' + key
-      request.put(url, {body: JSON.stringify(s)}, (err, response, body) => {
+      request.put(url, { body: JSON.stringify(s) }, (err, response, body) => {
         should.not.exist(err)
         started--
         if (started === 0) {
@@ -145,7 +145,7 @@ describe('ELASTICDUMP', () => {
   it('sets User-Agent', function (done) {
     const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
     this.timeout(testTimeout)
-    const parent = {options: {searchBody: 'none'}}
+    const parent = { options: { searchBody: 'none' } }
     const es = (new Elasticsearch(parent, baseUrl, 'source_index'))
     es.baseRequest(baseUrl, (err, response, body) => {
       should.not.exist(err)
@@ -157,7 +157,7 @@ describe('ELASTICDUMP', () => {
   it('sets custom headers', function (done) {
     const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
     this.timeout(testTimeout)
-    const parent = {options: {searchBody: 'none'}}
+    const parent = { options: { searchBody: 'none' } }
     const opts = {
       index: 'source_index',
       headers: {
@@ -344,7 +344,7 @@ describe('ELASTICDUMP', () => {
         input: baseUrl + '/source_index/seeds',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        searchBody: {'query': {'term': {'key': 'key1'}}}
+        searchBody: { 'query': { 'term': { 'key': 'key1' } } }
       }
 
       const dumper = new Elasticdump(options.input, options.output, options)
@@ -371,7 +371,7 @@ describe('ELASTICDUMP', () => {
         input: baseUrl + '/source_index/seeds',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        searchBody: {'query': {'range': {'_uuid': {'lte': '2'}}}}
+        searchBody: { 'query': { 'range': { '_uuid': { 'lte': '2' } } } }
       }
 
       const dumper = new Elasticdump(options.input, options.output, options)
@@ -889,7 +889,7 @@ describe('ELASTICDUMP', () => {
           const url = baseUrl + '/bigint_index/_search'
           request.get(url, (err, response, body) => {
             should.not.exist(err)
-            body = jsonParser.parse(body, {options})
+            body = jsonParser.parse(body, { options })
             body.hits.hits.length.should.equal(4)
             _.chain(body.hits.hits)
               .reduce((result, value) => {

@@ -1,9 +1,9 @@
 const http = require('http')
 const https = require('https')
-const {EventEmitter} = require('events')
+const { EventEmitter } = require('events')
 const url = require('url')
 const vm = require('vm')
-const {promisify} = require('util')
+const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
 
 const getParams = query => {
@@ -92,7 +92,7 @@ class elasticdump extends EventEmitter {
     const self = this
 
     if (self.validationErrors.length > 0) {
-      self.emit('error', {errors: self.validationErrors})
+      self.emit('error', { errors: self.validationErrors })
       callback(new Error('There was an error starting this dump'))
       return
     }
