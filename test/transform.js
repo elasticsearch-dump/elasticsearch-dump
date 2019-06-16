@@ -13,7 +13,7 @@ const async = require('async')
 const crypto = require('crypto')
 const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 const _ = require('lodash')
-const headers = {'Content-Type': 'application/json'}
+const headers = { 'Content-Type': 'application/json' }
 
 const clear = callback => {
   const jobs = []
@@ -30,13 +30,13 @@ const setup = callback => {
 
   jobs.push(done => {
     const url = baseUrl + '/source_index'
-    request.put(url, {body: JSON.stringify({mappings: {test: {}}}), headers}, done)
+    request.put(url, { body: JSON.stringify({ mappings: { test: {} } }), headers }, done)
   })
   ids.forEach(i => {
     jobs.push(done => {
       const url = baseUrl + '/source_index/test/' + i
-      const payload = JSON.stringify({foo: i})
-      request.put(url, {body: payload, headers}, done)
+      const payload = JSON.stringify({ foo: i })
+      request.put(url, { body: payload, headers }, done)
     })
   })
 

@@ -147,12 +147,12 @@ if (options.direction === 'load') {
     }
     // log('info', data);
     matchedIndexes = data.map(value => value
-        .replace('.mapping.json', '')
-        .replace('.analyzer.json', '')
-        .replace('.alias.json', '')
-        .replace('.settings.json', '')
-        .replace('.template.json', '')
-        .replace('.json', '')).filter(item => matchRegExp.test(item))
+      .replace('.mapping.json', '')
+      .replace('.analyzer.json', '')
+      .replace('.alias.json', '')
+      .replace('.settings.json', '')
+      .replace('.template.json', '')
+      .replace('.json', '')).filter(item => matchRegExp.test(item))
     matchedIndexes = unique(matchedIndexes)
     log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
@@ -311,12 +311,12 @@ const dump = () => {
 
     if (options.transform) {
       _transform = _.chain(options.transform)
-          .castArray()
-          .filter(_.negate(_.isEmpty))
-          .map(t => {
-            return `--transform=${t}`
-          })
-          .value()
+        .castArray()
+        .filter(_.negate(_.isEmpty))
+        .map(t => {
+          return `--transform=${t}`
+        })
+        .value()
     }
 
     const dataChild = fork(path.join(__dirname, 'elasticdump'), [
