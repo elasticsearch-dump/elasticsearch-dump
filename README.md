@@ -462,7 +462,7 @@ For loading files that you have dumped from multi-elasticsearch, `--direction` s
 and `interval` allows control over the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
 
 New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
-`--prefix` allows you to add a prefix to the index name e.g. `$index}-backup-2018-03-13`.
+`--prefix` allows you to add a prefix to the index name e.g. `${index}-backup-2018-03-13`.
 
 ## Module Transform
 
