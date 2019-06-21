@@ -166,6 +166,14 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     AWS secret access key
 --s3Region          
                     AWS region
+--s3Endpoint
+                    AWS endpoint can be used for AWS compatible backends such as
+                    OpenStack Swift and OpenStack Ceph
+--s3SSLEnabled
+                    Use SSL to connect to AWS [default true]
+
+--s3ForcePathStyle  Force path style URLs for S3 objects [default false]
+
 --s3Compress
                     gzip data before sending to s3
 --tlsAuth
