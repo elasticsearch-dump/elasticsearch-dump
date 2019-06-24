@@ -131,11 +131,15 @@ elasticdump \
 
 # Import data from S3 into ES (using s3urls)
 elasticdump \
+  --s3AccessKeyId "${access_key_id}" \
+  --s3SecretAccessKey "${access_key_secret}" \
   --input "s3://${bucket_name}/${file_name}.json" \
   --output=http://production.es.com:9200/my_index
 
 # Export ES data to S3 (using s3urls)
 elasticdump \
+  --s3AccessKeyId "${access_key_id}" \
+  --s3SecretAccessKey "${access_key_secret}" \
   --input=http://production.es.com:9200/my_index \
   --output "s3://${bucket_name}/${file_name}.json"
 ```
