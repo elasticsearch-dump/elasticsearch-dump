@@ -41,8 +41,6 @@ const defaults = {
   s3AccessKeyId: null,
   s3SecretAccessKey: null,
   s3Region: null,
-  s3Bucket: null,
-  s3RecordKey: null,
   s3Endpoint: null,
   s3SSLEnabled: true,
   s3ForcePathStyle: false,

@@ -75,10 +75,6 @@ class elasticdump extends EventEmitter {
 
     const required = ['input']
 
-    if (!self.options.s3Bucket) {
-      required.push('output')
-    }
-
     required.forEach(v => {
       if (!self.options[v]) {
         validationErrors.push('`' + v + '` is a required input')
