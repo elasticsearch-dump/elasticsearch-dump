@@ -508,6 +508,8 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - if you are using Elasticsearch version 6.0.0 or higher the `offset` parameter is no longer allowed in the scrollContext
 - ES 6.x.x & higher no longer support the `template` property for `_template` all templates prior to ES 6.0 has to be upgraded to use `index_patterns`
 - ES 7.x.x & higher no longer supports `type` property. all templates prior to ES 6.0 has to be upgraded to remove the type property
+- ES 5.x.x ignores offset (from) parameter in the search body. All records will be returned
+- ES 6.x.x [from](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/breaking-changes-6.0.html#_scroll) parameter can no longer be used in the search request body when initiating a scroll
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 
