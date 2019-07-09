@@ -125,9 +125,12 @@ log('info', `options: ${JSON.stringify(options)}`)
 const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
   if (!fs.existsSync(options.output)) { throw new Error('--output does not exist') }
-  let req = {         
-    uri: `${options.input}/_aliases`,
-    headers: JSON.parse(options.headers)
+  let req = {
+    url: `${options.input}/_aliases`,
+    headers: Object.assign({
+      'User-Agent': 'elasticdump',
+      'Content-Type': 'application/json'
+    }, JSON.parse(options.headers) || {})
   }
   request.get(req, (err, response) => {
     if (err) {
