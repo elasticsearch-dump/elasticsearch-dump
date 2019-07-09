@@ -110,3 +110,4 @@ app.js
 .eslintrc.json
 docker-compose*
 elasticdump.jpg
+runlocal*
