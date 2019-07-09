@@ -49,6 +49,7 @@ const defaults = {
   prefix: '',
   suffix: '',
   transform: null,
+  headers: null,
   searchBody: null,
   cert: null,
   key: null,
@@ -87,6 +88,7 @@ _.split(options.ignoreType, ',').forEach(field => {
 })
 
 const commonParams = [
+  `--headers=${options.headers}`,
   `--cert=${options.cert}`,
   `--key=${options.key}`,
   `--pass=${options.pass}`,
@@ -123,7 +125,11 @@ log('info', `options: ${JSON.stringify(options)}`)
 const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
   if (!fs.existsSync(options.output)) { throw new Error('--output does not exist') }
-  request.get(`${options.input}/_aliases`, (err, response) => {
+  let req = {         
+    uri: `${options.input}/_aliases`,
+    headers: JSON.parse(options.headers)
+  }
+  request.get(req, (err, response) => {
     if (err) {
       log('err', err)
       process.exit()
