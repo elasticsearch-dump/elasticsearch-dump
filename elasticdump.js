@@ -123,11 +123,11 @@ class elasticdump extends EventEmitter {
     const set = promisify(this.output.set).bind(this.output)
     const ignoreErrors = self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true'
 
-    let overlappedIoPromise
     for (;;) {
       let data
       try {
         data = await get(limit, offset)
+        console.log('>>>>>>>', data.length)
       } catch (err) {
         self.emit('error', err)
 
@@ -147,8 +147,7 @@ class elasticdump extends EventEmitter {
         }
       }
 
-      await overlappedIoPromise
-      overlappedIoPromise = set(data, limit, offset)
+      await set(data, limit, offset)
         .then((writes) => {
           totalWrites += writes
           if (data.length > 0) {
@@ -167,9 +166,8 @@ class elasticdump extends EventEmitter {
       if (data.length === 0) {
         break
       }
-      offset = offset + data.length
+      offset += data.length
     }
-    await overlappedIoPromise // wait for the latest output.set() result
 
     self.log('Total Writes: ' + totalWrites)
     self.log('dump complete')
