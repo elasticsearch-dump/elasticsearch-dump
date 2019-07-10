@@ -123,11 +123,12 @@ class elasticdump extends EventEmitter {
     const set = promisify(this.output.set).bind(this.output)
     const ignoreErrors = self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true'
 
+    let overlappedIoPromise
+    let overlappedIoPromiseChain = []
     for (;;) {
       let data
       try {
         data = await get(limit, offset)
-        console.log('>>>>>>>', data.length)
       } catch (err) {
         self.emit('error', err)
 
@@ -147,31 +148,36 @@ class elasticdump extends EventEmitter {
         }
       }
 
-      await set(data, limit, offset)
-        .then((writes) => {
+      overlappedIoPromise = set(data, limit, offset)
+        .then(writes => {
           totalWrites += writes
           if (data.length > 0) {
             self.log('sent ' + data.length + ' objects to destination ' + self.outputType + ', wrote ' + writes)
           }
-        }, (err) => {
-          self.emit('error', err)
-
-          if (!ignoreErrors) {
-            self.log('Total Writes: ' + totalWrites)
-            self.log('dump ended with error (set phase)  => ' + String(err))
-            throw err
-          }
         })
+
+      overlappedIoPromiseChain.push(overlappedIoPromise)
 
       if (data.length === 0) {
         break
       }
       offset += data.length
     }
+    Promise.all(overlappedIoPromiseChain)
+      .then(() => {
+        self.log('Total Writes: ' + totalWrites)
+        self.log('dump complete')
+        return totalWrites
+      })
+      .catch(err => {
+        self.emit('error', err)
 
-    self.log('Total Writes: ' + totalWrites)
-    self.log('dump complete')
-    return totalWrites
+        if (!ignoreErrors) {
+          self.log('Total Writes: ' + totalWrites)
+          self.log('dump ended with error (set phase)  => ' + String(err))
+          throw err
+        }
+      })
   }
 }
 
