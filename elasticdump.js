@@ -156,10 +156,10 @@ class elasticdump extends EventEmitter {
           }
         })
 
+      overlappedIoPromiseChain.push(overlappedIoPromise)
+
       if (data.length === 0) {
         break
-      } else {
-        overlappedIoPromiseChain.push(overlappedIoPromise)
       }
       offset += data.length
     }
