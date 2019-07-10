@@ -163,7 +163,8 @@ class elasticdump extends EventEmitter {
       }
       offset += data.length
     }
-    Promise.all(overlappedIoPromiseChain)
+
+    return Promise.all(overlappedIoPromiseChain)
       .then(() => {
         self.log('Total Writes: ' + totalWrites)
         self.log('dump complete')
