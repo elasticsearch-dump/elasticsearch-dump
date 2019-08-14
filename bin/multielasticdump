@@ -63,10 +63,11 @@ const defaults = {
   'output-cert': null,
   'output-key': null,
   'output-pass': null,
-  'output-ca': null
+  'output-ca': null,
+  concurrency: Infinity
 }
 
-for (let i in defaults) {
+for (const i in defaults) {
   options[i] = defaults[i]
   if (argv[i]) {
     options[i] = argv[i]
@@ -101,7 +102,8 @@ const commonParams = [
   `--output-cert=${options['output-cert']}`,
   `--output-key=${options['output-key']}`,
   `--output-pass=${options['output-pass']}`,
-  `--output-ca=${options['output-ca']}`
+  `--output-ca=${options['output-ca']}`,
+  `--concurrency=${options['concurrency']}`
 ]
 
 const log = (type, message) => {
@@ -125,7 +127,7 @@ log('info', `options: ${JSON.stringify(options)}`)
 const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
   if (!fs.existsSync(options.output)) { throw new Error('--output does not exist') }
-  let req = {
+  const req = {
     url: `${options.input}/_aliases`,
     method: 'GET',
     headers: Object.assign({
