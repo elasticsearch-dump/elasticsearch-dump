@@ -1,7 +1,6 @@
 const http = require('http')
 const https = require('https')
 const { EventEmitter } = require('events')
-const URL = require('url')
 const vm = require('vm')
 const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
