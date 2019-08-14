@@ -4,6 +4,7 @@ const { EventEmitter } = require('events')
 const vm = require('vm')
 const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
+const url = require('url')
 
 const getParams = query => {
   if (!query) {
@@ -49,8 +50,9 @@ class elasticdump extends EventEmitter {
       this.modifiers = this.options.transform.map(transform => {
         if (transform[0] === '@') {
           return doc => {
-            const parsed = new URL(transform.slice(1))
-            return require(parsed.pathname)(doc, getParams(parsed.query))
+            const filePath = transform.slice(1).split('?')
+            const parsed = url.pathToFileURL(filePath[0])
+            return require(parsed.pathname)(doc, getParams(filePath[1]))
           }
         } else {
           const modificationScriptText = '(function(doc) { ' + transform + ' })'
@@ -124,7 +126,7 @@ class elasticdump extends EventEmitter {
 
     let overlappedIoPromise
     const overlappedIoPromiseChain = []
-    for (;;) {
+    for (; ;) {
       let data
       try {
         data = await get(limit, offset)
