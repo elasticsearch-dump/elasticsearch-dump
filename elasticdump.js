@@ -1,7 +1,7 @@
 const http = require('http')
 const https = require('https')
 const { EventEmitter } = require('events')
-const url = require('url')
+const URL = require('url')
 const vm = require('vm')
 const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
@@ -14,7 +14,7 @@ const getParams = query => {
   return (/^[?#]/.test(query) ? query.slice(1) : query)
     .split('&')
     .reduce((params, param) => {
-      let [key, value] = param.split('=')
+      const [key, value] = param.split('=')
       params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : ''
       return params
     }, {})
@@ -50,7 +50,7 @@ class elasticdump extends EventEmitter {
       this.modifiers = this.options.transform.map(transform => {
         if (transform[0] === '@') {
           return doc => {
-            const parsed = url.parse(transform.slice(1))
+            const parsed = new URL(transform.slice(1))
             return require(parsed.pathname)(doc, getParams(parsed.query))
           }
         } else {
@@ -124,7 +124,7 @@ class elasticdump extends EventEmitter {
     const ignoreErrors = self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true'
 
     let overlappedIoPromise
-    let overlappedIoPromiseChain = []
+    const overlappedIoPromiseChain = []
     for (;;) {
       let data
       try {
