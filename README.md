@@ -253,6 +253,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --size
                     How many objects to retrieve
                     (default: -1 -> no limit)
+--concurrency
+                    How concurrent request is sent to a specified transport
+                    (default: Infinity -> no limit)                    
 --debug
                     Display the elasticsearch commands being used
                     (default: false)

@@ -37,7 +37,7 @@
     "lodash": "^4.17.15",
     "lossless-json": "^1.0.3",
     "optimist": "latest",
-    "p-throttle": "^3.1.0",
+    "p-limit": "^2.2.0",
     "request": "2.x.x",
     "requestretry": "^4.0.0",
     "s3-stream-upload": "2.0.2",
