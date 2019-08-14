@@ -35,7 +35,7 @@ const seed = (index, type, settings, callback) => {
   request.put(payload, (err, response) => { // create the index first with potential custom analyzers before seeding
     should.not.exist(err)
     let started = 0
-    for (let key in seeds) {
+    for (const key in seeds) {
       started++
       const s = seeds[key]
       s['_uuid'] = key
@@ -89,12 +89,12 @@ describe('ELASTICDUMP', () => {
     this.timeout(testTimeout)
     clear(() => {
       const settings = {
-        'settings': {
-          'analysis': {
-            'analyzer': {
-              'content': {
-                'type': 'custom',
-                'tokenizer': 'whitespace'
+        settings: {
+          analysis: {
+            analyzer: {
+              content: {
+                type: 'custom',
+                tokenizer: 'whitespace'
               }
             }
           }
@@ -344,7 +344,7 @@ describe('ELASTICDUMP', () => {
         input: baseUrl + '/source_index/seeds',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        searchBody: { 'query': { 'term': { 'key': 'key1' } } }
+        searchBody: { query: { term: { key: 'key1' } } }
       }
 
       const dumper = new Elasticdump(options.input, options.output, options)
@@ -371,7 +371,7 @@ describe('ELASTICDUMP', () => {
         input: baseUrl + '/source_index/seeds',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
-        searchBody: { 'query': { 'range': { '_uuid': { 'lte': '2' } } } }
+        searchBody: { query: { range: { _uuid: { lte: '2' } } } }
       }
 
       const dumper = new Elasticdump(options.input, options.output, options)
@@ -947,7 +947,7 @@ describe('ELASTICDUMP', () => {
           })
 
           let count = 0
-          for (let i in output) {
+          for (const i in output) {
             const elem = output[i]
             if (elem['_index'] === 'source_index' || elem['_index'] === 'another_index') {
               count++

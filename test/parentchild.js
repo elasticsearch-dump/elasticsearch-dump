@@ -117,12 +117,12 @@ describex('parent child', () => {
       it(city + ' should have children', done => {
         const url = baseUrl + '/source_index/_search'
         const payload = {
-          'query': {
-            'has_parent': {
-              'parent_type': 'city',
-              'query': {
-                'wildcard': {
-                  'name': ''
+          query: {
+            has_parent: {
+              parent_type: 'city',
+              query: {
+                wildcard: {
+                  name: ''
                 }
               }
             }
@@ -195,12 +195,12 @@ describex('parent child', () => {
         it(city + ' should have children', done => {
           const url = baseUrl + '/destination_index/_search'
           const payload = {
-            'query': {
-              'has_parent': {
-                'parent_type': 'city',
-                'query': {
-                  'wildcard': {
-                    'name': ''
+            query: {
+              has_parent: {
+                parent_type: 'city',
+                query: {
+                  wildcard: {
+                    name: ''
                   }
                 }
               }
@@ -351,12 +351,12 @@ describex('parent child', () => {
           it(city + ' should have children', done => {
             const url = baseUrl + '/file_destination_index/_search'
             const payload = {
-              'query': {
-                'has_parent': {
-                  'parent_type': 'city',
-                  'query': {
-                    'wildcard': {
-                      'name': ''
+              query: {
+                has_parent: {
+                  parent_type: 'city',
+                  query: {
+                    wildcard: {
+                      name: ''
                     }
                   }
                 }
