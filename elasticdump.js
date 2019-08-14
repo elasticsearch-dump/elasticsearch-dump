@@ -124,10 +124,10 @@ class elasticdump extends EventEmitter {
     const get = promisify(this.input.get).bind(this.input)
     const set = promisify(this.output.set).bind(this.output)
     const ignoreErrors = self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true'
-    const ioConcurrency = pLimit(self.options['concurrency'])
+    const ioConcurrency = pLimit(self.options['concurrency'] || Infinity)
     let overlappedIoPromise
     const overlappedIoPromiseChain = []
-    for (; ;) {
+    for (;;) {
       let data
       try {
         data = await get(limit, offset)
