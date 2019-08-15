@@ -73,7 +73,10 @@ const defaults = {
   inputSocksPort: null,
   outputSocksProxy: null,
   outputSocksPort: null,
-  concurrency: Infinity
+  concurrency: Infinity,
+  carryoverConcurrencyCount: false,
+  intervalCap: Infinity,
+  concurrencyInterval: 0
 }
 const jsonParsedOpts = ['searchBody', 'headers', 'params']
 const options = {}
