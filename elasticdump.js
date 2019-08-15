@@ -5,7 +5,7 @@ const vm = require('vm')
 const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
 const url = require('url')
-const pLimit = require('p-limit')
+const { default: PQueue } = require('p-queue')
 
 const getParams = query => {
   if (!query) {
@@ -124,9 +124,13 @@ class elasticdump extends EventEmitter {
     const get = promisify(this.input.get).bind(this.input)
     const set = promisify(this.output.set).bind(this.output)
     const ignoreErrors = self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true'
-    const ioConcurrency = pLimit(self.options['concurrency'] || Infinity)
+    const queue = new PQueue({
+      concurrency: self.options['concurrency'] || Infinity,
+      interval: self.options['concurrencyInterval'] || 0,
+      intervalCap: self.options['intervalCap'] || Infinity,
+      carryoverConcurrencyCount: self.options['carryoverConcurrencyCount'] || false
+    })
     let overlappedIoPromise
-    const overlappedIoPromiseChain = []
     for (;;) {
       let data
       try {
@@ -158,7 +162,7 @@ class elasticdump extends EventEmitter {
           }
         })
 
-      overlappedIoPromiseChain.push(ioConcurrency(() => overlappedIoPromise))
+      queue.add(() => overlappedIoPromise)
 
       if (data.length === 0) {
         break
@@ -166,7 +170,7 @@ class elasticdump extends EventEmitter {
       offset += data.length
     }
 
-    return Promise.all(overlappedIoPromiseChain)
+    return queue.onIdle()
       .then(() => {
         self.log('Total Writes: ' + totalWrites)
         self.log('dump complete')
