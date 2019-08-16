@@ -13,6 +13,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --output-index
                     Destination index and type
                     (default: all, example: index/type)
+--overwrite
+                    Overwrite output file if it exists
+                    (default: false)
 --limit
                     How many objects to move in batch per operation
                     limit is approximate for file streams

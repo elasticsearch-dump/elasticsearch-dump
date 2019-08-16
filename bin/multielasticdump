@@ -67,7 +67,8 @@ const defaults = {
   concurrency: Infinity,
   carryoverConcurrencyCount: false,
   intervalCap: Infinity,
-  concurrencyInterval: 0
+  concurrencyInterval: 0,
+  overwrite: false
 }
 
 for (const i in defaults) {
@@ -109,7 +110,8 @@ const commonParams = [
   `--concurrency=${options['concurrency']}`,
   `--carryoverConcurrencyCount=${options['carryoverConcurrencyCount']}`,
   `--intervalCap=${options['intervalCap']}`,
-  `--concurrencyInterval=${options['concurrencyInterval']}`
+  `--concurrencyInterval=${options['concurrencyInterval']}`,
+  `--overwrite=${options['overwrite']}`
 ]
 
 const log = (type, message) => {
