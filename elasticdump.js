@@ -6,6 +6,7 @@ const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
 const url = require('url')
 const { default: PQueue } = require('p-queue')
+const delay = require('delay')
 
 const getParams = query => {
   if (!query) {
@@ -168,6 +169,8 @@ class elasticdump extends EventEmitter {
         break
       }
       offset += data.length
+
+      await delay(self.options.throttleInterval || 0)
     }
 
     return queue.onIdle()

@@ -268,6 +268,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --carryoverConcurrencyCount
                     Whether the task must finish in the given interval or will be carried over into the next interval count.
                     (default: false)                                                                                       
+--throttleInterval
+                    Delay between getting data from an inputTransport and sending it to an outputTransport
+                     (default: 0 -> no limit)
 --debug
                     Display the elasticsearch commands being used
                     (default: false)

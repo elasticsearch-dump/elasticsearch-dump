@@ -74,6 +74,7 @@ const defaults = {
   outputSocksProxy: null,
   outputSocksPort: null,
   concurrency: Infinity,
+  throttleInterval: 0,
   carryoverConcurrencyCount: false,
   intervalCap: Infinity,
   concurrencyInterval: 0,
