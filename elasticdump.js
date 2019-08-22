@@ -126,10 +126,10 @@ class elasticdump extends EventEmitter {
     const set = promisify(this.output.set).bind(this.output)
     const ignoreErrors = self.options['ignore-errors'] === true || self.options['ignore-errors'] === 'true'
     const queue = new PQueue({
-      concurrency: self.options['concurrency'] || Infinity,
-      interval: self.options['concurrencyInterval'] || 0,
-      intervalCap: self.options['intervalCap'] || Infinity,
-      carryoverConcurrencyCount: self.options['carryoverConcurrencyCount'] || false
+      concurrency: self.options.concurrency || Infinity,
+      interval: self.options.concurrencyInterval || 0,
+      intervalCap: self.options.intervalCap || Infinity,
+      carryoverConcurrencyCount: self.options.carryoverConcurrencyCount || false
     })
     let overlappedIoPromise
     for (;;) {

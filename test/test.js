@@ -38,7 +38,7 @@ const seed = (index, type, settings, callback) => {
     for (const key in seeds) {
       started++
       const s = seeds[key]
-      s['_uuid'] = key
+      s._uuid = key
       const url = baseUrl + '/' + index + '/' + type + '/' + key
       request.put(url, { body: JSON.stringify(s) }, (err, response, body) => {
         should.not.exist(err)
@@ -143,7 +143,7 @@ describe('ELASTICDUMP', () => {
   })
 
   it('sets User-Agent', function (done) {
-    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch')).elasticsearch
     this.timeout(testTimeout)
     const parent = { options: { searchBody: 'none' } }
     const es = (new Elasticsearch(parent, baseUrl, 'source_index'))
@@ -155,7 +155,7 @@ describe('ELASTICDUMP', () => {
   })
 
   it('sets custom headers', function (done) {
-    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch')).elasticsearch
     this.timeout(testTimeout)
     const parent = { options: { searchBody: 'none' } }
     const opts = {
@@ -177,7 +177,7 @@ describe('ELASTICDUMP', () => {
   })
 
   it('sets custom params', function (done) {
-    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch'))['elasticsearch']
+    const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch')).elasticsearch
     this.timeout(testTimeout)
     const parent = {
       options: {
@@ -792,7 +792,7 @@ describe('ELASTICDUMP', () => {
 
         // "key" should be immediately available
         const first = JSON.parse(lines[0])
-        first['key'].length.should.be.above(0)
+        first.key.length.should.be.above(0)
         done()
       })
     })
@@ -893,7 +893,7 @@ describe('ELASTICDUMP', () => {
             body.hits.hits.length.should.equal(4)
             _.chain(body.hits.hits)
               .reduce((result, value) => {
-                result.push(value['_source']['key'].toString())
+                result.push(value._source.key.toString())
                 return result
               }, [])
               .sort()
@@ -949,7 +949,7 @@ describe('ELASTICDUMP', () => {
           let count = 0
           for (const i in output) {
             const elem = output[i]
-            if (elem['_index'] === 'source_index' || elem['_index'] === 'another_index') {
+            if (elem._index === 'source_index' || elem._index === 'another_index') {
               count++
             }
           }

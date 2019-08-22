@@ -107,11 +107,11 @@ const commonParams = [
   `--output-key=${options['output-key']}`,
   `--output-pass=${options['output-pass']}`,
   `--output-ca=${options['output-ca']}`,
-  `--concurrency=${options['concurrency']}`,
-  `--carryoverConcurrencyCount=${options['carryoverConcurrencyCount']}`,
-  `--intervalCap=${options['intervalCap']}`,
-  `--concurrencyInterval=${options['concurrencyInterval']}`,
-  `--overwrite=${options['overwrite']}`
+  `--concurrency=${options.concurrency}`,
+  `--carryoverConcurrencyCount=${options.carryoverConcurrencyCount}`,
+  `--intervalCap=${options.intervalCap}`,
+  `--concurrencyInterval=${options.concurrencyInterval}`,
+  `--overwrite=${options.overwrite}`
 ]
 
 const log = (type, message) => {
