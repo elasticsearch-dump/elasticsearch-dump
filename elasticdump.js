@@ -163,15 +163,8 @@ class elasticdump extends EventEmitter {
           }
         })
 
-      queue.add(() => overlappedIoPromise)
-
-      if (data.length === 0) {
-        break
-      }
-      offset += data.length
-
       try {
-        await delay(self.options.throttleInterval || 0)
+        await queue.add(() => overlappedIoPromise)
       } catch (err) {
         self.emit('error', err)
 
@@ -181,6 +174,13 @@ class elasticdump extends EventEmitter {
           throw err
         }
       }
+
+      if (data.length === 0) {
+        break
+      }
+      offset += data.length
+
+      await delay(self.options.throttleInterval || 0)
     }
 
     return queue.onIdle()
@@ -188,15 +188,6 @@ class elasticdump extends EventEmitter {
         self.log('Total Writes: ' + totalWrites)
         self.log('dump complete')
         return totalWrites
-      })
-      .catch(err => {
-        self.emit('error', err)
-
-        if (!ignoreErrors) {
-          self.log('Total Writes: ' + totalWrites)
-          self.log('dump ended with error (set phase)  => ' + String(err))
-          throw err
-        }
       })
   }
 }
