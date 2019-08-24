@@ -170,7 +170,17 @@ class elasticdump extends EventEmitter {
       }
       offset += data.length
 
-      await delay(self.options.throttleInterval || 0)
+      try {
+        await delay(self.options.throttleInterval || 0)
+      } catch (err) {
+        self.emit('error', err)
+
+        if (!ignoreErrors) {
+          self.log('Total Writes: ' + totalWrites)
+          self.log('dump ended with error (get phase) => ' + String(err))
+          throw err
+        }
+      }
     }
 
     return queue.onIdle()
