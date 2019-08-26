@@ -173,14 +173,6 @@ elasticdump \
   --output-index=my_index \
   --type=mapping
 
-# Copy a single type:
-elasticdump \
-  --input=http://es.com:9200/api/search \
-  --input-index=my_index/my_type \
-  --output=http://es.com:9200/api/search \
-  --output-index=my_index \
-  --type=mapping
-
 ```
 
 ### Docker install
