@@ -53,6 +53,8 @@ const defaults = {
   prefix: '',
   suffix: '',
   retryAttempts: 0,
+  customBackoff: false,
+  retryDelayBase: 0,
   retryDelay: 5000,
   parseExtraFields: '',
   fileSize: -1,
