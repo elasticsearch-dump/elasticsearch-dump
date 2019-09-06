@@ -416,6 +416,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     
 --s3Compress
                     gzip data before sending to s3  
+
+--retryDelayBase
+                    The base number of milliseconds to use in the exponential backoff for operation retries. (s3)
+--customBackoff
+                    Activate custom customBackoff function. (s3)
 --tlsAuth
                     Enable TLS X509 client authentication
 --cert, --input-cert, --output-cert
