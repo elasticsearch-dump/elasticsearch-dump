@@ -39,6 +39,6 @@ If applicable, add screenshots to help explain your problem.
 **Additional context**
 Add any other context about the problem here.
 
-> A good bug report shouldn't leave others needing to chase you up for more information. Please try to be as detailed as possible in your report. What is your environment? What was the course url? What steps will reproduce the issue? What OS experience the problem? All these details will help to fix any potential bugs as soon as possible.
+> A good bug report shouldn't leave others needing to chase you up for more information. Please try to be as detailed as possible in your report. What is your environment? What was the url? What steps will reproduce the issue? What OS experience the problem? All these details will help to fix any potential bugs as soon as possible.
 
 
