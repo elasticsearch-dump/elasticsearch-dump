@@ -10,6 +10,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: all, example: index/type)
 --output
                     Destination location (required)
+                    If the filename ends with ".gz", output is gzipped
+
 --output-index
                     Destination index and type
                     (default: all, example: index/type)
