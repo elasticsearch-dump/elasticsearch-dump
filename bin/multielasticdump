@@ -64,9 +64,9 @@ const defaults = {
   'output-key': null,
   'output-pass': null,
   'output-ca': null,
-  concurrency: Infinity,
+  concurrency: null,
   carryoverConcurrencyCount: false,
-  intervalCap: Infinity,
+  intervalCap: null,
   concurrencyInterval: 0,
   overwrite: false
 }
