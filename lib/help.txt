@@ -27,23 +27,23 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 
 --concurrency
                     How concurrent request is sent to a specified transport
-                    (default: Infinity -> no limit)
+                    (default: 1)
 
 --concurrencyInterval
                     The length of time in milliseconds before the interval count resets. Must be finite.
-                    (default: 0 -> no limit)
+                    (default: 5000)
 
 --intervalCap
                     The max number of transport request in the given interval of time.
-                    (default: Infinity -> no limit)
+                    (default: 5)
 
 --carryoverConcurrencyCount
                     Whether the task must finish in the given interval or will be carried over into the next interval count.
-                    (default: false)
+                    (default: true)
 
 --throttleInterval
                     Delay between getting data from an inputTransport and sending it to an outputTransport
-                     (default: 0 -> no limit)
+                     (default: 1)
 
 --debug
                     Display the elasticsearch commands being used
