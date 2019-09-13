@@ -249,7 +249,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     How many objects to retrieve
                     (default: -1 -> no limit)
 --concurrency
-                    How concurrent request is sent to a specified transport
+                    How many concurrent request is sent to a specified transport
                     (default: 1)       
 --concurrencyInterval
                     The length of time in milliseconds before the interval count resets. Must be finite.
