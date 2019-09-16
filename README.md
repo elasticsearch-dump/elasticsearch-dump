@@ -258,10 +258,14 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     The max number of transport request in the given interval of time.
                     (default: 5)
 --carryoverConcurrencyCount
-                    Whether the task must finish in the given interval or will be carried over into the next interval count.
+                    Whether the task must finish in the given concurrencyInterval 
+                    (intervalCap will reset to the default whether the request is completed or not)
+                    or will be carried over into the next interval count,
+                    which will effectively reduce the number of new requests created in the next interval
+                    i.e. intervalCap -= <num of carried over requests>
                     (default: true)                                                                                       
 --throttleInterval
-                    Delay between getting data from an inputTransport and sending it to an outputTransport
+                    The length of time in milliseconds to delay between getting data from an inputTransport and sending it to an outputTransport
                      (default: 1)
 --debug
                     Display the elasticsearch commands being used
