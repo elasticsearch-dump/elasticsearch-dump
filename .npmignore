@@ -111,3 +111,4 @@ app.js
 docker-compose*
 elasticdump.jpg
 runlocal*
+docker-entrypoint.sh
