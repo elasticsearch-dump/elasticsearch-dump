@@ -128,7 +128,8 @@ if (argv.help === true) {
   console.log(packageData.version)
 } else {
   if (!options.overwrite && options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output)) {
-    throw new Error(`File \`${options.output}\` already exists, quitting`)
+    console.error(`File \`${options.output}\` already exists, quitting`)
+    process.exit(1)
   }
 
   const dumper = new Elasticdump(options.input, options.output, options)
