@@ -127,6 +127,27 @@ const log = (type, message) => {
   console.log(message)
 }
 
+const validateDirectory = (options, field) => {
+  let isDir
+  try {
+    isDir = fs.lstatSync(options[field]).isDirectory()
+  } catch (e) {
+    // Handle error
+    if (e.code === 'ENOENT') {
+      // no such file or directory
+      console.error(`Directory --${field} : \`${options[field]}\` does not exists`)
+      process.exit(1)
+    } else {
+      // do something else
+    }
+  }
+
+  if (!isDir) {
+    console.error(`--${field} ${options[field]} is a not directory`)
+    process.exit(1)
+  }
+}
+
 if (!options.input) { throw new Error('--input is required') }
 if (!options.output) { throw new Error('--output is required') }
 log('info', `We are performing : ${options.direction}`)
@@ -134,7 +155,7 @@ log('info', `options: ${JSON.stringify(options)}`)
 
 const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
-  if (!fs.existsSync(options.output)) { throw new Error('--output does not exist') }
+  validateDirectory(options, 'output')
   const req = {
     url: `${options.input}/_aliases`,
     method: 'GET',
@@ -159,7 +180,7 @@ if (options.direction === 'dump') {
 }
 
 if (options.direction === 'load') {
-  if (!fs.existsSync(options.input)) { throw new Error('--input() does not exist') }
+  validateDirectory(options, 'input')
   fs.readdir(options.input, (err, data) => {
     if (err) {
       log('error', err)
