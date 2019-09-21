@@ -10,7 +10,7 @@ const os = require('os')
 const async = require('async')
 const _ = require('lodash')
 const jq = require('jsonpath')
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require('uuid/v4')
 const baseUrl = 'http://127.0.0.1:9200'
 
 const seeds = {}
@@ -99,7 +99,9 @@ describe('ELASTICDUMP', () => {
               }
             }
           }
-        }
+        },
+        number_of_shards: 1,
+        number_of_replicas: 0
       } // settings for index to be created with
       seed('source_index', 'seeds', settings, () => {
         seed('another_index', 'seeds', undefined, () => {
