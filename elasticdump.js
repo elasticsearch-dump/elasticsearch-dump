@@ -138,8 +138,8 @@ class elasticdump extends EventEmitter {
       })
       .catch(err => {
         this.emit('error', err)
-        this.log('Total Writes: ' + totalWrites)
-        this.log('dump ended with error (get phase) => ' + String(err))
+        this.log(`Total Writes: ${totalWrites}`)
+        this.log(`dump ended with error (get phase) => ${String(err)}`)
         throw err
       })
   }
@@ -181,7 +181,7 @@ class elasticdump extends EventEmitter {
         return queue.add(() => overlappedIoPromise)
           .then(() => {
             offset += data.length
-            delay(this.options.throttleInterval || 0)
+            return delay(this.options.throttleInterval || 0)
               .then(() => {
                 return this.__looper(limit, offset, totalWrites, queue)
                   .then(resolve)
