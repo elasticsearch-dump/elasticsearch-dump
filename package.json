@@ -50,8 +50,7 @@
     "jsonpath": "1.0.2",
     "mocha": "latest",
     "should": "latest",
-    "standard": "^14.3.1",
-    "uuid": "^3.3.3"
+    "standard": "^14.3.1"
   },
   "standard": {
     "globals": [

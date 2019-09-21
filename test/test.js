@@ -10,7 +10,6 @@ const os = require('os')
 const async = require('async')
 const _ = require('lodash')
 const jq = require('jsonpath')
-const uuidv4 = require('uuid/v4')
 const baseUrl = 'http://127.0.0.1:9200'
 
 const seeds = {}
@@ -743,7 +742,6 @@ describe('ELASTICDUMP', () => {
 
   describe('es to file', () => {
     it('works', function (done) {
-      const file = `/tmp/${uuidv4()}.json`
       this.timeout(testTimeout)
       const options = {
         limit: 100,
@@ -751,18 +749,18 @@ describe('ELASTICDUMP', () => {
         debug: false,
         type: 'data',
         input: baseUrl + '/source_index',
-        output: file,
+        output: '/tmp/out.jsonl',
         scrollTime: '10m',
         sourceOnly: false,
         jsonLines: false
       }
 
-      if (fs.existsSync(file)) { fs.unlinkSync(file) }
+      if (fs.existsSync('/tmp/out.jsonl')) { fs.unlinkSync('/tmp/out.jsonl') }
 
       const dumper = new Elasticdump(options.input, options.output, options)
 
       dumper.dump(() => {
-        const raw = fs.readFileSync(file)
+        const raw = fs.readFileSync('/tmp/out.jsonl')
         const lineCount = String(raw).split('\n').length
         lineCount.should.equal(seedSize + 1)
         done()
@@ -810,7 +808,7 @@ describe('ELASTICDUMP', () => {
         offset: 0,
         debug: false,
         type: 'data',
-        input: '/tmp/out.json',
+        input: '/tmp/out.jsonl',
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
       }
@@ -837,7 +835,7 @@ describe('ELASTICDUMP', () => {
         limit: 100,
         debug: false,
         type: 'data',
-        input: '/tmp/out.json',
+        input: '/tmp/out.jsonl',
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
         offset: 250
