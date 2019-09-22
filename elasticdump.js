@@ -52,27 +52,25 @@ class ElasticDump extends TransportProcessor {
   }
 
   dump (callback, continuing, limit, offset, totalWrites) {
-    const self = this
-
-    if (self.validationErrors.length > 0) {
-      self.emit('error', { errors: self.validationErrors })
+    if (this.validationErrors.length > 0) {
+      this.emit('error', { errors: this.validationErrors })
       callback(new Error('There was an error starting this dump'))
       return
     }
 
-    if (!limit) { limit = self.options.limit }
-    if (!offset) { offset = self.options.offset }
+    if (!limit) { limit = this.options.limit }
+    if (!offset) { offset = this.options.offset }
     if (!totalWrites) { totalWrites = 0 }
 
     if (continuing !== true) {
-      self.log('starting dump')
+      this.log('starting dump')
 
-      if (self.options.offset) {
-        self.log(`Warning: offsetting ${self.options.offset} rows.`)
-        self.log('  * Using an offset doesn\'t guarantee that the offset rows have already been written, please refer to the HELP text.')
+      if (this.options.offset) {
+        this.log(`Warning: offsetting ${this.options.offset} rows.`)
+        this.log('  * Using an offset doesn\'t guarantee that the offset rows have already been written, please refer to the HELP text.')
       }
-      if (self.modifiers.length) {
-        self.log(`Will modify documents using these scripts: ${self.options.transform}`)
+      if (this.modifiers.length) {
+        this.log(`Will modify documents using these scripts: ${this.options.transform}`)
       }
     }
 
