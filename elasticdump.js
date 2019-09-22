@@ -49,6 +49,7 @@ class ElasticDump extends TransportProcessor {
 
     // promisify helpers
     this.get = promisify(this.output.get).bind(this.input)
+    this.set = promisify(this.output.set).bind(this.output)
   }
 
   dump (callback, continuing, limit, offset, totalWrites) {
