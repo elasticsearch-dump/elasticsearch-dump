@@ -54,6 +54,14 @@ const seed = (index, type, settings, callback) => {
   })
 }
 
+const loadTemplate = (templateName, templateBody, callback) => {
+  const payload = { url: baseUrl + '/_template/' + templateName, body: JSON.stringify(templateBody) }
+  request.put(payload, (err, response) => { // create the index first with potential custom analyzers before seeding
+    should.not.exist(err)
+    callback()
+  })
+}
+
 const clear = callback => {
   request.del(baseUrl + '/destination_index', (err, response, body) => {
     should.not.exist(err)
@@ -99,12 +107,28 @@ describe('ELASTICDUMP', () => {
             }
           }
         }
-      } // settings for index to be created with
-      seed('source_index', 'seeds', settings, () => {
-        seed('another_index', 'seeds', undefined, () => {
-          setTimeout(() => {
-            done()
-          }, 500)
+      }
+
+      const templateSettings = {
+        index_patterns: [
+          'source_index',
+          'another_index',
+          'destination_index'
+        ],
+        settings: {
+          number_of_shards: 1,
+          number_of_replicas: 0
+        }
+      }
+
+      // settings for index to be created with
+      loadTemplate('template_1', templateSettings, () => {
+        seed('source_index', 'seeds', settings, () => {
+          seed('another_index', 'seeds', undefined, () => {
+            setTimeout(() => {
+              done()
+            }, 500)
+          })
         })
       })
     })
