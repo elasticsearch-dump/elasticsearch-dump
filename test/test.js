@@ -109,12 +109,14 @@ describe('ELASTICDUMP', () => {
         }
       }
 
+      const isNew = /[6-9]\.\d+\..+/.test(process.env.ES_VERSION)
+
       const templateSettings = {
-        index_patterns: [
+        [isNew ? 'index_patterns' : 'template']: isNew ? [
           'source_index',
           'another_index',
           'destination_index'
-        ],
+        ] : '*_index',
         settings: {
           number_of_shards: 1,
           number_of_replicas: 0
