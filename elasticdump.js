@@ -1,6 +1,6 @@
 const http = require('http')
 const https = require('https')
-const TransportProcessor = require('./lib/processer')
+const TransportProcessor = require('./lib/processor')
 const vm = require('vm')
 const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
