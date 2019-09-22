@@ -175,7 +175,9 @@ class elasticdump extends EventEmitter {
           })
 
         if (data.length === 0) {
-          return queue.onIdle().then(() => resolve(totalWrites))
+          return queue.onIdle()
+            .then(() => resolve(totalWrites))
+            .catch(reject)
         } else {
           return queue.add(() => overlappedIoPromise)
             .then(() => {
@@ -185,7 +187,8 @@ class elasticdump extends EventEmitter {
                   return this.__looper(limit, offset, totalWrites, queue)
                     .then(resolve)
                 })
-            }).catch(reject)
+            })
+            .catch(reject)
         }
       })
     })
