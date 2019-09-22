@@ -175,18 +175,18 @@ class elasticdump extends EventEmitter {
           })
 
         if (data.length === 0) {
-          return resolve(totalWrites)
+          return queue.onIdle().then(() => resolve(totalWrites))
+        } else {
+          return queue.add(() => overlappedIoPromise)
+            .then(() => {
+              offset += data.length
+              return delay(this.options.throttleInterval || 0)
+                .then(() => {
+                  return this.__looper(limit, offset, totalWrites, queue)
+                    .then(resolve)
+                })
+            }).catch(reject)
         }
-
-        return queue.add(() => overlappedIoPromise)
-          .then(() => {
-            offset += data.length
-            return delay(this.options.throttleInterval || 0)
-              .then(() => {
-                return this.__looper(limit, offset, totalWrites, queue)
-                  .then(resolve)
-              })
-          }).catch(reject)
       })
     })
   }
