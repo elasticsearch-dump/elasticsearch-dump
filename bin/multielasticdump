@@ -38,7 +38,7 @@ const defaults = {
   offset: 0,
   direction: 'dump', // default to dump
   'support-big-int': false,
-  ignoreAnalyzer: false,
+  ignoreAnalyzer: true,
   ignoreData: false,
   ignoreMapping: false,
   ignoreSettings: false,
