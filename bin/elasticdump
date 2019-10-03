@@ -45,6 +45,7 @@ const defaults = {
   s3SSLEnabled: true,
   s3ForcePathStyle: false,
   s3Compress: false,
+  fsCompress: false,
   awsIniFileName: null,
   sessionToken: null,
   transform: null,
