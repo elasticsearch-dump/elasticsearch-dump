@@ -68,7 +68,8 @@ const defaults = {
   carryoverConcurrencyCount: false,
   intervalCap: null,
   concurrencyInterval: 0,
-  overwrite: false
+  overwrite: false,
+  fsCompress: false
 }
 
 for (const i in defaults) {
@@ -111,8 +112,11 @@ const commonParams = [
   `--carryoverConcurrencyCount=${options.carryoverConcurrencyCount}`,
   `--intervalCap=${options.intervalCap}`,
   `--concurrencyInterval=${options.concurrencyInterval}`,
-  `--overwrite=${options.overwrite}`
+  `--overwrite=${options.overwrite}`,
+  `--fsCompress=${options.fsCompress}`
 ]
+
+const fileExt = options.fsCompress ? 'json.gz' : 'json'
 
 const log = (type, message) => {
   if (type === 'debug') {
@@ -188,12 +192,12 @@ if (options.direction === 'load') {
     }
     // log('info', data);
     matchedIndexes = data.map(value => value
-      .replace('.mapping.json', '')
-      .replace('.analyzer.json', '')
-      .replace('.alias.json', '')
-      .replace('.settings.json', '')
-      .replace('.template.json', '')
-      .replace('.json', '')).filter(item => matchRegExp.test(item))
+      .replace(`.mapping.${fileExt}`, '')
+      .replace(`.analyzer.${fileExt}`, '')
+      .replace(`.alias.${fileExt}`, '')
+      .replace(`.settings.${fileExt}`, '')
+      .replace(`.template.${fileExt}`, '')
+      .replace(`.${fileExt}`, '')).filter(item => matchRegExp.test(item))
     matchedIndexes = unique(matchedIndexes)
     log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
@@ -241,12 +245,12 @@ const dump = () => {
   indexCounter++
 
   const input = `${options.input}/${encodeURIComponent(index).toLowerCase()}`
-  const outputData = `${options.output}/${index}.json`
-  const outputMapping = `${options.output}/${index}.mapping.json`
-  const outputAnalyzer = `${options.output}/${index}.analyzer.json`
-  const outputAlias = `${options.output}/${index}.alias.json`
-  const outputSettings = `${options.output}/${index}.settings.json`
-  const outputTemplate = `${options.output}/${index}.template.json`
+  const outputData = `${options.output}/${index}.${fileExt}`
+  const outputMapping = `${options.output}/${index}.mapping.${fileExt}`
+  const outputAnalyzer = `${options.output}/${index}.analyzer.${fileExt}`
+  const outputAlias = `${options.output}/${index}.alias.${fileExt}`
+  const outputSettings = `${options.output}/${index}.settings.${fileExt}`
+  const outputTemplate = `${options.output}/${index}.template.${fileExt}`
   const jobs = []
 
   jobs.push(done => {
@@ -407,12 +411,12 @@ const load = () => {
   indexCounter++
 
   const output = `${options.output}/${encodeURIComponent(index).toLowerCase()}`
-  const inputData = `${options.input}/${index}.json`
-  const inputMapping = `${options.input}/${index}.mapping.json`
-  const inputAnalyzer = `${options.input}/${index}.analyzer.json`
-  const inputAlias = `${options.input}/${index}.alias.json`
-  const inputSettings = `${options.input}/${index}.settings.json`
-  const inputTemplate = `${options.input}/${index}.template.json`
+  const inputData = `${options.input}/${index}.${fileExt}`
+  const inputMapping = `${options.input}/${index}.mapping.${fileExt}`
+  const inputAnalyzer = `${options.input}/${index}.analyzer.${fileExt}`
+  const inputAlias = `${options.input}/${index}.alias.${fileExt}`
+  const inputSettings = `${options.input}/${index}.settings.${fileExt}`
+  const inputTemplate = `${options.input}/${index}.template.${fileExt}`
 
   const jobs = []
 
