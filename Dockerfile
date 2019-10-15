@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:12-alpine
 LABEL maintainer="evan@evantahler.com"
 
 ENV NODE_ENV production
