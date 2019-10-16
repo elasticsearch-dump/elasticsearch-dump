@@ -64,10 +64,10 @@ const defaults = {
   'output-key': null,
   'output-pass': null,
   'output-ca': null,
-  concurrency: null,
-  carryoverConcurrencyCount: false,
-  intervalCap: null,
-  concurrencyInterval: 0,
+  concurrency: 1,
+  carryoverConcurrencyCount: true,
+  intervalCap: 5,
+  concurrencyInterval: 5000,
   overwrite: false,
   fsCompress: false
 }
