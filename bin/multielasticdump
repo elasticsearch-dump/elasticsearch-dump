@@ -161,6 +161,16 @@ const validateDirectory = (options, field) => {
   }
 }
 
+const attachListeners = (clazz, cb) => {
+  clazz.on('close', code => {
+    if (code !== 0) {
+      return cb(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+    } else {
+      return cb()
+    }
+  }).on('error', error => log('error', error))
+}
+
 if (!options.input) { throw new Error('--input is required') }
 if (!options.output) { throw new Error('--output is required') }
 log('info', `We are performing : ${options.direction}`)
@@ -266,38 +276,25 @@ const dump = () => {
     if (options.ignoreTemplate) return done()
     log('info', `dumping ${input} to ${outputTemplate}`)
 
-    const mappingSettings = fork(path.join(__dirname, 'elasticdump'), [
+    const templateChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=template',
       `--input=${input}`,
       `--output=${outputTemplate}`
     ].concat(commonParams))
-
-    mappingSettings.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(templateChild, done)
   })
 
   jobs.push(done => {
     if (options.ignoreSettings) return done()
     log('info', `dumping ${input} to ${outputSettings}`)
 
-    const mappingSettings = fork(path.join(__dirname, 'elasticdump'), [
+    const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
       '--type=settings',
       `--input=${input}`,
       `--output=${outputSettings}`
     ].concat(commonParams))
 
-    mappingSettings.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(settingsChild, done)
   })
 
   jobs.push(done => {
@@ -310,13 +307,7 @@ const dump = () => {
       `--output=${outputMapping}`
     ].concat(commonParams))
 
-    mappingChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(mappingChild, done)
   })
 
   jobs.push(done => {
@@ -329,13 +320,7 @@ const dump = () => {
       `--output=${outputAnalyzer}`
     ].concat(commonParams))
 
-    analyzerChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(analyzerChild, done)
   })
 
   jobs.push(done => {
@@ -348,13 +333,7 @@ const dump = () => {
       `--output=${outputAlias}`
     ].concat(commonParams))
 
-    aliasChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(aliasChild, done)
   })
 
   jobs.push(done => {
@@ -386,13 +365,7 @@ const dump = () => {
       `--support-big-int=${options['support-big-int']}`
     ].concat(_transform).concat(commonParams))
 
-    dataChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(dataChild, done)
   })
 
   async.series(jobs, error => {
@@ -458,13 +431,7 @@ const load = () => {
       `--output=${output}`
     ].concat(commonParams))
 
-    settingsChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(settingsChild, done)
   })
 
   jobs.push(done => {
@@ -477,13 +444,7 @@ const load = () => {
       `--output=${output}`
     ].concat(commonParams))
 
-    analyzerChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(analyzerChild, done)
   })
 
   jobs.push(done => {
@@ -496,13 +457,7 @@ const load = () => {
       `--output=${output}`
     ].concat(commonParams))
 
-    mappingChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(mappingChild, done)
   })
 
   jobs.push(done => {
@@ -515,13 +470,7 @@ const load = () => {
       `--output=${output}`
     ].concat(commonParams))
 
-    aliasChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(aliasChild, done)
   })
 
   jobs.push(done => {
@@ -553,13 +502,7 @@ const load = () => {
       `--support-big-int=${options['support-big-int']}`
     ].concat(_transform).concat(commonParams))
 
-    dataChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => log('error', error))
+    attachListeners(dataChild, done)
   })
 
   async.series(jobs, error => {
