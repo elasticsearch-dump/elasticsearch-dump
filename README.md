@@ -479,6 +479,7 @@ The limited option set includes:
 - `offset`:     `0`,
 - `direction`:   `dump`,
 - `ignoreType`:   ``
+- `includeType`:   ``
 - `prefix`:   `'''`
 - `suffix`:   `''`
 - `interval`:     `1000`
@@ -495,6 +496,9 @@ For loading files that you have dumped from multi-elasticsearch, `--direction` s
 `--ignoreType` allows a type to be ignored from the dump/load. Six options are supported. `data,mapping,analyzer,alias,settings,template`. Multi-type support is available, when used each type must be comma(,)-separated
 and `interval` allows control over the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
 i.e analyzer,alias types are ignored by default
+
+`--includeType` allows a type to be included in the dump/load. Six options are supported. `data,mapping,analyzer,alias,settings,template`. 
+
 
 New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
 `--prefix` allows you to add a prefix to the index name e.g. `${index}-backup-2018-03-13`.

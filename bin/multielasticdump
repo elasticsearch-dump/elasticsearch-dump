@@ -45,6 +45,7 @@ const defaults = {
   ignoreTemplate: false,
   ignoreAlias: true,
   ignoreType: [],
+  includeType: null,
   interval: 1000,
   prefix: '',
   suffix: '',
@@ -92,6 +93,14 @@ _.split(options.ignoreType, ',').forEach(field => {
     options[key] = true
   }
 })
+
+if (options.includeType) {
+  const ignoreKeys = _.keys(options).filter((key) => key.startsWith('ignore'))
+  const includedKeys = _.split(options.includeType, ',')
+  ignoreKeys.forEach(k => {
+    options[k] = _.indexOf(includedKeys, _.toLower(/^ignore(.*)$/.exec(k)[1])) <= -1
+  })
+}
 
 const commonParams = [
   `--headers=${options.headers}`,
