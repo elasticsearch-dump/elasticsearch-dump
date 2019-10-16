@@ -278,7 +278,7 @@ const dump = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -297,7 +297,7 @@ const dump = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -316,7 +316,7 @@ const dump = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -335,7 +335,7 @@ const dump = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -354,7 +354,7 @@ const dump = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -392,9 +392,7 @@ const dump = () => {
       } else {
         return done()
       }
-    }).on('error', err => {
-      console.error('err', err)
-    })
+    }).on('error', error => log('error', error))
   })
 
   async.series(jobs, error => {
@@ -447,7 +445,7 @@ const load = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -466,7 +464,7 @@ const load = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -485,7 +483,7 @@ const load = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -504,7 +502,7 @@ const load = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -523,7 +521,7 @@ const load = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   jobs.push(done => {
@@ -561,7 +559,7 @@ const load = () => {
       } else {
         return done()
       }
-    })
+    }).on('error', error => log('error', error))
   })
 
   async.series(jobs, error => {
