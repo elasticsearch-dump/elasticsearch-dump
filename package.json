@@ -39,6 +39,7 @@
     "lossless-json": "^1.0.3",
     "optimist": "latest",
     "p-queue": "^6.2.0",
+    "pump": "^3.0.0",
     "request": "2.x.x",
     "requestretry": "^4.0.2",
     "s3-stream-upload": "2.0.2",
