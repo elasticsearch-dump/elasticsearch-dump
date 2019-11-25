@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const argv = require('optimist').argv
+const { argv } = require('optimist')
 const path = require('path')
 const fs = require('fs')
 const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))

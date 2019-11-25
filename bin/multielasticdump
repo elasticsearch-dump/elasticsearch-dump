@@ -6,13 +6,13 @@
 // dump --input must be a URL and --output must be a path on this system
 // index --input must be a a path on this system --output must be URL
 
-const argv = require('optimist').argv
+const { argv } = require('optimist')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
 const async = require('async')
 const request = require('request')
-const fork = require('child_process').fork
+const { fork } = require('child_process')
 const _ = require('lodash')
 
 const options = {}
@@ -161,6 +161,10 @@ const validateDirectory = (options, field) => {
   }
 }
 
+const _fork = (params = [], file = 'elasticdump') => {
+  return fork(path.join(__dirname, file), params.concat(commonParams))
+}
+
 const attachListeners = (clazz, cb) => {
   clazz.on('close', code => {
     if (code !== 0) {
@@ -276,11 +280,12 @@ const dump = () => {
     if (options.ignoreTemplate) return done()
     log('info', `dumping ${input} to ${outputTemplate}`)
 
-    const templateChild = fork(path.join(__dirname, 'elasticdump'), [
+    const templateChild = _fork([
       '--type=template',
       `--input=${input}`,
       `--output=${outputTemplate}`
-    ].concat(commonParams))
+    ])
+
     attachListeners(templateChild, done)
   })
 
@@ -288,11 +293,11 @@ const dump = () => {
     if (options.ignoreSettings) return done()
     log('info', `dumping ${input} to ${outputSettings}`)
 
-    const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
+    const settingsChild = _fork([
       '--type=settings',
       `--input=${input}`,
       `--output=${outputSettings}`
-    ].concat(commonParams))
+    ])
 
     attachListeners(settingsChild, done)
   })
@@ -301,11 +306,11 @@ const dump = () => {
     if (options.ignoreMapping) return done()
     log('info', `dumping ${input} to ${outputMapping}`)
 
-    const mappingChild = fork(path.join(__dirname, 'elasticdump'), [
+    const mappingChild = _fork([
       '--type=mapping',
       `--input=${input}`,
       `--output=${outputMapping}`
-    ].concat(commonParams))
+    ])
 
     attachListeners(mappingChild, done)
   })
@@ -314,11 +319,11 @@ const dump = () => {
     if (options.ignoreAnalyzer) return done()
     log('info', `analyzer ${input} to ${outputAnalyzer}`)
 
-    const analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
+    const analyzerChild = _fork([
       '--type=analyzer',
       `--input=${input}`,
       `--output=${outputAnalyzer}`
-    ].concat(commonParams))
+    ])
 
     attachListeners(analyzerChild, done)
   })
@@ -327,11 +332,11 @@ const dump = () => {
     if (options.ignoreAlias) return done()
     log('info', `analyzer ${input} to ${outputAlias}`)
 
-    const aliasChild = fork(path.join(__dirname, 'elasticdump'), [
+    const aliasChild = _fork([
       '--type=alias',
       `--input=${input}`,
       `--output=${outputAlias}`
-    ].concat(commonParams))
+    ])
 
     attachListeners(aliasChild, done)
   })
@@ -352,7 +357,7 @@ const dump = () => {
         .value()
     }
 
-    const dataChild = fork(path.join(__dirname, 'elasticdump'), [
+    const dataChild = _fork([
       '--type=data',
       `--input=${input}`,
       `--output=${outputData}`,
@@ -363,7 +368,7 @@ const dump = () => {
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
       `--support-big-int=${options['support-big-int']}`
-    ].concat(_transform).concat(commonParams))
+    ].concat(_transform))
 
     attachListeners(dataChild, done)
   })
@@ -406,11 +411,11 @@ const load = () => {
     if (options.ignoreTemplate) return done()
     log('info', `indexing template ${inputTemplate} to ${output}`)
 
-    const templateChild = fork(path.join(__dirname, 'elasticdump'), [
+    const templateChild = _fork([
       '--type=template',
       `--input=${inputTemplate}`,
       `--output=${output}`
-    ].concat(commonParams))
+    ])
 
     templateChild.on('close', code => {
       if (code !== 0) {
@@ -425,11 +430,11 @@ const load = () => {
     if (options.ignoreSettings) return done()
     log('info', `indexing settings ${inputSettings} to ${output}`)
 
-    const settingsChild = fork(path.join(__dirname, 'elasticdump'), [
+    const settingsChild = _fork([
       '--type=settings',
       `--input=${inputSettings}`,
       `--output=${output}`
-    ].concat(commonParams))
+    ])
 
     attachListeners(settingsChild, done)
   })
@@ -438,11 +443,11 @@ const load = () => {
     if (options.ignoreAnalyzer) return done()
     log('info', `indexing analyzer ${inputAnalyzer} to ${output}`)
 
-    const analyzerChild = fork(path.join(__dirname, 'elasticdump'), [
+    const analyzerChild = _fork([
       '--type=analyzer',
       `--input=${inputAnalyzer}`,
       `--output=${output}`
-    ].concat(commonParams))
+    ])
 
     attachListeners(analyzerChild, done)
   })
@@ -451,11 +456,11 @@ const load = () => {
     if (options.ignoreMapping) return done()
     log('info', `indexing mapping ${inputMapping} to ${output}`)
 
-    const mappingChild = fork(path.join(__dirname, 'elasticdump'), [
+    const mappingChild = _fork([
       '--type=mapping',
       `--input=${inputMapping}`,
       `--output=${output}`
-    ].concat(commonParams))
+    ])
 
     attachListeners(mappingChild, done)
   })
@@ -464,11 +469,11 @@ const load = () => {
     if (options.ignoreAlias) return done()
     log('info', `indexing alias ${inputAlias} to ${output}`)
 
-    const aliasChild = fork(path.join(__dirname, 'elasticdump'), [
+    const aliasChild = _fork([
       '--type=alias',
       `--input=${inputAlias}`,
       `--output=${output}`
-    ].concat(commonParams))
+    ])
 
     attachListeners(aliasChild, done)
   })
@@ -489,7 +494,7 @@ const load = () => {
         .value()
     }
 
-    const dataChild = fork(path.join(__dirname, 'elasticdump'), [
+    const dataChild = _fork([
       '--type=data',
       `--input=${inputData}`,
       `--output=${output}`,
@@ -500,7 +505,7 @@ const load = () => {
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
       `--support-big-int=${options['support-big-int']}`
-    ].concat(_transform).concat(commonParams))
+    ].concat(_transform))
 
     attachListeners(dataChild, done)
   })
