@@ -70,7 +70,8 @@ const defaults = {
   intervalCap: 5,
   concurrencyInterval: 5000,
   overwrite: false,
-  fsCompress: false
+  fsCompress: false,
+  quiet: false
 }
 
 for (const i in defaults) {
@@ -122,7 +123,8 @@ const commonParams = [
   `--intervalCap=${options.intervalCap}`,
   `--concurrencyInterval=${options.concurrencyInterval}`,
   `--overwrite=${options.overwrite}`,
-  `--fsCompress=${options.fsCompress}`
+  `--fsCompress=${options.fsCompress}`,
+  `--quiet=${options.quiet}`
 ]
 
 const fileExt = options.fsCompress ? 'json.gz' : 'json'
