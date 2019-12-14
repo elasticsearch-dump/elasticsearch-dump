@@ -6,6 +6,7 @@ const fs = require('fs')
 const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 const packageData = require(path.join(__dirname, '..', 'package.json'))
 const isUrl = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
+const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 const defaults = {
@@ -83,42 +84,10 @@ const defaults = {
   concurrencyInterval: 5000,
   overwrite: false
 }
-const jsonParsedOpts = ['searchBody', 'headers', 'params']
 const options = {}
 
-// parse passed options & use defaults otherwise
-for (const i in defaults) {
-  options[i] = argv[i] || defaults[i]
-
-  if (options[i] === 'true') { options[i] = true }
-  if (options[i] === 'false') { options[i] = false }
-  if (options[i] === 'Infinity') { options[i] = Infinity }
-  if (options[i] === 'null') { options[i] = null }
-}
-
-// parse whitelisted json formatted options
-for (const i of jsonParsedOpts) {
-  if (options[i]) { options[i] = JSON.parse(options[i]) }
-}
-
-const log = function (type, message) {
-  if (type === 'debug') {
-    if (options.debug === true) {
-      message = `${new Date().toUTCString()} [debug] | ${message}`
-      console.log(message)
-    } else {
-      return false
-    }
-  } else if (type === 'error') {
-    message = `${new Date().toUTCString()} | ${message}`
-    console.error(message)
-  } else if (options.quiet === false) {
-    message = `${new Date().toUTCString()} | ${message}`
-    console.log(message)
-  } else {
-    return false
-  }
-}
+const args = new ArgParser({ options, parseJSONOpts: true })
+args.parse(argv, defaults)
 
 if (argv.help === true) {
   let helpText = require('fs').readFileSync(path.join(__dirname, '..', 'lib', 'help.txt'))
@@ -135,9 +104,9 @@ if (argv.help === true) {
 
   const dumper = new Elasticdump(options.input, options.output, options)
 
-  dumper.on('log', function (message) { log('log', message) })
-  dumper.on('debug', function (message) { log('debug', message) })
-  dumper.on('error', function (error) { log('error', `Error Emitted => ${error.message || JSON.stringify(error)}`) })
+  dumper.on('log', function (message) { args.log('log', message) })
+  dumper.on('debug', function (message) { args.log('debug', message) })
+  dumper.on('error', function (error) { args.log('error', `Error Emitted => ${error.message || JSON.stringify(error)}`) })
 
   dumper.dump(function (error) {
     if (error) {

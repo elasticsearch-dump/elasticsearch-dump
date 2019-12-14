@@ -14,6 +14,7 @@ const async = require('async')
 const request = require('request')
 const { fork } = require('child_process')
 const _ = require('lodash')
+const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 
 const options = {}
 let matchedIndexes = []
@@ -74,19 +75,8 @@ const defaults = {
   quiet: false
 }
 
-for (const i in defaults) {
-  options[i] = defaults[i]
-  if (argv[i]) {
-    options[i] = argv[i]
-  }
-  if (options[i] === 'true') { options[i] = true }
-  if (options[i] === 'false') { options[i] = false }
-  if (options[i] === 'null') { options[i] = null }
-  if (i === 'interval' && _.isNumber(argv[i])) {
-    // special case to handle value == 0
-    options[i] = argv[i]
-  }
-}
+const args = new ArgParser({ options })
+args.parse(argv, defaults)
 
 _.split(options.ignoreType, ',').forEach(field => {
   const key = `ignore${_.upperFirst(field)}`
@@ -129,19 +119,6 @@ const commonParams = [
 
 const fileExt = options.fsCompress ? 'json.gz' : 'json'
 
-const log = (type, message) => {
-  if (type === 'debug') {
-    if (options.debug === true) {
-      message = `[debug] | ${message}`
-    } else {
-      return false
-    }
-  } else {
-    message = `${new Date().toUTCString()} | ${message}`
-  }
-  console.log(message)
-}
-
 const validateDirectory = (options, field) => {
   let isDir
   try {
@@ -174,13 +151,13 @@ const attachListeners = (clazz, cb) => {
     } else {
       return cb()
     }
-  }).on('error', error => log('error', error))
+  }).on('error', error => args.argParser.log('error', error))
 }
 
 if (!options.input) { throw new Error('--input is required') }
 if (!options.output) { throw new Error('--output is required') }
-log('info', `We are performing : ${options.direction}`)
-log('info', `options: ${JSON.stringify(options)}`)
+args.argParser.log('info', `We are performing : ${options.direction}`)
+args.argParser.log('info', `options: ${JSON.stringify(options)}`)
 
 const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
@@ -195,7 +172,7 @@ if (options.direction === 'dump') {
   }
   request(req, (err, response) => {
     if (err) {
-      log('err', err)
+      args.log('err', err)
       process.exit()
     }
     response = JSON.parse(response.body)
@@ -212,10 +189,10 @@ if (options.direction === 'load') {
   validateDirectory(options, 'input')
   fs.readdir(options.input, (err, data) => {
     if (err) {
-      log('error', err)
+      args.argParser.log('error', err)
       throw new Error('Something went wrong reading the list of files')
     }
-    // log('info', data);
+    // args.log('info', data);
     matchedIndexes = data.map(value => value
       .replace(`.mapping.${fileExt}`, '')
       .replace(`.analyzer.${fileExt}`, '')
@@ -224,7 +201,7 @@ if (options.direction === 'load') {
       .replace(`.template.${fileExt}`, '')
       .replace(`.${fileExt}`, '')).filter(item => matchRegExp.test(item))
     matchedIndexes = unique(matchedIndexes)
-    log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
+    args.argParser.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
     loadWork()
   })
@@ -233,8 +210,8 @@ if (options.direction === 'load') {
 const dumpWork = () => {
   clearTimeout(workTimeout)
   if (complete === matchedIndexes.length) {
-    log('info', ' dumping all done ')
-    log('info', ' bye ')
+    args.argParser.log('info', ' dumping all done ')
+    args.argParser.log('info', ' bye ')
     process.exit()
   } else if (working === options.parallel) {
     workTimeout = setTimeout(dumpWork, options.interval)
@@ -247,8 +224,8 @@ const dumpWork = () => {
 const loadWork = () => {
   clearTimeout(workTimeout)
   if (complete === matchedIndexes.length) {
-    log('info', ' indexing all done ')
-    log('info', ' bye ')
+    args.argParser.log('info', ' indexing all done ')
+    args.argParser.log('info', ' bye ')
     process.exit()
   } else if (working === options.parallel) {
     workTimeout = setTimeout(loadWork, options.interval)
@@ -280,7 +257,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreTemplate) return done()
-    log('info', `dumping ${input} to ${outputTemplate}`)
+    args.argParser.log('info', `dumping ${input} to ${outputTemplate}`)
 
     const templateChild = _fork([
       '--type=template',
@@ -293,7 +270,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreSettings) return done()
-    log('info', `dumping ${input} to ${outputSettings}`)
+    args.argParser.log('info', `dumping ${input} to ${outputSettings}`)
 
     const settingsChild = _fork([
       '--type=settings',
@@ -306,7 +283,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreMapping) return done()
-    log('info', `dumping ${input} to ${outputMapping}`)
+    args.argParser.log('info', `dumping ${input} to ${outputMapping}`)
 
     const mappingChild = _fork([
       '--type=mapping',
@@ -319,7 +296,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreAnalyzer) return done()
-    log('info', `analyzer ${input} to ${outputAnalyzer}`)
+    args.log('info', `analyzer ${input} to ${outputAnalyzer}`)
 
     const analyzerChild = _fork([
       '--type=analyzer',
@@ -332,7 +309,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreAlias) return done()
-    log('info', `analyzer ${input} to ${outputAlias}`)
+    args.log('info', `analyzer ${input} to ${outputAlias}`)
 
     const aliasChild = _fork([
       '--type=alias',
@@ -345,7 +322,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreData) return done()
-    log('info', `dumping ${input} to ${outputData}`)
+    args.log('info', `dumping ${input} to ${outputData}`)
 
     let _transform = []
 
@@ -377,7 +354,7 @@ const dump = () => {
 
   async.series(jobs, error => {
     if (error) {
-      log('error', error)
+      args.log('error', error)
       process.exit(1)
     } else {
       working--
@@ -395,7 +372,7 @@ const load = () => {
     return
   }
 
-  log('info', `Working on ${index}`)
+  args.log('info', `Working on ${index}`)
 
   indexCounter++
 
@@ -411,7 +388,7 @@ const load = () => {
 
   jobs.push(done => {
     if (options.ignoreTemplate) return done()
-    log('info', `indexing template ${inputTemplate} to ${output}`)
+    args.log('info', `indexing template ${inputTemplate} to ${output}`)
 
     const templateChild = _fork([
       '--type=template',
@@ -425,12 +402,12 @@ const load = () => {
       } else {
         return done()
       }
-    }).on('error', error => log('error', error))
+    }).on('error', error => args.log('error', error))
   })
 
   jobs.push(done => {
     if (options.ignoreSettings) return done()
-    log('info', `indexing settings ${inputSettings} to ${output}`)
+    args.log('info', `indexing settings ${inputSettings} to ${output}`)
 
     const settingsChild = _fork([
       '--type=settings',
@@ -443,7 +420,7 @@ const load = () => {
 
   jobs.push(done => {
     if (options.ignoreAnalyzer) return done()
-    log('info', `indexing analyzer ${inputAnalyzer} to ${output}`)
+    args.log('info', `indexing analyzer ${inputAnalyzer} to ${output}`)
 
     const analyzerChild = _fork([
       '--type=analyzer',
@@ -456,7 +433,7 @@ const load = () => {
 
   jobs.push(done => {
     if (options.ignoreMapping) return done()
-    log('info', `indexing mapping ${inputMapping} to ${output}`)
+    args.log('info', `indexing mapping ${inputMapping} to ${output}`)
 
     const mappingChild = _fork([
       '--type=mapping',
@@ -469,7 +446,7 @@ const load = () => {
 
   jobs.push(done => {
     if (options.ignoreAlias) return done()
-    log('info', `indexing alias ${inputAlias} to ${output}`)
+    args.log('info', `indexing alias ${inputAlias} to ${output}`)
 
     const aliasChild = _fork([
       '--type=alias',
@@ -482,7 +459,7 @@ const load = () => {
 
   jobs.push(done => {
     if (options.ignoreData) return done()
-    log('info', `indexing data ${inputData} to ${output}`)
+    args.log('info', `indexing data ${inputData} to ${output}`)
 
     let _transform = []
 
@@ -514,7 +491,7 @@ const load = () => {
 
   async.series(jobs, error => {
     if (error) {
-      log('error', error)
+      args.log('error', error)
       process.exit(1)
     } else {
       working--
