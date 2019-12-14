@@ -151,13 +151,13 @@ const attachListeners = (clazz, cb) => {
     } else {
       return cb()
     }
-  }).on('error', error => args.argParser.log('error', error))
+  }).on('error', error => args.log('error', error))
 }
 
 if (!options.input) { throw new Error('--input is required') }
 if (!options.output) { throw new Error('--output is required') }
-args.argParser.log('info', `We are performing : ${options.direction}`)
-args.argParser.log('info', `options: ${JSON.stringify(options)}`)
+args.log('info', `We are performing : ${options.direction}`)
+args.log('info', `options: ${JSON.stringify(options)}`)
 
 const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
@@ -189,7 +189,7 @@ if (options.direction === 'load') {
   validateDirectory(options, 'input')
   fs.readdir(options.input, (err, data) => {
     if (err) {
-      args.argParser.log('error', err)
+      args.log('error', err)
       throw new Error('Something went wrong reading the list of files')
     }
     // args.log('info', data);
@@ -201,7 +201,7 @@ if (options.direction === 'load') {
       .replace(`.template.${fileExt}`, '')
       .replace(`.${fileExt}`, '')).filter(item => matchRegExp.test(item))
     matchedIndexes = unique(matchedIndexes)
-    args.argParser.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
+    args.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
     loadWork()
   })
@@ -210,8 +210,8 @@ if (options.direction === 'load') {
 const dumpWork = () => {
   clearTimeout(workTimeout)
   if (complete === matchedIndexes.length) {
-    args.argParser.log('info', ' dumping all done ')
-    args.argParser.log('info', ' bye ')
+    args.log('info', ' dumping all done ')
+    args.log('info', ' bye ')
     process.exit()
   } else if (working === options.parallel) {
     workTimeout = setTimeout(dumpWork, options.interval)
@@ -224,8 +224,8 @@ const dumpWork = () => {
 const loadWork = () => {
   clearTimeout(workTimeout)
   if (complete === matchedIndexes.length) {
-    args.argParser.log('info', ' indexing all done ')
-    args.argParser.log('info', ' bye ')
+    args.log('info', ' indexing all done ')
+    args.log('info', ' bye ')
     process.exit()
   } else if (working === options.parallel) {
     workTimeout = setTimeout(loadWork, options.interval)
@@ -257,7 +257,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreTemplate) return done()
-    args.argParser.log('info', `dumping ${input} to ${outputTemplate}`)
+    args.log('info', `dumping ${input} to ${outputTemplate}`)
 
     const templateChild = _fork([
       '--type=template',
@@ -270,7 +270,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreSettings) return done()
-    args.argParser.log('info', `dumping ${input} to ${outputSettings}`)
+    args.log('info', `dumping ${input} to ${outputSettings}`)
 
     const settingsChild = _fork([
       '--type=settings',
@@ -283,7 +283,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreMapping) return done()
-    args.argParser.log('info', `dumping ${input} to ${outputMapping}`)
+    args.log('info', `dumping ${input} to ${outputMapping}`)
 
     const mappingChild = _fork([
       '--type=mapping',
