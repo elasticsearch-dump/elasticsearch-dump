@@ -23,10 +23,6 @@ let complete = 0
 let indexCounter = 0
 let workTimeout
 
-function unique (arr, keepLast) {
-  return arr.filter((value, index, array) => keepLast ? array.indexOf(value, index + 1) < 0 : array.indexOf(value) === index)
-}
-
 const defaults = {
   debug: true,
   parallel: os.cpus().length,
@@ -199,8 +195,9 @@ if (options.direction === 'load') {
       .replace(`.alias.${fileExt}`, '')
       .replace(`.settings.${fileExt}`, '')
       .replace(`.template.${fileExt}`, '')
-      .replace(`.${fileExt}`, '')).filter(item => matchRegExp.test(item))
-    matchedIndexes = unique(matchedIndexes)
+      .replace(`.${fileExt}`, ''))
+      .filter(item => matchRegExp.test(item))
+    matchedIndexes = _.uniq(matchedIndexes)
     args.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
     loadWork()
