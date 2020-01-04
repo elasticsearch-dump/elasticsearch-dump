@@ -510,7 +510,7 @@ New options, `--suffix` allows you to add a suffix to the index name being creat
 # backup ES indices & all their type to the es_backup folder
 multielasticdump \
   --direction=dump \
-  --match='^.*$'
+  --match='^.*$' \
   --input=http://production.es.com:9200 \
   --output=/tmp/es_backup
 
@@ -519,9 +519,9 @@ multielasticdump \
 # NB: analyzer & alias types are ignored by default
 multielasticdump \
   --direction=dump \
-  --match='^.*-index$'
+  --match='^.*-index$'\
   --input=http://production.es.com:9200 \
-  --ignoreType='mapping,settings,template'
+  --ignoreType='mapping,settings,template' \
   --output=/tmp/es_backup
 ```
 
