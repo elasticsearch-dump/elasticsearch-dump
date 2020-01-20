@@ -445,6 +445,12 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Socks5 host address
 --inputSocksPort, --outputSocksPort
                     Socks5 host port
+--handleVersion
+                    Tells elastisearch transport to handle the `_version` field if present in the dataset
+                    (default : false)
+--versionType
+                    Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
+                    NB : Type validation is handle by the bulk endpoint and not elasticsearch-dump
 --help
                     This page
 ```
