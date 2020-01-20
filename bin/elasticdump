@@ -82,7 +82,9 @@ const defaults = {
   carryoverConcurrencyCount: true,
   intervalCap: 5,
   concurrencyInterval: 5000,
-  overwrite: false
+  overwrite: false,
+  handleVersion: false,
+  versionType: null
 }
 const options = {}
 
