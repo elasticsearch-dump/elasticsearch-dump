@@ -148,6 +148,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     For greater flexibility, consider using --awsChain
                     and setting AWS_PROFILE and AWS_CONFIG_FILE
                     environment variables to override defaults if needed
+--awsService
+                    Sets the AWS service that the signature will be generated for
+                    (default: calculated from hostname or host)
 --transform
                     A javascript, which will be called to modify documents
                     before writing it to destination. global variable 'doc'

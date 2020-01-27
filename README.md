@@ -379,6 +379,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Override the default aws ini file name when using --awsIniFileProfile
                     Filename is relative to ~/.aws/
                     (default: config)
+--awsService
+                    Sets the AWS service that the signature will be generated for
+                    (default: calculated from hostname or host)
 --support-big-int   
                     Support big integer numbers
 --retryAttempts  

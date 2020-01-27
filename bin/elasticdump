@@ -39,6 +39,7 @@ const defaults = {
   awsAccessKeyId: null,
   awsSecretAccessKey: null,
   awsIniFileProfile: null,
+  awsService: null,
   s3AccessKeyId: null,
   s3SecretAccessKey: null,
   s3Region: null,
