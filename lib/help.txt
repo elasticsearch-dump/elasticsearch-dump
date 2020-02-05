@@ -151,6 +151,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --awsService
                     Sets the AWS service that the signature will be generated for
                     (default: calculated from hostname or host)
+--awsRegion
+                    Sets the AWS region that the signature will be generated for
+                    (default: calculated from hostname or host)
 --transform
                     A javascript, which will be called to modify documents
                     before writing it to destination. global variable 'doc'

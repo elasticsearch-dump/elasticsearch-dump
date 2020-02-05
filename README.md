@@ -382,6 +382,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --awsService
                     Sets the AWS service that the signature will be generated for
                     (default: calculated from hostname or host)
+--awsRegion
+                    Sets the AWS region that the signature will be generated for
+                    (default: calculated from hostname or host)
 --support-big-int   
                     Support big integer numbers
 --retryAttempts  
