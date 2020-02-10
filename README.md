@@ -559,7 +559,7 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 
 - this tool is likely to require Elasticsearch version 1.0.0 or higher
 - elasticdump (and elasticsearch in general) will create indices if they don't exist upon import
-- when exporting from elasticsearch, you can have export an entire index (`--input="http://localhost:9200/index"`) or a type of object from that index (`--input="http://localhost:9200/index/type"`).  This requires ElasticSearch 1.2.0 or higher
+- when exporting from elasticsearch, you can export an entire index (`--input="http://localhost:9200/index"`) or a type of object from that index (`--input="http://localhost:9200/index/type"`).  This requires ElasticSearch 1.2.0 or higher
 - If elasticsearch is in a sub-directory, index and type must be provided with a separate argument (`--input="http://localhost:9200/sub/directory --input-index=index/type"`). Using `--input-index=/` will include all indices and types.
 - we are using the `put` method to write objects.  This means new objects will be created and old objects with the same ID will be updated
 - The `file` transport will not overwrite any existing files by default, it will throw an exception of the file already exists. Use `--overwrite` instead.
