@@ -288,6 +288,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                         `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
                       else
                         `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
+--searchWithTemplate
+                    Enable to use Search Template when using --searchBody
+                    If using Search Template then searchBody has to consist of "id" field and "params" objects
+                    If "size" field is defined within Search Template, it will be overridden by --size parameter
+                    (default: false)
 --headers
                     Add custom headers to Elastisearch requests (helpful when
                     your Elasticsearch instance sits behind a proxy)

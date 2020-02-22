@@ -79,6 +79,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                         `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
                       else
                         `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
+--searchWithTemplate
+                    Enable to use Search Template when using --searchBody
+                    If using Search Template then searchBody has to consist of "id" field and "params" objects
+                    If "size" field is defined within Search Template, it will be overridden by --size parameter
+                    (default: false)
 --sourceOnly
                     Output only the json contained within the document _source
                     Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}

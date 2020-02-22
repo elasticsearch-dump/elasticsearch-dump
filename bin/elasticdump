@@ -25,6 +25,7 @@ const defaults = {
   inputTransport: null,
   outputTransport: null,
   searchBody: null,
+  searchWithTemplate: false,
   headers: null,
   sourceOnly: false,
   jsonLines: false,
