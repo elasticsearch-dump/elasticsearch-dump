@@ -292,6 +292,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Enable to use Search Template when using --searchBody
                     If using Search Template then searchBody has to consist of "id" field and "params" objects
                     If "size" field is defined within Search Template, it will be overridden by --size parameter
+                    See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html for 
+                    further information
                     (default: false)
 --headers
                     Add custom headers to Elastisearch requests (helpful when
