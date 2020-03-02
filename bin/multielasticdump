@@ -13,8 +13,10 @@ const path = require('path')
 const async = require('async')
 const request = require('request')
 const { fork } = require('child_process')
+const url = require('url')
 const _ = require('lodash')
 const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
+const addAuth = require(path.join(__dirname, '..', 'lib', 'add-auth.js'))
 
 const options = {}
 let matchedIndexes = []
@@ -63,6 +65,7 @@ const defaults = {
   'output-key': null,
   'output-pass': null,
   'output-ca': null,
+  httpAuthFile: null,
   concurrency: 1,
   carryoverConcurrencyCount: true,
   intervalCap: 5,
@@ -105,6 +108,7 @@ const commonParams = [
   `--output-key=${options['output-key']}`,
   `--output-pass=${options['output-pass']}`,
   `--output-ca=${options['output-ca']}`,
+  `--httpAuthFile=${options.httpAuthFile}`,
   `--concurrency=${options.concurrency}`,
   `--carryoverConcurrencyCount=${options.carryoverConcurrencyCount}`,
   `--intervalCap=${options.intervalCap}`,
@@ -159,8 +163,16 @@ args.log('info', `options: ${JSON.stringify(options)}`)
 const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
   validateDirectory(options, 'output')
+
+  let input = options.input
+  if (options.httpAuthFile) {
+    input = addAuth(options.input, options.httpAuthFile)
+  }
+  let inputUrl = new URL(input)
+  inputUrl.pathname = '/_aliases'
+
   const req = {
-    url: `${options.input}/_aliases`,
+    url: url.format(inputUrl),
     method: 'GET',
     headers: Object.assign({
       'User-Agent': 'elasticdump',
