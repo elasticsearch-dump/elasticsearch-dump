@@ -342,7 +342,7 @@ const dump = () => {
       `--limit=${options.limit}`,
       `--offset=${options.offset}`,
       `--searchBody=${options.searchBody}`,
-      `--searchWithTemplate=${options.searchWithTemplate}`
+      `--searchWithTemplate=${options.searchWithTemplate}`,
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
       `--support-big-int=${options['support-big-int']}`
