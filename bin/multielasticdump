@@ -168,7 +168,7 @@ if (options.direction === 'dump') {
   if (options.httpAuthFile) {
     input = addAuth(options.input, options.httpAuthFile)
   }
-  let inputUrl = new URL(input)
+  const inputUrl = new URL(input)
   inputUrl.pathname = '/_aliases'
 
   const req = {
