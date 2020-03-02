@@ -172,6 +172,10 @@ if (options.direction === 'dump') {
       process.exit()
     }
     response = JSON.parse(response.body)
+    if ('error' in response) {
+      args.log('err', response.error.reason)
+      process.exit()
+    }
     if (!Array.isArray(response)) {
       response = Object.keys(response)
     }
