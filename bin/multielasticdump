@@ -49,6 +49,7 @@ const defaults = {
   transform: null,
   headers: null,
   searchBody: null,
+  searchWithTemplate: null,
   cert: null,
   key: null,
   pass: null,
