@@ -38,6 +38,7 @@ const defaults = {
   direction: 'dump', // default to dump
   'support-big-int': false,
   ignoreAnalyzer: true,
+  ignoreChildError: false,
   ignoreData: false,
   ignoreMapping: false,
   ignoreSettings: false,
@@ -148,7 +149,11 @@ const _fork = (params = [], file = 'elasticdump') => {
 const attachListeners = (clazz, cb) => {
   clazz.on('close', code => {
     if (code !== 0) {
-      return cb(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      if (!options.ignoreChildError) {
+        return cb(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
+      } else {
+        return cb()
+      }
     } else {
       return cb()
     }
