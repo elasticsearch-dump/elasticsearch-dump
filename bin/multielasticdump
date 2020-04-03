@@ -6,7 +6,7 @@
 // dump --input must be a URL and --output must be a path on this system
 // index --input must be a a path on this system --output must be URL
 
-const { argv } = require('optimist')
+const argv = require('minimist')(process.argv)
 const fs = require('fs')
 const os = require('os')
 const path = require('path')

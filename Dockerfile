@@ -1,5 +1,5 @@
 FROM node:12-alpine
-LABEL maintainer="evan@evantahler.com"
+LABEL maintainer="ferronrsmith@gmail.com"
 
 ENV NODE_ENV production
 
