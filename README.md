@@ -311,6 +311,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --ignore-errors
                     Will continue the read/write loop on write error
                     (default: false)
+--scrollId
+                    The last scroll Id returned from elasticsearch. 
+                    This will allow dumps to be resumed used the last scroll Id &
+                    `scrollTime` has not expired.
 --scrollTime
                     Time the nodes will hold the requested search in order.
                     (default: 10m)
