@@ -24,7 +24,7 @@
     "elastic dump"
   ],
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "dependencies": {
     "JSONStream": "^1.3.5",
@@ -70,6 +70,6 @@
   },
   "scripts": {
     "pretest": "standard",
-    "test": "mocha"
+    "test": "mocha -g 'es to file' -i && mocha -g 'es to file'"
   }
 }

@@ -212,6 +212,9 @@ describe('ELASTICDUMP', () => {
         params: {
           preference: '_shards:0'
         }
+      },
+      emit: (level, msg) => {
+        console[level](msg)
       }
     }
     const opts = {
