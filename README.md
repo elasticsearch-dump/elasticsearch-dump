@@ -143,6 +143,24 @@ elasticdump \
   --s3SecretAccessKey "${access_key_secret}" \
   --input=http://production.es.com:9200/my_index \
   --output "s3://${bucket_name}/${file_name}.json"
+
+# Import data from MINIO (s3 compatible) into ES (using s3urls)
+elasticdump \
+  --s3AccessKeyId "${access_key_id}" \
+  --s3SecretAccessKey "${access_key_secret}" \
+  --input "s3://${bucket_name}/${file_name}.json" \
+  --output=http://production.es.com:9200/my_index
+  --s3ForcePathStyle true
+  --s3Endpoint https://production.minio.co
+
+# Export ES data to MINIO (s3 compatible) (using s3urls)
+elasticdump \
+  --s3AccessKeyId "${access_key_id}" \
+  --s3SecretAccessKey "${access_key_secret}" \
+  --input=http://production.es.com:9200/my_index \
+  --output "s3://${bucket_name}/${file_name}.json"
+  --s3ForcePathStyle true
+  --s3Endpoint https://production.minio.co
 ```
 
 
