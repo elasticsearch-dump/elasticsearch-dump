@@ -70,6 +70,6 @@
   },
   "scripts": {
     "pretest": "standard",
-    "test": "mocha -g 'es to file' -i && mocha -g 'es to file'"
+    "test": "mocha"
   }
 }
