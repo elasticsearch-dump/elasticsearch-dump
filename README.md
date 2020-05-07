@@ -3,20 +3,20 @@ elasticdump
 
 Tools for moving and saving indices.
 
-![picture](https://raw.github.com/taskrabbit/elasticsearch-dump/master/elasticdump.jpg)
+![picture](https://raw.github.com/elasticsearch-dump/elasticsearch-dump/master/elasticdump.jpg)
 
 ---
 
 [![Nodei stats](https://nodei.co/npm/elasticdump.png?downloads=true)](https://npmjs.org/package/elasticdump)
-[![DockerHub Badge](https://dockeri.co/image/taskrabbit/elasticsearch-dump)](https://hub.docker.com/r/taskrabbit/elasticsearch-dump/)
+[![DockerHub Badge](https://dockeri.co/image/elasticsearch-dump/elasticsearch-dump)](https://hub.docker.com/r/elasticsearch-dump/elasticsearch-dump/)
 
-[![Build Status](https://secure.travis-ci.org/taskrabbit/elasticsearch-dump.png?branch=master)](http://travis-ci.org/taskrabbit/elasticsearch-dump)
+[![Build Status](https://secure.travis-ci.org/elasticsearch-dump/elasticsearch-dump.png?branch=master)](http://travis-ci.org/elasticsearch-dump/elasticsearch-dump)
 [![Downloads](https://img.shields.io/npm/dm/elasticdump.svg)](https://npmjs.com/elasticdump)
 
 
 ## Version Warnings!
 
-- Version `1.0.0` of Elasticdump changes the format of the files created by the dump.  Files created with version `0.x.x` of this tool are likely not to work with versions going forward.  To learn more about the breaking changes, vist the release notes for version [`1.0.0`](https://github.com/taskrabbit/elasticsearch-dump/releases/tag/v1.0.0).  If you recive an "out of memory" error, this is probaly the cause.
+- Version `1.0.0` of Elasticdump changes the format of the files created by the dump.  Files created with version `0.x.x` of this tool are likely not to work with versions going forward.  To learn more about the breaking changes, vist the release notes for version [`1.0.0`](https://github.com/elasticsearch-dump/elasticsearch-dump/releases/tag/v1.0.0).  If you recive an "out of memory" error, this is probaly the cause.
 - Version `2.0.0` of Elasticdump removes the `bulk` options.  These options were buggy, and differ between versions of Elasticsearch.  If you need to export multiple indexes, look for the `multielasticdump` section of the tool.
 - Version `2.1.0` of Elasticdump moves from using `scan/scroll` (ES 1.x) to just `scan` (ES 2.x).  This is a backwards-compatible change within Elasticsearch, but performance may suffer on Elasticsearch versions prior to 2.x.
 - Version `3.0.0` of Elasticdump has the default queries updated to only work for ElasticSearch version 5+.  The tool *may* be compatible with earlier versions of Elasticsearch, but our version detection method may not work for all ES cluster topologies
@@ -196,26 +196,26 @@ elasticdump \
 ### Docker install
 If you prefer using docker to use elasticdump, you can download this project from docker hub :
 ```bash
-docker pull taskrabbit/elasticsearch-dump
+docker pull elasticdump/elasticsearch-dump
 ```
 Then you can use it just by :
-- using `docker run --rm -ti taskrabbit/elasticsearch-dump`
+- using `docker run --rm -ti elasticdump/elasticsearch-dump`
 - you'll need to mount your file storage dir `-v <your dumps dir>:<your mount point>` to your docker container
 
 Example:
 ```bash
 # Copy an index from production to staging with mappings:
-docker run --rm -ti taskrabbit/elasticsearch-dump \
+docker run --rm -ti elasticdump/elasticsearch-dump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
   --type=mapping
-docker run --rm -ti taskrabbit/elasticsearch-dump \
+docker run --rm -ti elasticdump/elasticsearch-dump \
   --input=http://production.es.com:9200/my_index \
   --output=http://staging.es.com:9200/my_index \
   --type=data
 
 # Backup index data to a file:
-docker run --rm -ti -v /data:/tmp taskrabbit/elasticsearch-dump \
+docker run --rm -ti -v /data:/tmp elasticdump/elasticsearch-dump \
   --input=http://production.es.com:9200/my_index \
   --output=/tmp/my_index_mapping.json \
   --type=data
@@ -223,7 +223,7 @@ docker run --rm -ti -v /data:/tmp taskrabbit/elasticsearch-dump \
 
 If you need to run using `localhost` as your ES host :
 ```bash
-docker run --net=host --rm -ti taskrabbit/elasticsearch-dump \
+docker run --net=host --rm -ti elasticdump/elasticsearch-dump \
   --input=http://staging.es.com:9200/my_index \
   --output=http://localhost:9200/my_index \
   --type=data
@@ -605,5 +605,3 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - ES 6.x.x [from](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/breaking-changes-6.0.html#_scroll) parameter can no longer be used in the search request body when initiating a scroll
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
-
-Built at [TaskRabbit](https://www.taskrabbit.com)
