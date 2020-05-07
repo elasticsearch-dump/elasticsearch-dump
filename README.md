@@ -8,6 +8,7 @@ Tools for moving and saving indices.
 ---
 
 [![Nodei stats](https://nodei.co/npm/elasticdump.png?downloads=true)](https://npmjs.org/package/elasticdump)
+<br />
 [![DockerHub Badge](https://dockeri.co/image/elasticdump/elasticsearch-dump)](https://hub.docker.com/r/elasticdump/elasticsearch-dump/)
 [![DockerHub Badge](https://dockeri.co/image/taskrabbit/elasticsearch-dump)](https://hub.docker.com/r/taskrabbit/elasticsearch-dump/)
 
