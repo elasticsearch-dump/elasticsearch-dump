@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/taskrabbit/elasticsearch-dump.git"
+    "url": "git://github.com/elasticsearch-dump/elasticsearch-dump.git"
   },
   "main": "elasticdump.js",
   "keywords": [
@@ -29,7 +29,7 @@
   "dependencies": {
     "JSONStream": "^1.3.5",
     "async": "^2.0.1",
-    "aws-sdk": "^2.667.0",
+    "aws-sdk": "^2.672.0",
     "aws4": "^1.9.1",
     "bytes": "^3.1.0",
     "decimal.js": "^10.2.0",
@@ -38,7 +38,7 @@
     "lodash": "^4.17.15",
     "lossless-json": "^1.0.3",
     "minimist": "^1.2.5",
-    "p-queue": "^6.3.0",
+    "p-queue": "^6.4.0",
     "pump": "^3.0.0",
     "request": "2.x.x",
     "requestretry": "^4.1.0",
