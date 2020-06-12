@@ -41,7 +41,7 @@
     "minimist": "^1.2.5",
     "p-queue": "^6.4.0",
     "pump": "^3.0.0",
-    "request": "2.x.x",
+    "request": "2.88.2",
     "requestretry": "^4.1.1",
     "s3-stream-upload": "2.0.2",
     "s3urls": "^1.5.2",
@@ -49,9 +49,9 @@
     "socks5-https-client": "^1.2.1"
   },
   "devDependencies": {
-    "jsonpath": "1.0.2",
-    "mocha": "latest",
-    "should": "latest",
+    "jsonpath": "^1.0.2",
+    "mocha": "^6.2.2",
+    "should": "^13.2.3",
     "standard": "^14.3.4"
   },
   "standard": {
