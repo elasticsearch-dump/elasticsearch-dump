@@ -1,0 +1,7 @@
+{
+  "reject": [
+    "async",
+    "mocha",
+    "should",
+  ]
+}

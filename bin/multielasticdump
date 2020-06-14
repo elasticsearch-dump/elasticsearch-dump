@@ -38,6 +38,7 @@ const defaults = {
   offset: 0,
   direction: 'dump', // default to dump
   'support-big-int': false,
+  'big-int-fields': '',
   ignoreAnalyzer: true,
   ignoreChildError: false,
   ignoreData: false,
@@ -373,6 +374,7 @@ const dump = () => {
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
       `--support-big-int=${options['support-big-int']}`
+      `--big-int-fields=${options['big-int-fields']}`
     ].concat(_transform))
 
     attachListeners(dataChild, done)

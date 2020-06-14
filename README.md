@@ -418,6 +418,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: calculated from hostname or host)
 --support-big-int   
                     Support big integer numbers
+--big-int-fields   
+                    Sepcifies a comma-seperated list of fields that should be checked for big-int support
+                    (default '')
 --retryAttempts  
                     Integer indicating the number of times a request should be automatically re-attempted before failing
                     when a connection fails with one of the following errors `ECONNRESET`, `ENOTFOUND`, `ESOCKETTIMEDOUT`,
@@ -529,6 +532,7 @@ The limited option set includes:
 - `searchbody`: `null`
 - `transform`: `null`
 - `support-big-int`: `false`
+- `big-int-fields`: ``
 - `ignoreChildError`: `false`
 
 If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (i.e. `http://localhost:9200`) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.

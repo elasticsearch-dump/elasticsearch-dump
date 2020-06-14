@@ -32,6 +32,7 @@ const defaults = {
   format: '',
   'ignore-errors': false,
   'support-big-int': false,
+  'big-int-fields': '',
   scrollId: null,
   scrollTime: '10m',
   timeout: null,
