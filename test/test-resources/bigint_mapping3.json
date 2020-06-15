@@ -1,0 +1,1 @@
+{"bigint_index":{"mappings":{"seeds":{"properties":{"guid":{"type":"double"},"nickname":{"type":"keyword","fields":{"nickname_fen":{"type":"text"}}}}}}}}

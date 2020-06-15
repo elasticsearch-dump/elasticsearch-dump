@@ -14,7 +14,7 @@ const baseUrl = 'http://127.0.0.1:9200'
 
 const seeds = {}
 const seedSize = 500
-const testTimeout = seedSize * 100
+const testTimeout = seedSize * 200
 let i = 0
 let indexesExistingBeforeSuite = 0
 
@@ -927,10 +927,10 @@ describe('ELASTICDUMP', () => {
               }, [])
               .sort()
               .value().should.deepEqual([
+                '+99926275868403174267',
                 '-99926275868403174266',
                 '1726275868403174266',
-                '99926275868403174266',
-                '99926275868403174267'])
+                '99926275868403174266'])
             done()
           })
         })
@@ -977,6 +977,52 @@ describe('ELASTICDUMP', () => {
             body.hits.hits.length.should.equal(1)
             const rec = body.hits.hits[0]
             rec._source.guid.toString().should.eql('647200872369')
+            rec._source.nickname.should.eql('01234567891011121314151617181920')
+            done()
+          })
+        })
+      })
+    })
+  })
+
+  describe('big int 3 file to es', () => {
+    it('works', function (done) {
+      this.timeout(testTimeout)
+
+      let options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'mapping',
+        input: path.join(__dirname, 'test-resources', 'bigint_mapping3.json'),
+        output: baseUrl + '/bigint3_index',
+        scrollTime: '10m'
+      }
+
+      let dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(() => {
+        options = {
+          limit: 100,
+          offset: 0,
+          debug: false,
+          type: 'data',
+          input: path.join(__dirname, 'test-resources', 'bigint3.json'),
+          output: baseUrl + '/bigint3_index',
+          scrollTime: '10m',
+          'support-big-int': true
+        }
+
+        dumper = new Elasticdump(options.input, options.output, options)
+
+        dumper.dump(() => {
+          const url = baseUrl + '/bigint3_index/_search'
+          request.get(url, (err, response, body) => {
+            should.not.exist(err)
+            body = jsonParser.parse(body, { options })
+            body.hits.hits.length.should.equal(1)
+            const rec = body.hits.hits[0]
+            rec._source.guid.should.eql('+01234567891011121314151617181920')
             rec._source.nickname.should.eql('01234567891011121314151617181920')
             done()
           })
