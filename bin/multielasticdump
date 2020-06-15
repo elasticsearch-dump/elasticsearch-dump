@@ -373,7 +373,7 @@ const dump = () => {
       `--searchWithTemplate=${options.searchWithTemplate}`,
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
-      `--support-big-int=${options['support-big-int']}`
+      `--support-big-int=${options['support-big-int']}`,
       `--big-int-fields=${options['big-int-fields']}`
     ].concat(_transform))
 
@@ -510,7 +510,8 @@ const load = () => {
       `--offset=${options.offset}`,
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
-      `--support-big-int=${options['support-big-int']}`
+      `--support-big-int=${options['support-big-int']}`,
+      `--big-int-fields=${options['big-int-fields']}`
     ].concat(_transform))
 
     attachListeners(dataChild, done)
