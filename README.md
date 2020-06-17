@@ -416,6 +416,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --awsRegion
                     Sets the AWS region that the signature will be generated for
                     (default: calculated from hostname or host)
+--awsRegex
+                    Regular expression that defined valied AWS urls that should be signed
+                    (default: https?:\\.*.amazonaws.com.*)
 --support-big-int   
                     Support big integer numbers
 --big-int-fields   
