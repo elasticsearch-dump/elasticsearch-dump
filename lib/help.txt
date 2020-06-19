@@ -167,7 +167,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: calculated from hostname or host)
 --awsUrlRegex
                     Regular expression that defined valied AWS urls that should be signed
-                    (default: https?:\\.*.amazonaws.com.*)
+                    (default: ^https?:\\.*.amazonaws.com.*$)
 --transform
                     A javascript, which will be called to modify documents
                     before writing it to destination. global variable 'doc'

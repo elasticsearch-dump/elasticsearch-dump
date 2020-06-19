@@ -418,7 +418,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: calculated from hostname or host)
 --awsUrlRegex
                     Regular expression that defined valied AWS urls that should be signed
-                    (default: https?:\\.*.amazonaws.com.*)
+                    (default: ^https?:\\.*.amazonaws.com.*$)
 --support-big-int   
                     Support big integer numbers
 --big-int-fields   
