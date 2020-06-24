@@ -308,7 +308,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                         `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
                       else
                         `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
-                    NB: searchBody only accepts escaped JSON
 --searchWithTemplate
                     Enable to use Search Template when using --searchBody
                     If using Search Template then searchBody has to consist of "id" field and "params" objects
@@ -613,5 +612,6 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - ES 7.x.x & higher no longer supports `type` property. all templates prior to ES 6.0 has to be upgraded to remove the type property
 - ES 5.x.x ignores offset (from) parameter in the search body. All records will be returned
 - ES 6.x.x [from](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/breaking-changes-6.0.html#_scroll) parameter can no longer be used in the search request body when initiating a scroll
+- Ensure JSON in the searchBody properly escaped to avoid parsing issues : https://www.freeformatter.com/json-escape.html
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
