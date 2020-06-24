@@ -94,7 +94,7 @@ elasticdump \
 elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output=query.json \
-  --searchBody='{"query":{"term":{"username": "admin"}}}'
+  --searchBody="{\"query":{\"term\":{\"username\": \"admin\"}}}"
 
 # Copy a single shard data:
 elasticdump \
@@ -308,6 +308,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                         `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
                       else
                         `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
+                    NB: searchBody only accepts escaped JSON
 --searchWithTemplate
                     Enable to use Search Template when using --searchBody
                     If using Search Template then searchBody has to consist of "id" field and "params" objects
