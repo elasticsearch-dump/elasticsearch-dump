@@ -15,7 +15,6 @@ const request = require('request')
 const { fork } = require('child_process')
 const url = require('url')
 const _ = require('lodash')
-require(path.join(__dirname, '..', 'lib', 'patch.js'))
 const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 const addAuth = require(path.join(__dirname, '..', 'lib', 'add-auth.js'))
 
