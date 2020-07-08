@@ -613,5 +613,5 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - ES 5.x.x ignores offset (from) parameter in the search body. All records will be returned
 - ES 6.x.x [from](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/breaking-changes-6.0.html#_scroll) parameter can no longer be used in the search request body when initiating a scroll
 - Ensure JSON in the searchBody properly escaped to avoid parsing issues : https://www.freeformatter.com/json-escape.html
-
+- Dropped support for Node.JS 8. Node.JS 10+ is now requireed.
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
