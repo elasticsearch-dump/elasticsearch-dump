@@ -3,6 +3,7 @@
 const argv = require('minimist')(process.argv)
 const path = require('path')
 const fs = require('fs')
+require(path.join(__dirname, '..', 'lib', 'patch.js'))
 const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 const packageData = require(path.join(__dirname, '..', 'package.json'))
 const isUrl = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
