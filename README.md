@@ -94,7 +94,7 @@ elasticdump \
 elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output=query.json \
-  --searchBody="{\"query":{\"term\":{\"username\": \"admin\"}}}"
+  --searchBody="{\"query\":{\"term\":{\"username\": \"admin\"}}}"
 
 # Copy a single shard data:
 elasticdump \
