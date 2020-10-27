@@ -75,6 +75,12 @@ const defaults = {
   concurrencyInterval: 5000,
   overwrite: false,
   fsCompress: false,
+  awsChain: false,
+  awsAccessKeyId: null,
+  awsSecretAccessKey: null,
+  awsIniFileProfile: null,
+  awsService: null,
+  awsRegion: null,
   quiet: false
 }
 
@@ -118,6 +124,12 @@ const commonParams = [
   `--concurrencyInterval=${options.concurrencyInterval}`,
   `--overwrite=${options.overwrite}`,
   `--fsCompress=${options.fsCompress}`,
+  `--awsChain=${options.awsChain}`,
+  `--awsAccessKeyId=${options.awsAccessKeyId}`,
+  `--awsSecretAccessKey=${options.awsSecretAccessKey}`,
+  `--awsIniFileProfile=${options.awsIniFileProfile}`,
+  `--awsService=${options.awsService}`,
+  `--awsRegion=${options.awsRegion}`,
   `--quiet=${options.quiet}`
 ]
 
