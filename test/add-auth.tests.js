@@ -1,4 +1,4 @@
-var addAuth = require('../lib/add-auth')
+const addAuth = require('../lib/add-auth')
 var should = require('should') // eslint-disable-line
 
 describe('add-auth', function () {

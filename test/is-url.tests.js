@@ -1,4 +1,4 @@
-var sut = require('../lib/is-url')
+const sut = require('../lib/is-url')
 var should = require('should') // eslint-disable-line
 
 describe('is-url', function () {

@@ -1,5 +1,5 @@
 var should = require('should') // eslint-disable-line
-var parseBaseURL = require('../lib/parse-base-url')
+const parseBaseURL = require('../lib/parse-base-url')
 
 describe('parseBaseURL', function () {
   it('should parse index and type from the input-host', function () {

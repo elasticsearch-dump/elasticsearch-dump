@@ -1,4 +1,4 @@
-var crypto = require('crypto')
+const crypto = require('crypto')
 
 function anonymize (thing, options = {}) {
   if (

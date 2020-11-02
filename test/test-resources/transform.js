@@ -1,4 +1,4 @@
-var crypto = require('crypto')
+const crypto = require('crypto')
 
 module.exports = function (doc) {
   doc._source.bar = crypto

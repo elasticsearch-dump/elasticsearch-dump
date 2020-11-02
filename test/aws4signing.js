@@ -1,12 +1,12 @@
-var should = require('should') // eslint-disable-line
-var aws4signer = require('../lib/aws4signer')
-var credentialsParent = { options: { awsAccessKeyId: 'key', awsSecretAccessKey: 'secret' } }
-var profileParent = { options: { awsIniFileName: 'file', awsIniFileProfile: 'testing' } }
-var chainParent = { options: { awsChain: true } }
+const should = require('should') // eslint-disable-line
+const aws4signer = require('../lib/aws4signer')
+const credentialsParent = { options: { awsAccessKeyId: 'key', awsSecretAccessKey: 'secret' } }
+const profileParent = { options: { awsIniFileName: 'file', awsIniFileProfile: 'testing' } }
+const chainParent = { options: { awsChain: true } }
 
 describe('aws4signer', function () {
   it('should parse "uri" from request object and add signature, if credentials provided', function () {
-    var r = {
+    const r = {
       uri: 'http://es.aws.amazonaws.com:9200/_search?q=test',
       method: 'GET',
       body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
@@ -17,7 +17,7 @@ describe('aws4signer', function () {
   })
 
   it('should parse "url" from request object and add signature, if credentials provided', function () {
-    var r = {
+    const r = {
       url: 'http://es.aws.amazonaws.com:9200/_search?q=test',
       method: 'GET',
       body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
@@ -27,7 +27,7 @@ describe('aws4signer', function () {
   })
 
   it('should parse "url" from request object and add signature, if AWS profile info provided', function () {
-    var r = {
+    const r = {
       url: 'http://es.aws.amazonaws.com:9200/_search?q=test',
       method: 'GET',
       body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
@@ -37,7 +37,7 @@ describe('aws4signer', function () {
   })
 
   it('should parse "url" from request object and add signature, if AWS Chain option provided', function () {
-    var r = {
+    const r = {
       url: 'http://es.aws.amazonaws.com:9200/_search?q=test',
       method: 'GET',
       body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
@@ -47,7 +47,7 @@ describe('aws4signer', function () {
   })
 
   it('should not add signature if credential (key, secret) is NOT provided', function () {
-    var r = {
+    const r = {
       uri: 'http://es.aws.amazonaws.com:9200/_search?q=test',
       method: 'GET',
       body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
@@ -61,7 +61,7 @@ describe('aws4signer', function () {
   })
 
   it('should not add signature if credential (secret or key) is NOT provided', function () {
-    var r = {
+    const r = {
       uri: 'http://es.aws.amazonaws.com:9200/_search?q=test',
       method: 'GET',
       body: '{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'
@@ -73,7 +73,7 @@ describe('aws4signer', function () {
       r.headers.should.not.have.property('Authorization')
     }
   })
-  var assertSigned = function (r) {
+  const assertSigned = r => {
     r.should.have.property('headers').which.is.an.Object()
     r.headers.should.have.property('host').which.is.a.String()
     r.headers.should.have.property('Content-Type').which.is.a.String()
