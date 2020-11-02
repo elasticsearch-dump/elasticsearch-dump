@@ -1,6 +1,7 @@
 {
   "reject": [
     "async",
+    "big.js",
     "mocha",
     "should",
   ]
