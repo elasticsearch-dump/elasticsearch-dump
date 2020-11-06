@@ -4,7 +4,7 @@ const TransportProcessor = require('./lib/processor')
 const vm = require('vm')
 const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
-const url = require('url')
+const path = require('path')
 
 class ElasticDump extends TransportProcessor {
   constructor (input, output, options) {
@@ -37,8 +37,8 @@ class ElasticDump extends TransportProcessor {
         if (transform[0] === '@') {
           return doc => {
             const filePath = transform.slice(1).split('?')
-            const parsed = url.pathToFileURL(filePath[0])
-            return require(parsed.pathname)(doc, ElasticDump.getParams(filePath[1]))
+            const resolvedFilePath = path.resolve(process.cwd(), filePath[0])
+            return require(resolvedFilePath)(doc, ElasticDump.getParams(filePath[1]))
           }
         } else {
           const modificationScriptText = `(function(doc) { ${transform} })`
