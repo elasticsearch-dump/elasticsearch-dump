@@ -29,7 +29,7 @@
   "dependencies": {
     "JSONStream": "^1.3.5",
     "async": "^2.0.1",
-    "aws-sdk": "^2.784.0",
+    "aws-sdk": "^2.789.0",
     "aws4": "^1.11.0",
     "big.js": "^5.2.2",
     "bytes": "^3.1.0",

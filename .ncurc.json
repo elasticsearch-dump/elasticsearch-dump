@@ -4,5 +4,6 @@
     "big.js",
     "mocha",
     "should",
+    "semver"
   ]
 }
