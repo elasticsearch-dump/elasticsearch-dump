@@ -571,7 +571,7 @@ describe('ELASTICDUMP', () => {
         templateFile = 'template_1x.json'
       } else if (process.env.ES_VERSION === '6.0.0') {
         templateFile = 'template_6x.json'
-      } else if (/[7-9]\.\d+\..+/.test(process.env.ES_VERSION)) {
+      } else if (process.env.ES_VERSION === '7.0.0') {
         templateFile = 'template_7x.json'
       }
 

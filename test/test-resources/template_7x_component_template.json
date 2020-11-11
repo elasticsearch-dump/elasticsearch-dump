@@ -1,0 +1,1 @@
+"{\"component_templates\":[{\"name\":\"component_template1\",\"component_template\":{\"template\":{\"mappings\":{\"properties\":{\"@timestamp\":{\"type\":\"date\"}}}}}},{\"name\":\"other_component_template\",\"component_template\":{\"template\":{\"mappings\":{\"properties\":{\"ip_address\":{\"type\":\"ip\"}}}}}}]}"
