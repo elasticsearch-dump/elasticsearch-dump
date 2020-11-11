@@ -65,7 +65,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: true])
 --templateRegex
                     Regex used to filter templates before passing to the output transport 
-                    (default: (metrics|logs)(-.+)?])
+                    (default: (metrics|logs|\\..+)(-.+)?)
 --delete
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
