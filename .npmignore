@@ -113,3 +113,9 @@ docker-compose*
 elasticdump.jpg
 runlocal*
 docker-entrypoint.sh
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test/*
+
+### VisualStudioCode ###
+.vscode/*
