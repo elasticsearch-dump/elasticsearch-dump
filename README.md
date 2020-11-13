@@ -454,7 +454,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Partitioning helps to alleviate overflow/out of memory exceptions by efficiently segmenting files
                     into smaller chunks that then be merged if needs be.
 --fsCompress
-                    gzip data before sending outputting to file 
+                    gzip data before sending output to file.
+                    On import the command is used to inflate a gzipped file
 --s3AccessKeyId
                     AWS access key ID
 --s3SecretAccessKey
