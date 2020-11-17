@@ -14,7 +14,7 @@ const baseUrl = 'http://127.0.0.1:9200'
 
 const seeds = {}
 const seedSize = 500
-const testTimeout = seedSize * 200
+const testTimeout = seedSize * 25
 let i = 0
 let indexesExistingBeforeSuite = 0
 
@@ -831,7 +831,7 @@ describe('ELASTICDUMP', () => {
         offset: 0,
         debug: false,
         type: 'data',
-        input: '/tmp/out.json',
+        input: path.join(__dirname, 'test-resources', 'data_set.json'),
         output: baseUrl + '/destination_index',
         scrollTime: '10m'
       }
@@ -850,15 +850,12 @@ describe('ELASTICDUMP', () => {
     })
 
     it('can provide offset', function (done) {
-      if (/[6-9]\.\d+\..+/.test(process.env.ES_VERSION)) {
-        return this.skip()
-      }
       this.timeout(testTimeout)
       const options = {
         limit: 100,
         debug: false,
         type: 'data',
-        input: '/tmp/out.json',
+        input: path.join(__dirname, 'test-resources', 'data_set.json'),
         output: baseUrl + '/destination_index',
         scrollTime: '10m',
         offset: 250
