@@ -100,7 +100,7 @@ elasticdump \
 elasticdump \
   --input=http://es.com:9200/api \
   --output=http://es.com:9200/api2 \
-  --params='{"preference" : "_shards:0"}'
+  --params="{\"preference\":\"_shards:0\"}"
 
 # Backup aliases to a file
 elasticdump \
