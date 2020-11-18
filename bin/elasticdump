@@ -5,7 +5,7 @@ const path = require('path')
 const fs = require('fs')
 const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 const packageData = require(path.join(__dirname, '..', 'package.json'))
-const isUrl = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
+const { isUrl } = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
 const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
@@ -92,7 +92,22 @@ const defaults = {
   concurrencyInterval: 5000,
   overwrite: false,
   handleVersion: false,
-  versionType: null
+  versionType: null,
+
+  // csv options
+  csvDelimiter: ',',
+  csvRowDelimiter: '\n',
+  csvFirstRowAsHeaders: true,
+  csvRenameHeaders: false,
+  csvWriteHeaders: true,
+  csvCustomHeaders: null,
+  csvIgnoreEmpty: false,
+  csvSkipLines: 0,
+  csvSkipRows: 0,
+  csvTrim: false,
+  csvRTrim: false,
+  csvLTrim: false,
+  csvDiscardUnmappedColumns: false
 }
 const options = {}
 
