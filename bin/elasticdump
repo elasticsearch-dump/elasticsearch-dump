@@ -109,7 +109,9 @@ const defaults = {
   csvTrim: false,
   csvRTrim: false,
   csvLTrim: false,
-  csvDiscardUnmappedColumns: false
+  csvDiscardUnmappedColumns: false,
+  csvQuoteChar: '"',
+  csvEscapeChar: '"'
 }
 const options = {}
 
