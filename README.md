@@ -165,6 +165,12 @@ elasticdump \
   --s3Endpoint https://production.minio.co
 ```
 
+# Import data from CSV file into ES (using csvurls)
+elasticdump \
+  --input "csv://${file_name}.json" \
+  --output=http://production.es.com:9200/my_index \
+  --csvSkipRows 1
+  --csvDelimiter ";"
 
 ### Non-Standard Install
 
@@ -501,6 +507,36 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --versionType
                     Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
                     NB : Type validation is handled by the bulk endpoint and not by elasticsearch-dump
+--csvDelimiter        
+                    The delimiter that will separate columns.
+                    (default : ',')
+--csvFirstRowAsHeaders        
+                    If set to true the first row will be treated as the headers.
+                    (default : true)
+--csvRenameHeaders        
+                    If you want the first line of the file to be removed and replaced by the one provided in the `csvCustomHeaders` option
+                    (default : true)
+--csvCustomHeaders  A comma-seperated listed of values that will be used as headers for your data. This param must
+                    be used in conjunction with `csvRenameHeaders`
+                    (default : null)
+--csvIgnoreEmpty        
+                    Set to true to ignore empty rows. 
+                    (default : false)
+--csvSkipLines        
+                    If number is > 0 the specified number of lines will be skipped.
+                    (default : 0)
+--csvSkipRows        
+                    If number is > 0 then the specified number of parsed rows will be skipped
+                    (default : 0)
+--csvTrim        
+                    Set to true to trim all white space from columns.
+                    (default : false)
+--csvRTrim        
+                    Set to true to right trim all columns.
+                    (default : false)
+--csvLTrim        
+                   Set to true to left trim all columns.
+                    (default : false)                 
 --help
                     This page
 ```
