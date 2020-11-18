@@ -772,18 +772,18 @@ describe('ELASTICDUMP', () => {
         debug: false,
         type: 'data',
         input: baseUrl + '/source_index',
-        output: '/tmp/out.json',
+        output: '/tmp/es_out.json',
         scrollTime: '10m',
         sourceOnly: false,
         jsonLines: false
       }
 
-      if (fs.existsSync('/tmp/out.json')) { fs.unlinkSync('/tmp/out.json') }
+      if (fs.existsSync('/tmp/es_out.json')) { fs.unlinkSync('/tmp/es_out.json') }
 
       const dumper = new Elasticdump(options.input, options.output, options)
 
       dumper.dump(() => {
-        const raw = fs.readFileSync('/tmp/out.json')
+        const raw = fs.readFileSync('/tmp/es_out.json')
         const lineCount = String(raw).split('\n').length
         lineCount.should.equal(seedSize + 1)
         done()
@@ -1041,19 +1041,19 @@ describe('ELASTICDUMP', () => {
           debug: false,
           type: 'data',
           input: baseUrl,
-          output: '/tmp/out.json',
+          output: '/tmp/all_es_out.json',
           scrollTime: '10m',
           sourceOnly: false,
           jsonLines: false,
           all: true
         }
 
-        if (fs.existsSync('/tmp/out.json')) { fs.unlinkSync('/tmp/out.json') }
+        if (fs.existsSync('/tmp/all_es_out.json')) { fs.unlinkSync('/tmp/all_es_out.json') }
 
         const dumper = new Elasticdump(options.input, options.output, options)
 
         dumper.dump(() => {
-          const raw = fs.readFileSync('/tmp/out.json')
+          const raw = fs.readFileSync('/tmp/all_es_out.json')
           const output = []
           raw.toString().split(os.EOL).forEach(line => {
             if (line.length > 0) {
