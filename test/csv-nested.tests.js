@@ -64,7 +64,7 @@ describe('csv import', () => {
     })
   })
 
-  describe('file to es', () => {
+  describe('csv nested file to es', () => {
     it('works', function (done) {
       this.timeout(testTimeout * 2)
       const options = {
