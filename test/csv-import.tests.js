@@ -77,7 +77,8 @@ describe('csv import', () => {
         csvFirstRowAsHeaders: true,
         csvDelimiter: ';',
         csvSkipLines: 0,
-        csvSkipRows: 1
+        csvSkipRows: 1,
+        csvMaxRows: 0
       }
 
       const dumper = new Elasticdump(options.input, options.output, options)
