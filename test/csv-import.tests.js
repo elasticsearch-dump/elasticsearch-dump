@@ -6,7 +6,8 @@ const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 const should = require('should')
 const baseUrl = 'http://127.0.0.1:9200'
 const _ = require('lodash')
-const testTimeout = 3000
+const seedSize = 500
+const testTimeout = seedSize * 25
 
 const request = require('request').defaults({
   headers: {
@@ -44,14 +45,14 @@ describe('csv import', () => {
 
   describe('file to es', () => {
     it('works', function (done) {
-      this.timeout(testTimeout)
+      this.timeout(testTimeout * 2)
       const options = {
         limit: 100,
         offset: 0,
         debug: false,
         type: 'data',
         input: `csv://${path.join(__dirname, 'test-resources', 'cars.csv')}`,
-        output: baseUrl + '/cars_index',
+        output: `${baseUrl}/cars_index/cars`,
         csvFirstRowAsHeaders: true,
         csvDelimiter: ';',
         csvSkipLines: 0,
@@ -61,12 +62,15 @@ describe('csv import', () => {
       const dumper = new Elasticdump(options.input, options.output, options)
 
       dumper.dump(() => {
-        const url = baseUrl + '/cars_index/_search'
-        request.get(url, (err, response, body) => {
+        const url = `${baseUrl}/cars_index`
+        request.post(`${url}/_refresh`, (err, response) => {
           should.not.exist(err)
-          body = JSON.parse(body)
-          getTotal(body).should.equal(406)
-          done()
+          request.get(`${url}/_search`, (err, response, sourceBody) => {
+            should.not.exist(err)
+            sourceBody = JSON.parse(sourceBody)
+            getTotal(sourceBody).should.equal(406)
+            done()
+          })
         })
       })
     })
