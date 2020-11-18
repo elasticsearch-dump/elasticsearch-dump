@@ -528,6 +528,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --csvSkipRows        
                     If number is > 0 then the specified number of parsed rows will be skipped
                     (default : 0)
+--csvMaxRows        
+                    If number is > 0 then only the specified number of rows will be parsed.(e.g. 100 would return the first 100 rows of data)
+                    (default : 0)
 --csvTrim        
                     Set to true to trim all white space from columns.
                     (default : false)
