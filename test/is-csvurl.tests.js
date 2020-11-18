@@ -18,6 +18,6 @@ describe('fromCsvUrl & isCsvUrl', function () {
     isCsvUrl('csv:///some/unix/path').should.equal(true)
   })
   it('returns true for windows file path', function () {
-    fromCsvUrl('csv://c:\\some\\windows\\path').should.deepEqual({ protocol: 'csv://', url: 'c:\\some\\windows\\path' })
+    fromCsvUrl('csv://c:\\some\\windows\\path').should.deepEqual({ protocol: 'csv://', path: 'c:\\some\\windows\\path' })
   })
 })

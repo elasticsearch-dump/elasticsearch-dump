@@ -538,8 +538,24 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Set to true to right trim all columns.
                     (default : false)
 --csvLTrim        
-                   Set to true to left trim all columns.
-                    (default : false)                 
+                    Set to true to left trim all columns.
+                    (default : false)   
+--csvHandleNestedData        
+                    Set to true to handle nested JSON/CSV data. 
+                    NB : This is a very optioninated implementaton !
+                    (default : false)
+--csvIdColumn        
+                    Name of the column to extract the record identifier (id) from
+                    When exporting to CSV this column can be used to override the default id (@id) column name
+                    (default : null)   
+--csvIndexColumn        
+                    Name of the column to extract the record index from
+                    When exporting to CSV this column can be used to override the default index (@index) column name
+                    (default : null)
+--csvTypeColumn        
+                    Name of the column to extract the record type from
+                    When exporting to CSV this column can be used to override the default type (@type) column name
+                    (default : null)              
 --help
                     This page
 ```
