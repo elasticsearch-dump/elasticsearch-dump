@@ -99,7 +99,7 @@ const defaults = {
   csvRowDelimiter: '\n',
   csvFirstRowAsHeaders: true,
   csvRenameHeaders: false,
-  csvWriteHeaders: true,
+  // csvWriteHeaders: true,
   csvCustomHeaders: null,
   csvIgnoreEmpty: false,
   csvSkipLines: 0,
