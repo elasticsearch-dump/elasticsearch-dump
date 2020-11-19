@@ -680,3 +680,4 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - Ensure JSON in the searchBody properly escaped to avoid parsing issues : https://www.freeformatter.com/json-escape.html
 - Dropped support for Node.JS 8. Node.JS 10+ is now requireed.
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
+- Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library
