@@ -271,6 +271,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --csvCustomHeaders  A comma-seperated listed of values that will be used as headers for your data. This param must
                     be used in conjunction with `csvRenameHeaders`
                     (default : null)
+--csvWriteHeaders   Determines if headers should be written to the csv file.
+                    (default : true)
 --csvIgnoreEmpty        
                     Set to true to ignore empty rows. 
                     (default : false)
