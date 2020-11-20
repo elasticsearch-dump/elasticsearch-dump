@@ -163,7 +163,6 @@ elasticdump \
   --output "s3://${bucket_name}/${file_name}.json"
   --s3ForcePathStyle true
   --s3Endpoint https://production.minio.co
-```
 
 # Import data from CSV file into ES (using csvurls)
 elasticdump \
@@ -171,6 +170,7 @@ elasticdump \
   --output=http://production.es.com:9200/my_index \
   --csvSkipRows 1
   --csvDelimiter ";"
+```
 
 ### Non-Standard Install
 
