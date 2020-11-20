@@ -439,7 +439,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default '')
 --retryAttempts  
                     Integer indicating the number of times a request should be automatically re-attempted before failing
-                    when a connection fails with one of the                     
+                    when a connection fails with one of the following errors `ECONNRESET`, `ENOTFOUND`, `ESOCKETTIMEDOUT`,
+                    ETIMEDOUT`, `ECONNREFUSED`, `EHOSTUNREACH`, `EPIPE`, `EAI_AGAIN`
+                    (default: 0)          
 --retryDelay   
                     Integer indicating the back-off/break period between retry attempts (milliseconds)
                     (default : 5000)            
