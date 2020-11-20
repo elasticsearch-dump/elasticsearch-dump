@@ -41,6 +41,7 @@ const defaults = {
   toLog: null,
   quiet: false,
   awsChain: false,
+  awsRefresh: false,
   awsAccessKeyId: null,
   awsSecretAccessKey: null,
   awsIniFileProfile: null,

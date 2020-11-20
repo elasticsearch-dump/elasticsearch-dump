@@ -406,6 +406,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --awsChain
                     Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) location and ordering for resolving credentials including environment variables, config files, EC2 and ECS metadata locations
                     _Recommended option for use with AWS_
+--awsRefresh        enables AWS refresh of expired credentials
 --awsAccessKeyId
 --awsSecretAccessKey
                     When using Amazon Elasticsearch Service protected by
@@ -438,10 +439,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default '')
 --retryAttempts  
                     Integer indicating the number of times a request should be automatically re-attempted before failing
-                    when a connection fails with one of the following errors `ECONNRESET`, `ENOTFOUND`, `ESOCKETTIMEDOUT`,
-                    ETIMEDOUT`, `ECONNREFUSED`, `EHOSTUNREACH`, `EPIPE`, `EAI_AGAIN`
-                    (default: 0)
-                    
+                    when a connection fails with one of the                     
 --retryDelay   
                     Integer indicating the back-off/break period between retry attempts (milliseconds)
                     (default : 5000)            
