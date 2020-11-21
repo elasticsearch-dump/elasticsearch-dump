@@ -404,8 +404,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     May be used multiple times.
                     Additionally, transform may be performed by a module. See [Module Transform](#module-transform) below.
 --awsChain
-                    Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) location and ordering for resolving credentials including environment variables, config files, EC2 and ECS metadata locations
-                    _Recommended option for use with AWS_
+                    Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) 
+                    location and ordering for resolving credentials including environment variables, 
+                    config files, EC2 and ECS metadata locations _Recommended option for use with AWS_
 --awsRefresh        enables AWS refresh of expired credentials
 --awsAccessKeyId
 --awsSecretAccessKey
