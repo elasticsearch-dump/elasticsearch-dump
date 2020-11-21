@@ -681,5 +681,10 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - Ensure JSON in the searchBody properly escaped to avoid parsing issues : https://www.freeformatter.com/json-escape.html
 - Dropped support for Node.JS 8. Node.JS 10+ is now requireed.
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
-- Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library
+- Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library 
+
+# Articles on Elasticdump
 - Shout out to @alexandernnakwue (doc contributer) for the awesome article on using elasticdump https://blog.logrocket.com/a-practical-guide-to-working-with-elasticdump/
+- https://help.aiven.io/en/articles/3280782-moving-indexes-with-elasticsearch-dump-tool
+- https://prophecyinternational.atlassian.net/wiki/spaces/eMite/pages/83787777/HOW+TO+Apply+Index+Template+changes+in+existing+indexes+using+Elasticdump
+- https://fitdevops.in/elasticdump-to-backup-restore-indexes/
