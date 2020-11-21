@@ -682,3 +682,4 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 - Dropped support for Node.JS 8. Node.JS 10+ is now requireed.
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
 - Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library
+- Shout out to @alexandernnakwue (doc contributer) for the awesome article on using elasticdump https://blog.logrocket.com/a-practical-guide-to-working-with-elasticdump/
