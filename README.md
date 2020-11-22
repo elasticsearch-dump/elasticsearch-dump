@@ -665,7 +665,7 @@ will load module `./transforms/my-transform.js', and execute the function with `
 
 An example transform for anonymizing data on-the-fly can be found in the `transforms` folder.
 
-# How Elasticdump handles Nested Data in CSV
+## How Elasticdump handles Nested Data in CSV
 
 Elasticdump is cable of read/write nested data, but in a opinionated way. This is to reduce complexity while parsing/saving CSVs
 The format used a "level 1 data format", might not be the best name, but that's what I am calling it.
