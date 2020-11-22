@@ -610,11 +610,15 @@ The limited option set includes:
 - `big-int-fields`: ``
 - `ignoreChildError`: `false`
 
+
 If the `--direction` is `dump`, which is the default, `--input` MUST be a URL for the base location of an ElasticSearch server (i.e. `http://localhost:9200`) and `--output` MUST be a directory. Each index that does match will have a data, mapping, and analyzer file created.
 
 For loading files that you have dumped from multi-elasticsearch, `--direction` should be set to `load`, `--input` MUST be a directory of a multielasticsearch dump and `--output` MUST be a Elasticsearch server URL.
 
-`--parallel` is how many forks shomight not work with   the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
+`--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped/loaded (regex).
+
+`--ignoreType` allows a type to be ignored from the dump/load. Six options are supported. `data,mapping,analyzer,alias,settings,template`. Multi-type support is available, when used each type must be comma(,)-separated
+and `interval` allows control over the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
 i.e analyzer,alias types are ignored by default
 
 `--includeType` allows a type to be included in the dump/load. Six options are supported - `data,mapping,analyzer,alias,settings,template`. 
