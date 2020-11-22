@@ -171,7 +171,7 @@ elasticdump \
   # --input "csv://${file_path}.csv" \
   --input "csv:///data/cars.csv"
   --output=http://production.es.com:9200/my_index \
-  --csvSkipRows 1    # used to skip parsed rows (this does not include the)
+  --csvSkipRows 1    # used to skip parsed rows (this does not include the headers row)
   --csvDelimiter ";" # default csvDelimiter is ','
 ```
 
