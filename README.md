@@ -167,7 +167,6 @@ elasticdump \
 # Import data from CSV file into ES (using csvurls)
 elasticdump \
   # csv:// prefix must be included to allow parsing of csv files
-  # regex used for detection /^(csv:\/\/)(.+)$/
   # --input "csv://${file_path}.csv" \
   --input "csv:///data/cars.csv"
   --output=http://production.es.com:9200/my_index \
