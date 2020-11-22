@@ -614,10 +614,7 @@ If the `--direction` is `dump`, which is the default, `--input` MUST be a URL fo
 
 For loading files that you have dumped from multi-elasticsearch, `--direction` should be set to `load`, `--input` MUST be a directory of a multielasticsearch dump and `--output` MUST be a Elasticsearch server URL.
 
-`--parallel` is how many forks should be run simultaneously and `--match` is used to filter which indexes should be dumped/loaded (regex).
-
-`--ignoreType` allows a type to be ignored from the dump/load. Six options are supported. `data,mapping,analyzer,alias,settings,template`. Multi-type support is available, when used each type must be comma(,)-separated
-and `interval` allows control over the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
+`--parallel` is how many forks shomight not work with   the interval for spawning a dump/load for a new index. For small indices this can be set to `0` to reduce delays and optimize performance
 i.e analyzer,alias types are ignored by default
 
 `--includeType` allows a type to be included in the dump/load. Six options are supported - `data,mapping,analyzer,alias,settings,template`. 
@@ -667,6 +664,42 @@ with a module at `./transforms/my-transform.js` with the following:
 will load module `./transforms/my-transform.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
 
 An example transform for anonymizing data on-the-fly can be found in the `transforms` folder.
+
+# How Elasticdump handles Nested Data in CSV
+
+Elasticdump is cable of read/write nested data, but in a opinionated way. This is to reduce complexity while parsing/saving CSVs
+The format used a "level 1 data format", might not be the best name, but that's what I am calling it.
+
+Here is an example of nested data
+
+```json
+{
+	"elasticdump": {
+		"version": "6.51.0",
+		"formats": ["json", "csv"]
+	},
+	"contributors": [{
+		"name": "ferron",
+		"id": 3
+	}],
+	"year": 112
+}
+```
+
+This is the format that the data is converted into before saving 
+
+```json
+{
+	"elasticdump": "{\"version\":\"6.51.0\",\"formats\":[\"json\",\"csv\"]}",
+	"contributors": "{\"contributors\":[{\"name\":\"ferron\",\"id\":3}]}",
+	"year": 2020
+}
+```
+
+Notice that the data is flatten down to only 1 level. Object keys are used for headers and values as row data.
+This might not work with existing nested data formats, but that's the format that was chosen for `elasticdump`
+because of its simplicity. This detection is disabled by default, to enable use the `--csvHandleNestedData` flag
+
 
 ## Notes
 
