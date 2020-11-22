@@ -166,10 +166,13 @@ elasticdump \
 
 # Import data from CSV file into ES (using csvurls)
 elasticdump \
-  --input "csv://${file_name}.json" \
+  # csv:// prefix must be included to allow parsing of csv files
+  # regex used for detection /^(csv:\/\/)(.+)$/
+  # --input "csv://${file_path}.csv" \
+  --input "csv:///data/cars.csv"
   --output=http://production.es.com:9200/my_index \
-  --csvSkipRows 1
-  --csvDelimiter ";"
+  --csvSkipRows 1    # used to skip parsed rows (this does not include the)
+  --csvDelimiter ";" # default csvDelimiter is ','
 ```
 
 ### Non-Standard Install
@@ -532,6 +535,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default : 0)
 --csvSkipRows        
                     If number is > 0 then the specified number of parsed rows will be skipped
+                    NB:  (If the first row is treated as headers, they aren't a part of the count)
                     (default : 0)
 --csvMaxRows        
                     If number is > 0 then only the specified number of rows will be parsed.(e.g. 100 would return the first 100 rows of data)
