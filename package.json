@@ -43,7 +43,6 @@
     "p-queue": "^6.6.2",
     "request": "2.88.2",
     "requestretry": "^4.1.2",
-    "s3-stream-upload": "2.0.2",
     "s3urls": "^1.5.2",
     "semver": "5.7.1",
     "socks5-http-client": "^1.0.4",
