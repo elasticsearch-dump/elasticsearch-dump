@@ -726,7 +726,8 @@ Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://gith
 - Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library 
 
 ## Articles on Elasticdump
-- Shout out to @alexandernnakwue (doc contributer) for the awesome article on using elasticdump https://blog.logrocket.com/a-practical-guide-to-working-with-elasticdump/
-- https://help.aiven.io/en/articles/3280782-moving-indexes-with-elasticsearch-dump-tool
-- https://prophecyinternational.atlassian.net/wiki/spaces/eMite/pages/83787777/HOW+TO+Apply+Index+Template+changes+in+existing+indexes+using+Elasticdump
-- https://fitdevops.in/elasticdump-to-backup-restore-indexes/
+- [A practical Guide to working with Elasticdump](https://blog.logrocket.com/a-practical-guide-to-working-with-elasticdump/)
+- [Moving Indexes with elasticdump tool](https://help.aiven.io/en/articles/3280782-moving-indexes-with-elasticsearch-dump-tool)
+- [How to Apply Index Template changes in existing Indexes using Elasticdump](https://prophecyinternational.atlassian.net/wiki/spaces/eMite/pages/83787777/HOW+TO+Apply+Index+Template+changes+in+existing+indexes+using+Elasticdump)
+- [Elasticdump to Backup & Restore Indexes](https://fitdevops.in/elasticdump-to-backup-restore-indexes/)
+- [Moving Elasticsearch Indexes with Elasticdump](https://apassionatechie.wordpress.com/2019/07/03/moving-elasticsearch-indexes-with-elasticdump/)
