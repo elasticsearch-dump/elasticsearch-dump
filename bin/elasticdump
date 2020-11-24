@@ -68,6 +68,7 @@ const defaults = {
   retryDelay: 5000,
   parseExtraFields: '',
   fileSize: -1,
+  maxRows: -1,
   cert: null,
   key: null,
   pass: null,
