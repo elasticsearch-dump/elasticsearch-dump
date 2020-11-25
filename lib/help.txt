@@ -200,6 +200,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default : 5000)
 --parseExtraFields
                     Comma-separated list of meta-fields to be parsed
+--maxRows
+                    supports file splitting.  Files are split by the number of rows specified
 --fileSize
                     supports file splitting.  This value must be a string supported by the **bytes** module.
                     The following abbreviations must be used to signify size in terms of units
