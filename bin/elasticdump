@@ -56,6 +56,7 @@ const defaults = {
   s3Compress: false,
   s3ServerSideEncryption: null,
   s3SSEKMSKeyId: null,
+  s3ACL: null,
   fsCompress: false,
   awsIniFileName: null,
   sessionToken: null,
