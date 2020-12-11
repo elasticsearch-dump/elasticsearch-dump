@@ -234,7 +234,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --s3Compress
                     gzip data before sending to s3
 --s3ServerSideEncryption
-                    Should be used turn on uploading with encryption
+                    Enables encrypted uploads
 --s3SSEKMSKeyId
                     KMS Id to be used with aws:kms uploads
 --retryDelayBase
