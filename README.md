@@ -729,10 +729,12 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - ES 7.x.x & higher no longer supports `type` property. All templates prior to ES 6.0 has to be upgraded to remove the type property
 - ES 5.x.x ignores offset (from) parameter in the search body. All records will be returned
 - ES 6.x.x [from](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/breaking-changes-6.0.html#_scroll) parameter can no longer be used in the search request body when initiating a scroll
+-  Index templates has been deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.
 - Ensure JSON in the searchBody properly escaped to avoid parsing issues : https://www.freeformatter.com/json-escape.html
-- Dropped support for Node.JS 8. Node.JS 10+ is now requireed.
-Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
+- Dropped support for Node.JS 8. Node.JS 10+ is now required.
 - Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library 
+
+  
 
 ## Articles on Elasticdump
 - [A practical Guide to working with Elasticdump](https://blog.logrocket.com/a-practical-guide-to-working-with-elasticdump/)
@@ -740,3 +742,7 @@ Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://gith
 - [How to Apply Index Template changes in existing Indexes using Elasticdump](https://prophecyinternational.atlassian.net/wiki/spaces/eMite/pages/83787777/HOW+TO+Apply+Index+Template+changes+in+existing+indexes+using+Elasticdump)
 - [Elasticdump to Backup & Restore Indexes](https://fitdevops.in/elasticdump-to-backup-restore-indexes/)
 - [Moving Elasticsearch Indexes with Elasticdump](https://apassionatechie.wordpress.com/2019/07/03/moving-elasticsearch-indexes-with-elasticdump/)
+
+
+
+Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
