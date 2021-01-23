@@ -156,8 +156,9 @@ const validateDirectory = (options, field) => {
   }
 }
 
-const generatePath = (direction, index) => {
+const generatePath = (direction, index, order) => {
   return {
+    [`${order}`]: `${options[order]}/${encodeURIComponent(index).toLowerCase()}`,
     [`${direction}Data`]: `${options[direction]}/${index}.${fileExt}`,
     [`${direction}Mapping`]: `${options[direction]}/${index}.mapping.${fileExt}`,
     [`${direction}Alias`]: `${options[direction]}/${index}.alias.${fileExt}`,
@@ -294,26 +295,25 @@ const dump = () => {
 
   indexCounter++
 
-  const input = `${options.input}/${encodeURIComponent(index).toLowerCase()}`
-  const inputTemplates = `${options.input}/*`
   const {
+    input,
     outputData,
     outputMapping,
     outputAnalyzer,
     outputAlias,
     outputSettings,
     outputTemplate
-  } = generatePath('output', index)
+  } = generatePath('output', index, 'input')
 
   const jobs = []
 
   jobs.push(done => {
     if (options.ignoreTemplate) return done()
-    args.log('info', `dumping ${inputTemplates} to ${outputTemplate}`)
+    args.log('info', `dumping ${options.input} to ${outputTemplate}`)
 
     const templateChild = _fork([
       '--type=template',
-      `--input=${inputTemplates}`,
+      `--input=${options.input}`,
       `--output=${outputTemplate}`
     ])
 
@@ -431,15 +431,15 @@ const load = () => {
 
   indexCounter++
 
-  const output = `${options.output}/${encodeURIComponent(index).toLowerCase()}`
   const {
+    output,
     inputData,
     inputMapping,
     inputAnalyzer,
     inputAlias,
     inputSettings,
     inputTemplate
-  } = generatePath('input', index)
+  } = generatePath('input', index, 'output')
 
   const jobs = []
 
