@@ -156,6 +156,17 @@ const validateDirectory = (options, field) => {
   }
 }
 
+const generatePath = (direction, index) => {
+  return {
+    [`${direction}Data`]: `${options[direction]}/${index}.${fileExt}`,
+    [`${direction}Mapping`]: `${options[direction]}/${index}.mapping.${fileExt}`,
+    [`${direction}Alias`]: `${options[direction]}/${index}.alias.${fileExt}`,
+    [`${direction}Analyzer`]: `${options[direction]}/${index}.analyzer.${fileExt}`,
+    [`${direction}Settings`]: `${options[direction]}/${index}.settings.${fileExt}`,
+    [`${direction}Template`]: `${options[direction]}/${index}.template.${fileExt}`
+  }
+}
+
 const _fork = (params = [], file = 'elasticdump') => {
   return fork(path.join(__dirname, file), params.concat(commonParams))
 }
@@ -284,21 +295,25 @@ const dump = () => {
   indexCounter++
 
   const input = `${options.input}/${encodeURIComponent(index).toLowerCase()}`
-  const outputData = `${options.output}/${index}.${fileExt}`
-  const outputMapping = `${options.output}/${index}.mapping.${fileExt}`
-  const outputAnalyzer = `${options.output}/${index}.analyzer.${fileExt}`
-  const outputAlias = `${options.output}/${index}.alias.${fileExt}`
-  const outputSettings = `${options.output}/${index}.settings.${fileExt}`
-  const outputTemplate = `${options.output}/${index}.template.${fileExt}`
+  const inputTemplates = `${options.input}/*`
+  const {
+    outputData,
+    outputMapping,
+    outputAnalyzer,
+    outputAlias,
+    outputSettings,
+    outputTemplate
+  } = generatePath('output', index)
+
   const jobs = []
 
   jobs.push(done => {
     if (options.ignoreTemplate) return done()
-    args.log('info', `dumping ${input} to ${outputTemplate}`)
+    args.log('info', `dumping ${inputTemplates} to ${outputTemplate}`)
 
     const templateChild = _fork([
       '--type=template',
-      `--input=${input}`,
+      `--input=${inputTemplates}`,
       `--output=${outputTemplate}`
     ])
 
@@ -417,12 +432,14 @@ const load = () => {
   indexCounter++
 
   const output = `${options.output}/${encodeURIComponent(index).toLowerCase()}`
-  const inputData = `${options.input}/${index}.${fileExt}`
-  const inputMapping = `${options.input}/${index}.mapping.${fileExt}`
-  const inputAnalyzer = `${options.input}/${index}.analyzer.${fileExt}`
-  const inputAlias = `${options.input}/${index}.alias.${fileExt}`
-  const inputSettings = `${options.input}/${index}.settings.${fileExt}`
-  const inputTemplate = `${options.input}/${index}.template.${fileExt}`
+  const {
+    inputData,
+    inputMapping,
+    inputAnalyzer,
+    inputAlias,
+    inputSettings,
+    inputTemplate
+  } = generatePath('input', index)
 
   const jobs = []
 
