@@ -68,8 +68,8 @@
     ]
   },
   "bin": {
-    "elasticdump": "bin/elasticdump",
-    "multielasticdump": "bin/multielasticdump"
+    "elasticdump": "./bin/elasticdump",
+    "multielasticdump": "./bin/multielasticdump"
   },
   "scripts": {
     "pretest": "standard",
