@@ -27,7 +27,7 @@ const defaults = {
   searchBody: null,
   searchWithTemplate: false,
   filterSystemTemplates: true,
-  templateRegex: '(metrics|logs|\\..+)(-.+)?',
+  templateRegex: '(metrics|logs|.+_audit_log|.+-index-template|\\..+)(-.+)?',
   headers: null,
   sourceOnly: false,
   jsonLines: false,
@@ -138,7 +138,7 @@ if (argv.help === true) {
     process.exit(1)
   }
 
-  const dumper = new Elasticdump(options.input, options.output, options)
+  const dumper = new Elasticdump(options)
 
   dumper.on('log', function (message) { args.log('log', message) })
   dumper.on('debug', function (message) { args.log('debug', message) })

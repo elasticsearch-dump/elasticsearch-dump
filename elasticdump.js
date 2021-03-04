@@ -5,10 +5,16 @@ const vm = require('vm')
 const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
 const path = require('path')
+const _ = require('lodash')
 
 class ElasticDump extends TransportProcessor {
   constructor (input, output, options) {
     super()
+    if (arguments.length === 1 && _.isPlainObject(arguments[0])) {
+      options = input
+      output = options.output
+      input = options.input
+    }
     this.input = input
     this.output = output
     this.options = options
