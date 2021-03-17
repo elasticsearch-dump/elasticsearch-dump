@@ -679,10 +679,8 @@ An example transform for anonymizing data on-the-fly can be found in the `transf
 
 ## How Elasticdump handles Nested Data in CSV
 
-Elasticdump is capable of read/write nested data, but in a opinionated way. This is to reduce complexity while parsing/saving CSVs
-The format used a "level 1 data format", might not be the best name, but that's what I am calling it.
-
-Here is an example of nested data
+Elasticdump is capable of reading/writing nested data, but in a *_opinionated way*. This is to reduce complexity while parsing/saving CSVs
+The format flattens all nesting to a single level (an example of this is shown below)
 
 ```json
 {
@@ -698,7 +696,9 @@ Here is an example of nested data
 }
 ```
 
-This is the format that the data is converted into before saving 
+
+
+Output format
 
 ```json
 {
@@ -708,7 +708,7 @@ This is the format that the data is converted into before saving
 }
 ```
 
-Notice that the data is flatten down to only 1 level. Object keys are used for headers and values as row data.
+**Notice that the data is flattened to 1 level**. Object keys are used for headers and values as row data.
 This might not work with existing nested data formats, but that's the format that was chosen for `elasticdump`
 because of its simplicity. This detection is disabled by default, to enable use the `--csvHandleNestedData` flag
 
