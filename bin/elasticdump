@@ -7,6 +7,7 @@ const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 const packageData = require(path.join(__dirname, '..', 'package.json'))
 const { isUrl } = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
 const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
+const versionCheck = require(path.join(__dirname, '..', 'lib', 'version-check.js'))
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 const defaults = {
@@ -121,6 +122,8 @@ const defaults = {
   csvEscapeChar: '"'
 }
 const options = {}
+
+versionCheck()
 
 const args = new ArgParser({ options, parseJSONOpts: true })
 args.parse(argv, defaults)

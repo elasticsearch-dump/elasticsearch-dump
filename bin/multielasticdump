@@ -17,6 +17,7 @@ const url = require('url')
 const _ = require('lodash')
 const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 const addAuth = require(path.join(__dirname, '..', 'lib', 'add-auth.js'))
+const versionCheck = require(path.join(__dirname, '..', 'lib', 'version-check.js'))
 
 const options = {}
 let matchedIndexes = []
@@ -83,6 +84,8 @@ const defaults = {
   awsRegion: null,
   quiet: false
 }
+
+versionCheck()
 
 const args = new ArgParser({ options })
 args.parse(argv, defaults)
