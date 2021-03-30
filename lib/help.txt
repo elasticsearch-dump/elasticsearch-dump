@@ -85,6 +85,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                         `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
                       else
                         `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
+                    [As of 6.68.0] If the searchBody is preceded by a @ symbol, elasticdump will perform a file lookup
+                    in the location specified. NB: File must contain valid JSON
 --searchWithTemplate
                     Enable to use Search Template when using --searchBody
                     If using Search Template then searchBody has to consist of "id" field and "params" objects

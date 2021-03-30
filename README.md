@@ -96,6 +96,12 @@ elasticdump \
   --input=http://production.es.com:9200/my_index \
   --output=query.json \
   --searchBody="{\"query\":{\"term\":{\"username\": \"admin\"}}}"
+  
+# Specify searchBody from a file
+elasticdump \
+  --input=http://production.es.com:9200/my_index \
+  --output=query.json \
+  --searchBody=@/data/searchbody.json  
 
 # Copy a single shard data:
 elasticdump \
@@ -323,6 +329,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                         `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
                       else
                         `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
+                    [As of 6.68.0] If the searchBody is preceded by a @ symbol, elasticdump will perform a file lookup
+                    in the location specified. NB: File must contain valid JSON
 --searchWithTemplate
                     Enable to use Search Template when using --searchBody
                     If using Search Template then searchBody has to consist of "id" field and "params" objects
@@ -734,6 +742,7 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - Ensure JSON in the searchBody properly escaped to avoid parsing issues : https://www.freeformatter.com/json-escape.html
 - Dropped support for Node.JS 8 in Elasticdump v6.32.0. Node.JS 10+ is now required.
 - Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library 
+- Elasticdump v6.68.0 added support for specifying a file containing the searchBody
 
   
 
