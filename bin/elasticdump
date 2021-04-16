@@ -28,7 +28,7 @@ const defaults = {
   searchBody: null,
   searchWithTemplate: false,
   filterSystemTemplates: true,
-  templateRegex: '(metrics|logs|.+_audit_log|.+-index-template|\\..+)(-.+)?',
+  templateRegex: '^(metrics|logs|.+_audit_log|.+-index-template|\\..+)$',
   headers: null,
   sourceOnly: false,
   jsonLines: false,
