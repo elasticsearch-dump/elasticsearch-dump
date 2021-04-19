@@ -107,7 +107,7 @@ elasticdump \
 elasticdump \
   --input=http://es.com:9200/api \
   --output=http://es.com:9200/api2 \
-  --params="{\"preference\":\"_shards:0\"}"
+  --scrollParams="{\"preference\":\"_shards:0\"}"
 
 # Backup aliases to a file
 elasticdump \
@@ -345,6 +345,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --params
                     Add custom parameters to Elastisearch requests uri. Helpful when you for example
                     want to use elasticsearch preference
+                    
+                    --scrollParams is a specific params extension that can be used when fetching data with the scroll api
+                    --index Params is a specific params extension that can be used when indexing data with the bulk index api
+                    NB : These were added to avoid param pollution problems which occur when an input param is used in an output source
                     (default: null)
 --sourceOnly
                     Output only the json contained within the document _source
