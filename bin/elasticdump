@@ -64,7 +64,7 @@ const defaults = {
   transform: null,
   httpAuthFile: null,
   params: null,
-  dataParams: null,
+  indexParams: null,
   scrollParams: null,
   prefix: '',
   suffix: '',
