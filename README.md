@@ -342,6 +342,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Add custom headers to Elastisearch requests (helpful when
                     your Elasticsearch instance sits behind a proxy)
                     (default: '{"User-Agent": "elasticdump"}')
+                    Type/direction based headers are supported .i.e. input-headers/output-headers 
+                    (these will only be added based on the current flow type input/output)
 --params
                     Add custom parameters to Elastisearch requests uri. Helpful when you for example
                     want to use elasticsearch preference
