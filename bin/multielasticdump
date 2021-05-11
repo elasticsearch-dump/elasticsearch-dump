@@ -34,6 +34,7 @@ const defaults = {
   output: null,
   scrollId: null,
   scrollTime: '10m',
+  'scroll-with-post': false,
   timeout: null,
   limit: 100,
   offset: 0,
@@ -133,7 +134,8 @@ const commonParams = [
   `--awsIniFileProfile=${options.awsIniFileProfile}`,
   `--awsService=${options.awsService}`,
   `--awsRegion=${options.awsRegion}`,
-  `--quiet=${options.quiet}`
+  `--quiet=${options.quiet}`,
+  `--scroll-with-post=${options['scroll-with-post']}`
 ]
 
 const fileExt = options.fsCompress ? 'json.gz' : 'json'

@@ -109,6 +109,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --scrollTime
                     Time the nodes will hold the requested search in order.
                     (default: 10m)
+--scroll-with-post
+                    Use a HTTP POST method to perform scrolling instead of the default GET
+                    (default: false)
 --maxSockets
                     How many simultaneous HTTP requests can we process make?
                     (default:

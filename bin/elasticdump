@@ -41,6 +41,7 @@ const defaults = {
   scrollId: null,
   scrollTime: '10m',
   scrollRetryDelay: 15000,
+  'scroll-with-post': false,
   timeout: null,
   toLog: null,
   quiet: false,
