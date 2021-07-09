@@ -454,8 +454,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Sets the AWS region that the signature will be generated for
                     (default: calculated from hostname or host)
 --awsUrlRegex
-                    Regular expression that defined valied AWS urls that should be signed
-                    (default: ^https?:\\.*.amazonaws.com.*$)
+                    Regular expression that defines AWS Elastic Search Clusters' urls that should be signed - for example AWS Elastic Search Custom Domains
+                    (default: ^https?:\/.*.amazonaws.com.*$)
 --support-big-int   
                     Support big integer numbers
 --big-int-fields   
