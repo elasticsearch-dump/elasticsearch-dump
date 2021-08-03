@@ -219,16 +219,16 @@ if (options.direction === 'dump') {
   request(req, (err, response) => {
     if (err) {
       args.log('err', err)
-      process.exit()
+      process.exit(1)
     }
     if (response.statusCode >= 400) {
       args.log('err', `Attempt to list /_aliases failed with status ${response.statusCode} ${response.statusMessage}`)
-      process.exit()
+      process.exit(1)
     }
     response = JSON.parse(response.body)
     if ('error' in response) {
       args.log('err', response.error.reason)
-      process.exit()
+      process.exit(1)
     }
     if (!Array.isArray(response)) {
       response = Object.keys(response)
