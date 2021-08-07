@@ -620,6 +620,7 @@ The limited option set includes:
 
 - `parallel`:   `os.cpus()`,
 - `match`:      `'^.*$'`,
+- `order`:      `'asc'`,
 - `input`:      `null`,
 - `output`:     `null`,
 - `scrollTime`: `'10m'`,
@@ -656,6 +657,7 @@ i.e analyzer,alias types are ignored by default
 
 New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
 `--prefix` allows you to add a prefix to the index name e.g. `${index}-backup-2018-03-13`.
+`--order` accepts `asc` or `desc` and allows the indexes/aliases to be sorted before processing is performed
 
 ## Usage Examples
 

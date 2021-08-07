@@ -30,6 +30,7 @@ const defaults = {
   debug: true,
   parallel: os.cpus().length,
   match: '^.*$',
+  order: 'asc',
   input: null,
   output: null,
   scrollId: null,
@@ -233,6 +234,7 @@ if (options.direction === 'dump') {
       response = Object.keys(response)
     }
     matchedIndexes = response.filter(index => matchRegExp.test(index))
+    matchedIndexes = _.orderBy(matchedIndexes, _.identity, [options.order])
 
     dumpWork()
   })
