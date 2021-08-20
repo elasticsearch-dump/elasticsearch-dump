@@ -765,6 +765,8 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - [How to Apply Index Template changes in existing Indexes using Elasticdump](https://prophecyinternational.atlassian.net/wiki/spaces/eMite/pages/83787777/HOW+TO+Apply+Index+Template+changes+in+existing+indexes+using+Elasticdump)
 - [Elasticdump to Backup & Restore Indexes](https://fitdevops.in/elasticdump-to-backup-restore-indexes/)
 - [Moving Elasticsearch Indexes with Elasticdump](https://apassionatechie.wordpress.com/2019/07/03/moving-elasticsearch-indexes-with-elasticdump/)
+- [Elasticsearch backup and restore](https://www.netvizura.com/blog/elasticsearch-backup-and-restore)
+- [Guide to Elasticdump - Moving and Saving Elasticsearch Indices](https://stackabuse.com/guide-to-elasticdump-moving-and-saving-elasticsearch-indices/)
 
 
 
