@@ -230,10 +230,15 @@ if (options.direction === 'dump') {
       args.log('err', response.error.reason)
       process.exit(1)
     }
+
+    let indexes = response;
     if (!Array.isArray(response)) {
-      response = Object.keys(response)
+      indexes = Object.keys(response)
     }
-    matchedIndexes = response.filter(index => matchRegExp.test(index))
+    matchedIndexes = indexes.filter(index => {
+      const aliases = Object.keys(response[index].aliases || {})
+      return matchRegExp.test(index) || aliases.some(alias => matchRegExp.test(alias))
+    })
     matchedIndexes = _.orderBy(matchedIndexes, _.identity, [options.order])
 
     dumpWork()
