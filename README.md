@@ -627,6 +627,7 @@ The limited option set includes:
 - `timeout`: `null`,
 - `limit`:      `100`,
 - `offset`:     `0`,
+- `size`:       `-1`,
 - `direction`:   `dump`,
 - `ignoreType`:   ``
 - `includeType`:   ``
