@@ -39,6 +39,7 @@ const defaults = {
   timeout: null,
   limit: 100,
   offset: 0,
+  size: -1,
   direction: 'dump', // default to dump
   'support-big-int': false,
   'big-int-fields': '',
@@ -408,6 +409,7 @@ const dump = () => {
       `--scrollTime=${options.scrollTime}`,
       `--limit=${options.limit}`,
       `--offset=${options.offset}`,
+      `--size=${options.size}`,
       `--searchBody=${options.searchBody}`,
       `--searchWithTemplate=${options.searchWithTemplate}`,
       `--prefix=${options.prefix}`,
@@ -549,6 +551,7 @@ const load = () => {
       `--timeout=${options.timeout}`,
       `--limit=${options.limit}`,
       `--offset=${options.offset}`,
+      `--size=${options.size}`,
       `--prefix=${options.prefix}`,
       `--suffix=${options.suffix}`,
       `--support-big-int=${options['support-big-int']}`,
