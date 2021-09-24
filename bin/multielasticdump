@@ -18,6 +18,8 @@ const _ = require('lodash')
 const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 const addAuth = require(path.join(__dirname, '..', 'lib', 'add-auth.js'))
 const versionCheck = require(path.join(__dirname, '..', 'lib', 'version-check.js'))
+const AWS = require('aws-sdk')
+const initAws = require(path.join(__dirname, '..', 'lib', 'init-aws.js'))
 
 const options = {}
 let matchedIndexes = []
@@ -53,6 +55,7 @@ const defaults = {
   ignoreType: [],
   includeType: null,
   interval: 1000,
+  delete: false,
   prefix: '',
   suffix: '',
   transform: null,
@@ -85,6 +88,16 @@ const defaults = {
   awsIniFileProfile: null,
   awsService: null,
   awsRegion: null,
+  s3AccessKeyId: null,
+  s3SecretAccessKey: null,
+  s3Region: null,
+  s3Endpoint: null,
+  s3SSLEnabled: true,
+  s3ForcePathStyle: false,
+  s3Compress: false,
+  s3ServerSideEncryption: null,
+  s3SSEKMSKeyId: null,
+  s3ACL: null,
   quiet: false
 }
 
@@ -136,6 +149,16 @@ const commonParams = [
   `--awsIniFileProfile=${options.awsIniFileProfile}`,
   `--awsService=${options.awsService}`,
   `--awsRegion=${options.awsRegion}`,
+  `--s3AccessKeyId=${options.s3AccessKeyId}`,
+  `--s3SecretAccessKey=${options.s3SecretAccessKey}`,
+  `--s3Region=${options.s3Region}`,
+  `--s3Endpoint=${options.s3Endpoint}`,
+  `--s3SSLEnabled=${options.s3SSLEnabled}`,
+  `--s3ForcePathStyle=${options.s3ForcePathStyle}`,
+  `--s3Compress=${options.s3Compress}`,
+  `--s3ServerSideEncryption=${options.s3ServerSideEncryption}`,
+  `--s3SSEKMSKeyId=${options.s3SSEKMSKeyId}`,
+  `--s3ACL=${options.s3ACL}`,
   `--quiet=${options.quiet}`,
   `--scroll-with-post=${options['scroll-with-post']}`
 ]
@@ -143,6 +166,10 @@ const commonParams = [
 const fileExt = options.fsCompress ? 'json.gz' : 'json'
 
 const validateDirectory = (options, field) => {
+  if (options[field].startsWith('s3://')) {
+    return;
+  }
+
   let isDir
   try {
     isDir = fs.lstatSync(options[field]).isDirectory()
@@ -176,6 +203,7 @@ const generatePath = (direction, index, order) => {
 }
 
 const _fork = (params = [], file = 'elasticdump') => {
+  args.log("debug", `fork: ${path.join(__dirname, file)} ${params.concat(commonParams)}`)
   return fork(path.join(__dirname, file), params.concat(commonParams))
 }
 
@@ -193,6 +221,86 @@ const attachListeners = (clazz, cb) => {
   }).on('error', error => args.log('error', error))
 }
 
+const listFiles = (dir, callback) => {
+  if (dir.startsWith('s3://')) {
+    initAws(options)
+    const s3 = new AWS.S3()
+    const s3Url = new URL(dir)
+    let prefix = ""
+    if (s3Url.pathname.length > 1) {
+      prefix = s3Url.pathname.slice(1) + '/'
+    }
+    const listOptions = {
+      Bucket: s3Url.hostname,
+      Prefix: prefix,
+    }
+
+    s3.listObjectsV2(listOptions, (err, data) => {
+      if (data) {
+        data = data.Contents.map(item => item.Key.slice(prefix.length))
+      }
+      callback(err, data)
+    })
+  } else {
+    fs.readdir(dir, callback)
+  }
+}
+
+const elasticRequest = (params, callback) => {
+  _.defaults(params, {
+    method: 'GET',
+    ignoreErrors: false,
+  })
+
+  let baseUrl = params.url
+  if (options.httpAuthFile) {
+    baseUrl = addAuth(params.url, options.httpAuthFile)
+  }
+  const reqUrl = new URL(baseUrl)
+  reqUrl.pathname = params.path
+
+  const req = {
+    url: url.format(reqUrl),
+    method: params.method,
+    headers: Object.assign({
+      'User-Agent': 'elasticdump',
+      'Content-Type': 'application/json'
+    }, JSON.parse(options.headers) || {})
+  }
+
+  args.log('debug', `${params.method} ${params.path}`);
+  request(req, (err, response) => {
+    if (err) {
+      args.log('err', err)
+      process.exit(1)
+    }
+    args.log('debug', `${params.method} ${params.path} -> ${response.statusCode} ${response.statusMessage}`);
+    if (response.statusCode >= 400 && !params.ignoreErrors) {
+      process.exit(1)
+    }
+    response = JSON.parse(response.body)
+    if ('error' in response && !params.ignoreErrors) {
+      args.log('err', response.error.reason)
+      process.exit(1)
+    }
+
+    if (callback) {
+      callback(response)
+    }
+  })
+}
+
+const deleteIndexes = (indexes) => {
+  const req = {
+    method: 'DELETE',
+    url: options.output,
+    path: indexes.join(','),
+    ignoreErrors: true,
+  }
+
+  elasticRequest(req)
+}
+
 if (!options.input) { throw new Error('--input is required') }
 if (!options.output) { throw new Error('--output is required') }
 args.log('info', `We are performing : ${options.direction}`)
@@ -202,36 +310,12 @@ const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
   validateDirectory(options, 'output')
 
-  let input = options.input
-  if (options.httpAuthFile) {
-    input = addAuth(options.input, options.httpAuthFile)
-  }
-  const inputUrl = new URL(input)
-  inputUrl.pathname = '/_aliases'
-
   const req = {
-    url: url.format(inputUrl),
-    method: 'GET',
-    headers: Object.assign({
-      'User-Agent': 'elasticdump',
-      'Content-Type': 'application/json'
-    }, JSON.parse(options.headers) || {})
+    url: options.input,
+    path: '/_aliases',
   }
-  request(req, (err, response) => {
-    if (err) {
-      args.log('err', err)
-      process.exit(1)
-    }
-    if (response.statusCode >= 400) {
-      args.log('err', `Attempt to list /_aliases failed with status ${response.statusCode} ${response.statusMessage}`)
-      process.exit(1)
-    }
-    response = JSON.parse(response.body)
-    if ('error' in response) {
-      args.log('err', response.error.reason)
-      process.exit(1)
-    }
 
+  elasticRequest(req, (response) => {
     let indexes = response;
     if (!Array.isArray(response)) {
       indexes = Object.keys(response)
@@ -248,7 +332,7 @@ if (options.direction === 'dump') {
 
 if (options.direction === 'load') {
   validateDirectory(options, 'input')
-  fs.readdir(options.input, (err, data) => {
+  listFiles(options.input, (err, data) => {
     if (err) {
       args.log('error', err)
       throw new Error('Something went wrong reading the list of files')
@@ -264,6 +348,9 @@ if (options.direction === 'load') {
       .filter(item => matchRegExp.test(item))
     matchedIndexes = _.uniq(matchedIndexes)
     args.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
+    if (options.delete) {
+      deleteIndexes(matchedIndexes);
+    }
 
     loadWork()
   })
