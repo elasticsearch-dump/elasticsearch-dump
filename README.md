@@ -592,9 +592,12 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --csvTypeColumn        
                     Name of the column to extract the record type from
                     When exporting to CSV this column can be used to override the default type (@type) column name
-                    (default : null)              
+                    (default : null)   
+--force-os-version   
+                    Forces the OpenSearch version used by elasticsearch-dump.
+                    (default: 7.10.2)                       
 --help
-                    This page
+                    This page   
 ```
 
 ## Elasticsearch's Scroll API

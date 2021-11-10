@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-// I am a wrapper around basic elastcidump
-// I will source all indices from your elasticserach server and dump them out to .json and .mapping.json files
+// I am a wrapper around basic Elasticdump
+// I will source all indices from your Elasticserach server and dump them out to .json and .mapping.json files
 // I probably only work on *nix hosts
 // dump --input must be a URL and --output must be a path on this system
-// index --input must be a a path on this system --output must be URL
+// index --input must be a path on this system --output must be URL
 
 const argv = require('minimist')(process.argv)
 const fs = require('fs')
@@ -12,6 +12,7 @@ const os = require('os')
 const path = require('path')
 const async = require('async')
 const request = require('request')
+const s3urls = require('s3urls')
 const { fork } = require('child_process')
 const url = require('url')
 const _ = require('lodash')
@@ -222,22 +223,13 @@ const attachListeners = (clazz, cb) => {
 }
 
 const listFiles = (dir, callback) => {
-  if (dir.startsWith('s3://')) {
+  if (s3urls.valid(dir)) {
     initAws(options)
     const s3 = new AWS.S3()
-    const s3Url = new URL(dir)
-    let prefix = ""
-    if (s3Url.pathname.length > 1) {
-      prefix = s3Url.pathname.slice(1) + '/'
-    }
-    const listOptions = {
-      Bucket: s3Url.hostname,
-      Prefix: prefix,
-    }
-
-    s3.listObjectsV2(listOptions, (err, data) => {
+    const { Bucket, Key: Prefix } = s3urls.fromUrl(this.file)
+    s3.listObjectsV2({ Bucket, Prefix }, (err, data) => {
       if (data) {
-        data = data.Contents.map(item => item.Key.slice(prefix.length))
+        data = data.Contents.map(item => item.Key.slice(Prefix.length))
       }
       callback(err, data)
     })
