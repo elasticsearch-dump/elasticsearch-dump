@@ -168,7 +168,7 @@ const fileExt = options.fsCompress ? 'json.gz' : 'json'
 
 const validateDirectory = (options, field) => {
   if (options[field].startsWith('s3://')) {
-    return;
+    return
   }
 
   let isDir
@@ -204,7 +204,7 @@ const generatePath = (direction, index, order) => {
 }
 
 const _fork = (params = [], file = 'elasticdump') => {
-  args.log("debug", `fork: ${path.join(__dirname, file)} ${params.concat(commonParams)}`)
+  args.log('debug', `fork: ${path.join(__dirname, file)} ${params.concat(commonParams)}`)
   return fork(path.join(__dirname, file), params.concat(commonParams))
 }
 
@@ -241,7 +241,7 @@ const listFiles = (dir, callback) => {
 const elasticRequest = (params, callback) => {
   _.defaults(params, {
     method: 'GET',
-    ignoreErrors: false,
+    ignoreErrors: false
   })
 
   let baseUrl = params.url
@@ -260,13 +260,13 @@ const elasticRequest = (params, callback) => {
     }, JSON.parse(options.headers) || {})
   }
 
-  args.log('debug', `${params.method} ${params.path}`);
+  args.log('debug', `${params.method} ${params.path}`)
   request(req, (err, response) => {
     if (err) {
       args.log('err', err)
       process.exit(1)
     }
-    args.log('debug', `${params.method} ${params.path} -> ${response.statusCode} ${response.statusMessage}`);
+    args.log('debug', `${params.method} ${params.path} -> ${response.statusCode} ${response.statusMessage}`)
     if (response.statusCode >= 400 && !params.ignoreErrors) {
       process.exit(1)
     }
@@ -287,7 +287,7 @@ const deleteIndexes = (indexes) => {
     method: 'DELETE',
     url: options.output,
     path: indexes.join(','),
-    ignoreErrors: true,
+    ignoreErrors: true
   }
 
   elasticRequest(req)
@@ -304,11 +304,11 @@ if (options.direction === 'dump') {
 
   const req = {
     url: options.input,
-    path: '/_aliases',
+    path: '/_aliases'
   }
 
   elasticRequest(req, (response) => {
-    let indexes = response;
+    let indexes = response
     if (!Array.isArray(response)) {
       indexes = Object.keys(response)
     }
@@ -341,7 +341,7 @@ if (options.direction === 'load') {
     matchedIndexes = _.uniq(matchedIndexes)
     args.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
     if (options.delete) {
-      deleteIndexes(matchedIndexes);
+      deleteIndexes(matchedIndexes)
     }
 
     loadWork()
