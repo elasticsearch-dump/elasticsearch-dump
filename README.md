@@ -387,7 +387,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Integer containing the number of rows you wish to skip
                     ahead from the input transport.  When importing a large
                     index, things can go wrong, be it connectivity, crashes,
-                    someone forgetting to `screen`, etc.  This allows you
+                    someone forgets to `screen`, etc.  This allows you
                     to start the dump again from the last known line written
                     (as logged by the `offset` in the output).  Please be
                     advised that since no sorting is specified when the
@@ -405,7 +405,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                       2. Much less hardware requirements
                     Negative:
                       1. Recently added data may not be indexed
-                    Recommended to use with big data indexing,
+                    Recommended using with big data indexing,
                     where speed and system health in a higher priority
                     than recently added data.
 --inputTransport
@@ -512,6 +512,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --s3ACL
                     S3 ACL: private | public-read | public-read-write | authenticated-read | aws-exec-read |
                     bucket-owner-read | bucket-owner-full-control [default private]
+--s3StorageClass
+                    Set the Storage Class used for s3
+                    (default: STANDARD)   
 
 --retryDelayBase
                     The base number of milliseconds to use in the exponential backoff for operation retries. (s3)

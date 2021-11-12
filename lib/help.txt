@@ -61,10 +61,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     What are we exporting?
                     (default: data, options: [settings, analyzer, data, mapping, policy, alias, template, component_template, index_template])
 --filterSystemTemplates
-                    Whether to remove metrics-*-* and logs-*-* system templates 
+                    Whether to remove metrics-*-* and logs-*-* system templates
                     (default: true])
 --templateRegex
-                    Regex used to filter templates before passing to the output transport 
+                    Regex used to filter templates before passing to the output transport
                     (default: (metrics|logs|\\..+)(-.+)?)
 --delete
                     Delete documents one-by-one from the input as they are
@@ -127,7 +127,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Integer containing the number of rows you wish to skip
                     ahead from the input transport.  When importing a large
                     index, things can go wrong, be it connectivity, crashes,
-                    someone forgetting to `screen`, etc.  This allows you
+                    someone forgets to `screen`, etc.  This allows you
                     to start the dump again from the last known line written
                     (as logged by the `offset` in the output).  Please be
                     advised that since no sorting is specified when the
@@ -145,7 +145,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                       2. Much less hardware requirements
                     Negative:
                       1. Recently added data may not be indexed
-                    Recommended to use with big data indexing,
+                    Recommended using with big data indexing,
                     where speed and system health in a higher priority
                     than recently added data.
 --inputTransport
@@ -245,6 +245,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --s3ACL
                     S3 ACL: private | public-read | public-read-write | authenticated-read | aws-exec-read |
                     bucket-owner-read | bucket-owner-full-control [default private]
+--s3StorageClass
+                    Set the Storage Class used for s3
+                    (default: STANDARD)
 --retryDelayBase
                     The base number of milliseconds to use in the exponential backoff for operation retries. (s3)
 --customBackoff
@@ -273,13 +276,13 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --versionType
                     Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
                     NB : Type validation is handle by the bulk endpoint and not elasticsearch-dump
---csvDelimiter        
+--csvDelimiter
                     The delimiter that will separate columns.
                     (default : ',')
---csvFirstRowAsHeaders        
+--csvFirstRowAsHeaders
                     If set to true the first row will be treated as the headers.
                     (default : true)
---csvRenameHeaders        
+--csvRenameHeaders
                     If you want the first line of the file to be removed and replaced by the one provided in the `csvCustomHeaders` option
                     (default : true)
 --csvCustomHeaders  A comma-seperated listed of values that will be used as headers for your data. This param must
@@ -287,42 +290,45 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default : null)
 --csvWriteHeaders   Determines if headers should be written to the csv file.
                     (default : true)
---csvIgnoreEmpty        
-                    Set to true to ignore empty rows. 
+--csvIgnoreEmpty
+                    Set to true to ignore empty rows.
                     (default : false)
---csvSkipLines        
+--csvSkipLines
                     If number is > 0 the specified number of lines will be skipped.
                     (default : 0)
---csvSkipRows        
+--csvSkipRows
                     If number is > 0 then the specified number of parsed rows will be skipped
                     (default : 0)
---csvTrim        
+--csvTrim
                     Set to true to trim all white space from columns.
                     (default : false)
---csvRTrim        
+--csvRTrim
                     Set to true to right trim all columns.
                     (default : false)
---csvLTrim        
+--csvLTrim
                     Set to true to left trim all columns.
-                    (default : false)   
---csvHandleNestedData        
-                    Set to true to handle nested JSON/CSV data. 
-                    NB : This is a very optioninated implementaton !
                     (default : false)
---csvIdColumn        
+--csvHandleNestedData
+                    Set to true to handle nested JSON/CSV data.
+                    NB : This is a very opinionated implementation!
+                    (default : false)
+--csvIdColumn
                     Name of the column to extract the record identifier (id) from
                     When exporting to CSV this column can be used to override the default id (@id) column name
-                    (default : null)   
---csvIndexColumn        
+                    (default : null)
+--csvIndexColumn
                     Name of the column to extract the record index from
                     When exporting to CSV this column can be used to override the default index (@index) column name
                     (default : null)
---csvTypeColumn        
+--csvTypeColumn
                     Name of the column to extract the record type from
                     When exporting to CSV this column can be used to override the default type (@type) column name
-                    (default : null)    
+                    (default : null)
+--force-os-version
+                    Forces the OpenSearch version used by elasticsearch-dump.
+                    (default: 7.10.2)
 --help
-                    This page  
+                    This page
 Examples:
 
 # Copy an index from production to staging with mappings:
