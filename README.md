@@ -25,6 +25,7 @@ Tools for moving and saving indices.
 - Version `5.0.0` of Elasticdump contains a breaking change for the s3 transport. _s3Bucket_ and _s3RecordKey_ params are no longer supported please use s3urls instead
 - Version `6.1.0` and higher of Elasticdump contains a change to the upload/dump process. This change allows for overlapping promise processing. The benefit of which is improved performance due increased parallel processing, but a side-effect exists where-by records (data-set) aren't processed in a sequential order (the ordering is no longer guaranteed)
 - Version `6.67.0` and higher of Elasticdump will quit if the node version does not match the minimum requirement needed (v10.0.0)
+- Version `6.76.0` and higher of Elasticdump added support for OpenSearch (forked from Elasticsearch 7.10.2)
 
 ## Installing
 
