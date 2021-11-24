@@ -248,6 +248,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --s3StorageClass
                     Set the Storage Class used for s3
                     (default: STANDARD)
+--s3Options
+                    Set all s3 parameters shown here https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#createMultipartUpload-property
+                    A escaped JSON string or file can be supplied. File location must be prefixed with the @ symbol
+                    (default: null)
 --retryDelayBase
                     The base number of milliseconds to use in the exponential backoff for operation retries. (s3)
 --customBackoff
