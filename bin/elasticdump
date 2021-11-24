@@ -64,6 +64,7 @@ const defaults = {
   s3ACL: null,
   s3StorageClass: 'STANDARD',
   s3Options: null,
+  s3Configs: null,
   fsCompress: false,
   awsIniFileName: null,
   sessionToken: null,
