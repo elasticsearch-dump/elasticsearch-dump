@@ -1,5 +1,5 @@
-const { isUrl } = require('../lib/is-url')
-var should = require('should') // eslint-disable-line
+const { isUrl, encodeURIOnce } = require('../lib/is-url')
+require('should')
 
 describe('is-url', () => {
   it('returns true if url starts with http://', () => {
@@ -19,5 +19,26 @@ describe('is-url', () => {
   })
   it('returns false for unix file path', () => {
     isUrl('/some/unix/path').should.equal(false)
+  })
+  it('returns true if url is encoded', () => {
+    isUrl('http%3A%2F%2Fgithub.com%2Fkuzzleio%2Fkuzzle').should.equal(true)
+  })
+})
+
+describe('encodeURIOnce', () => {
+  const decodedURI = 'http://github.com/kuzzleio/kuzzle'
+  const encodedURI = 'http%3A%2F%2Fgithub.com%2Fkuzzleio%2Fkuzzle'
+
+  it('returns encoded URI if not encoded', () => {
+    encodeURIOnce(decodedURI).should.equal(encodedURI)
+  })
+  it('returns same encoded URI if already encoded', () => {
+    encodeURIOnce(encodedURI).should.equal(encodedURI)
+  })
+  it('returns encoded partial URI component', () => {
+    encodeURIOnce('%kuzzle').should.equal('%25kuzzle')
+  })
+  it('returns same encoded partial URI component if already encoded', () => {
+    encodeURIOnce('%25kuzzle').should.equal('%25kuzzle')
   })
 })
