@@ -226,7 +226,7 @@ const listFiles = (dir, callback) => {
   if (s3urls.valid(dir)) {
     initAws(options)
     const s3 = new AWS.S3()
-    const { Bucket, Key: Prefix } = s3urls.fromUrl(this.file)
+    const { Bucket, Key: Prefix } = s3urls.fromUrl(dir)
     s3.listObjectsV2({ Bucket, Prefix }, (err, data) => {
       if (data) {
         data = data.Contents.map(item => item.Key.slice(Prefix.length))
