@@ -339,6 +339,7 @@ if (options.direction === 'load') {
       .replace(`.settings.${fileExt}`, '')
       .replace(`.template.${fileExt}`, '')
       .replace(`.${fileExt}`, ''))
+      .replace('/', '')
       .filter(item => matchRegExp.test(item))
     matchedIndexes = _.uniq(matchedIndexes)
     args.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
