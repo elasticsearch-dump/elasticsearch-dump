@@ -21,6 +21,7 @@ const addAuth = require(path.join(__dirname, '..', 'lib', 'add-auth.js'))
 const versionCheck = require(path.join(__dirname, '..', 'lib', 'version-check.js'))
 const AWS = require('aws-sdk')
 const initAws = require(path.join(__dirname, '..', 'lib', 'init-aws.js'))
+const requestUtils = require(path.join(__dirname, '..', 'lib', 'request.js'))
 
 const options = {}
 let matchedIndexes = []
@@ -260,6 +261,18 @@ const elasticRequest = (params, callback) => {
       'User-Agent': 'elasticdump',
       'Content-Type': 'application/json'
     }, JSON.parse(options.headers) || {})
+  }
+
+  if (options.tlsAuth) {
+    let type = 'input'
+    if (options.direction === 'dump') {
+      type = 'output'
+    }
+
+    Object.assign(req,
+      requestUtils.applySSL([`${type}-cert`, `${type}-key`, `${type}-pass`, `${type}-ca`]))
+
+    Object.assign(req, requestUtils.applySSL(['cert', 'key', 'pass', 'ca']))
   }
 
   args.log('debug', `${params.method} ${params.path}`)
