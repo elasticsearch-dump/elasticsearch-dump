@@ -263,12 +263,12 @@ const elasticRequest = (params, callback) => {
     }, JSON.parse(options.headers) || {})
   }
 
-  if (options.tlsAuth) {
-    let type = 'input'
-    if (options.direction === 'dump') {
-      type = 'output'
-    }
+  let type = 'input'
+  if (options.direction === 'dump') {
+    type = 'output'
+  }
 
+  if (options.tlsAuth) {
     Object.assign(req,
       requestUtils.applySSL([`${type}-cert`, `${type}-key`, `${type}-pass`, `${type}-ca`]))
 
