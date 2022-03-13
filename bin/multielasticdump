@@ -267,9 +267,9 @@ const elasticRequest = (params, callback) => {
 
   if (options.tlsAuth) {
     Object.assign(req,
-      requestUtils.applySSL([`${type}-cert`, `${type}-key`, `${type}-pass`, `${type}-ca`]))
+      requestUtils.applySSL([`${type}-cert`, `${type}-key`, `${type}-pass`, `${type}-ca`], { parent: { options } }))
 
-    Object.assign(req, requestUtils.applySSL(['cert', 'key', 'pass', 'ca']))
+    Object.assign(req, requestUtils.applySSL(['cert', 'key', 'pass', 'ca'], { parent: { options } }))
   }
 
   args.log('debug', `${params.method} ${params.path}`)
