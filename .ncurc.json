@@ -3,6 +3,7 @@
     "async",
     "big.js",
     "mocha",
+    "p-queue",
     "should",
     "semver"
   ]
