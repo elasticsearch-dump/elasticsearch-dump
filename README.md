@@ -648,7 +648,7 @@ The limited option set includes:
 - `prefix`:   `'''`
 - `suffix`:   `''`
 - `interval`:     `1000`
-- `searchbody`: `null`
+- `searchBody`: `null`
 - `transform`: `null`
 - `support-big-int`: `false`
 - `big-int-fields`: ``
