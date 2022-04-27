@@ -68,7 +68,7 @@ const setup = callback => {
     people.forEach(person => {
       jobs.push(done => {
         const url = baseUrl + '/source_index/person/' + person + '_' + city + '?parent=' + city
-        const payload = { name: person, city: city }
+        const payload = { name: person, city }
         request.put(url, { body: JSON.stringify(payload) }, done)
       })
     })
