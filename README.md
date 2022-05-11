@@ -776,7 +776,6 @@ because of its simplicity. This detection is disabled by default, to enable use 
 
 ## Articles on Elasticdump
 - [A practical Guide to working with Elasticdump](https://blog.logrocket.com/a-practical-guide-to-working-with-elasticdump/)
-- [Moving Indexes with elasticdump tool](https://help.aiven.io/en/articles/3280782-moving-indexes-with-elasticsearch-dump-tool)
 - [Elasticdump to Backup & Restore Indexes](https://fitdevops.in/elasticdump-to-backup-restore-indexes/)
 - [Moving Elasticsearch Indexes with Elasticdump](https://apassionatechie.wordpress.com/2019/07/03/moving-elasticsearch-indexes-with-elasticdump/)
 - [Elasticsearch backup and restore](https://www.netvizura.com/blog/elasticsearch-backup-and-restore)
