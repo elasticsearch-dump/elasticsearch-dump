@@ -301,6 +301,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --csvIgnoreEmpty
                     Set to true to ignore empty rows.
                     (default : false)
+--csvIgnoreAutoColumns
+                    Set to true to prevent the following columns @id, @index, @type from being written to the output file
+                    (default : false)
 --csvSkipLines
                     If number is > 0 the specified number of lines will be skipped.
                     (default : 0)

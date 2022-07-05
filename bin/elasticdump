@@ -120,6 +120,7 @@ const defaults = {
   csvTypeColumn: null,
   csvCustomHeaders: null,
   csvIgnoreEmpty: false,
+  csvIgnoreAutoColumns: false,
   csvMaxRows: 0,
   csvSkipLines: 0,
   csvSkipRows: 0,
