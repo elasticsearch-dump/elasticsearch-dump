@@ -1,4 +1,5 @@
-
+#!/bin/bash
+#
 # ES_VERSION=${1}
 ES_FLAGS=
 echo "running es-version ${ES_VERSION}"
@@ -11,7 +12,7 @@ fi
 
 
 ## ES has different download locations for each version, so we'll download them both and then just use the one we want
-curl -Lo elasticsearch.tar.gz ${ES_DOWNLOAD_URL}
+curl -Lo elasticsearch.tar.gz "${ES_DOWNLOAD_URL}"
 
 ## Now, use the ENV to choose the version
 tar -xzf elasticsearch.tar.gz
