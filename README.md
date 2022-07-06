@@ -6,14 +6,14 @@ Tools for moving and saving indices.
 ![picture](https://raw.github.com/elasticsearch-dump/elasticsearch-dump/master/elasticdump.jpg)
 
 ---
-
-[![Nodei stats](https://nodei.co/npm/elasticdump.png?downloads=true)](https://npmjs.org/package/elasticdump)
-<br />
 [![DockerHub Badge](https://dockeri.co/image/elasticdump/elasticsearch-dump)](https://hub.docker.com/r/elasticdump/elasticsearch-dump/)
+
 [![DockerHub Badge](https://dockeri.co/image/taskrabbit/elasticsearch-dump)](https://hub.docker.com/r/taskrabbit/elasticsearch-dump/)
 
-![Build Status](https://github.com/elasticsearch-dump/elasticsearch-dump/actions/workflows/elasticdump.yaml/badge.svg)
-[![Downloads](https://img.shields.io/npm/dm/elasticdump.svg)](https://npmjs.com/elasticdump)
+[![Build Status](https://github.com/elasticsearch-dump/elasticsearch-dump/actions/workflows/elasticdump.yaml/badge.svg)](https://github.com/elasticsearch-dump/elasticsearch-dump)
+[![npm version](https://badge.fury.io/js/elasticdump.svg)](https://npmjs.org/package/elasticdump)
+[![NPM Weekly stats](https://img.shields.io/npm/dw/elasticdump.svg)](https://npmjs.org/package/elasticdump)
+[![NPM Monthly stats](https://img.shields.io/npm/dm/elasticdump.svg)](https://npmjs.org/package/elasticdump)
 
 
 ## Version Warnings!
@@ -685,7 +685,6 @@ New options, `--suffix` allows you to add a suffix to the index name being creat
 ## Usage Examples
 
 ```bash
-
 # backup ES indices & all their type to the es_backup folder
 multielasticdump \
   --direction=dump \
@@ -710,13 +709,17 @@ When specifying the `transform` option, prefix the value with `@` (a curl conven
 
 Uses a pseudo-URL format to specify arguments to the module as follows. Given:
 
-    elasticdump --transform='@./transforms/my-transform?param1=value&param2=another-value'
+```bash
+elasticdump --transform='@./transforms/my-transform?param1=value&param2=another-value'
+```
 
 with a module at `./transforms/my-transform.js` with the following:
 
-    module.exports = function (doc, options) {
-        // do something to doc
-    };
+```javascript
+module.exports = function(doc, options) {
+  // do something to doc
+};
+```
 
 will load module `./transforms/my-transform.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
 
@@ -728,14 +731,18 @@ When specifying the `searchBodyTemplate` option, prefix the value with `@` (a cu
 
 Uses a pseudo-URL format to specify arguments to the module as follows. Given:
 
-    elasticdump --searchBodyTemplate='@./temapltes/my-teamplate?param1=value&param2=another-value'
+```bash
+elasticdump --searchBodyTemplate='@./temapltes/my-teamplate?param1=value&param2=another-value'
+```
 
 with a module at `./transforms/my-transform.js` with the following:
 
-    module.exports = function (doc, options) {
-        // result must be added to doc.searchBody
-        doc.searchBody = {}
-    };
+```javascript
+module.exports = function(doc, options) {
+  // result must be added to doc.searchBody
+  doc.searchBody = {}
+};
+```
 
 will load module `./temapltes/my-teamplate.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
 
@@ -748,15 +755,20 @@ The format flattens all nesting to a single level (an example of this is shown b
 
 ```json
 {
-	"elasticdump": {
-		"version": "6.51.0",
-		"formats": ["json", "csv"]
-	},
-	"contributors": [{
-		"name": "ferron",
-		"id": 3
-	}],
-	"year": 112
+   "elasticdump":{
+      "version":"6.51.0",
+      "formats":[
+         "json",
+         "csv"
+      ]
+   },
+   "contributors":[
+      {
+         "name":"ferron",
+         "id":3
+      }
+   ],
+   "year":112
 }
 ```
 
@@ -766,9 +778,9 @@ Output format
 
 ```json
 {
-	"elasticdump": "{\"version\":\"6.51.0\",\"formats\":[\"json\",\"csv\"]}",
-	"contributors": "{\"contributors\":[{\"name\":\"ferron\",\"id\":3}]}",
-	"year": 2020
+  "elasticdump":"{\"version\":\"6.51.0\",\"formats\":[\"json\",\"csv\"]}",
+  "contributors":"{\"contributors\":[{\"name\":\"ferron\",\"id\":3}]}",
+  "year":2020
 }
 ```
 
@@ -798,6 +810,8 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - Dropped support for Node.JS 8 in Elasticdump v6.32.0. Node.JS 10+ is now required.
 - Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library 
 - Elasticdump v6.68.0 added support for specifying a file containing the searchBody
+- Elasticdump v6.85.0 added support for ignoring auto columns in CSV
+- Elasticdump v6.86.0 added support for searchBodyTemplate which allows the searchBody to be transformed
 
   
 
