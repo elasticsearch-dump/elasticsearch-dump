@@ -1,5 +1,5 @@
 
-ES_VERSION=${1}
+# ES_VERSION=${1}
 ES_FLAGS=
 echo "running es-version ${ES_VERSION}"
 if ["${ES_VERSION}" = "7.0.0"]; then
