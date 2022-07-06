@@ -26,6 +26,7 @@ const defaults = {
   inputTransport: null,
   outputTransport: null,
   searchBody: null,
+  searchBodyTemplate: null,
   searchWithTemplate: false,
   filterSystemTemplates: true,
   templateRegex: '^(metrics|logs|.+_audit_log|.+-index-template|\\..+)$',
