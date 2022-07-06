@@ -11,6 +11,8 @@ else
 fi
 
 
+echo "url ${ES_DOWNLOAD_URL}"
+
 ## ES has different download locations for each version, so we'll download them both and then just use the one we want
 curl -Lo elasticsearch.tar.gz "${ES_DOWNLOAD_URL}"
 
