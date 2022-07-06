@@ -94,6 +94,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html for
                     further information
                     (default: false)
+--searchBodyTemplate
+                    A method/function which can be called to the searchBody
+                        doc.searchBody = { query: { match_all: {} }, stored_fields: [], _source: true };
+                    May be used multiple times.
+                    Additionally, searchBodyTemplate may be performed by a module. See [searchBody Template](#search-template) below.
 --sourceOnly
                     Output only the json contained within the document _source
                     Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}

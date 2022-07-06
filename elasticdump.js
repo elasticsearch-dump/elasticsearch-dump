@@ -1,10 +1,8 @@
 const http = require('http')
 const https = require('https')
 const TransportProcessor = require('./lib/processor')
-const vm = require('vm')
 const { promisify } = require('util')
 const ioHelper = require('./lib/ioHelper')
-const path = require('path')
 const _ = require('lodash')
 
 class ElasticDump extends TransportProcessor {
@@ -19,12 +17,20 @@ class ElasticDump extends TransportProcessor {
     this.output = output
     this.options = options
     this.modifiers = []
+    this.sModififiers = []
 
     if (output !== '$' && (this.options.toLog === null || this.options.toLog === undefined)) {
       this.options.toLog = true
     }
 
     this.validationErrors = this.validateOptions()
+
+    if (this.options.searchBodyTemplate) {
+      this.sModififiers = this.generateModifiers(this.options.searchBodyTemplate)
+      const state = {}
+      this.applyModifiers([state], this.sModififiers)
+      this.options.searchBody = state.searchBody
+    }
 
     if (options.maxSockets) {
       this.log(`globally setting maxSockets=${options.maxSockets}`)
@@ -36,21 +42,7 @@ class ElasticDump extends TransportProcessor {
     ioHelper(this, 'output')
 
     if (this.options.type === 'data' && this.options.transform) {
-      if (!(this.options.transform instanceof Array)) {
-        this.options.transform = [this.options.transform]
-      }
-      this.modifiers = this.options.transform.map(transform => {
-        if (transform[0] === '@') {
-          return doc => {
-            const filePath = transform.slice(1).split('?')
-            const resolvedFilePath = path.resolve(process.cwd(), filePath[0])
-            return require(resolvedFilePath)(doc, ElasticDump.getParams(filePath[1]))
-          }
-        } else {
-          const modificationScriptText = `(function(doc) { ${transform} })`
-          return new vm.Script(modificationScriptText).runInThisContext()
-        }
-      })
+      this.modifiers = this.generateModifiers(this.options.transform)
     }
   }
 

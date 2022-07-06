@@ -339,6 +339,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html for 
                     further information
                     (default: false)
+--searchBodyTemplate
+                    A method/function which can be called to the searchBody
+                        doc.searchBody = { query: { match_all: {} }, stored_fields: [], _source: true };
+                    May be used multiple times.
+                    Additionally, searchBodyTemplate may be performed by a module. See [searchBody Template](#search-template) below.
 --headers
                     Add custom headers to Elastisearch requests (helpful when
                     your Elasticsearch instance sits behind a proxy)
@@ -716,6 +721,25 @@ with a module at `./transforms/my-transform.js` with the following:
 will load module `./transforms/my-transform.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
 
 An example transform for anonymizing data on-the-fly can be found in the `transforms` folder.
+
+## searchBody Template
+
+When specifying the `searchBodyTemplate` option, prefix the value with `@` (a curl convention) to load the top-level function which is called with the document and the parsed arguments to the module.
+
+Uses a pseudo-URL format to specify arguments to the module as follows. Given:
+
+    elasticdump --searchBodyTemplate='@./temapltes/my-teamplate?param1=value&param2=another-value'
+
+with a module at `./transforms/my-transform.js` with the following:
+
+    module.exports = function (doc, options) {
+        // result must be added to doc.searchBody
+        doc.searchBody = {}
+    };
+
+will load module `./temapltes/my-teamplate.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
+
+An example template for modifying dates using a simple templating engine is available in the `templates` folder.
 
 ## How Elasticdump handles Nested Data in CSV
 
