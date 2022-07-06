@@ -3,7 +3,7 @@
 # ES_VERSION=${1}
 ES_FLAGS=
 echo "running es-version ${ES_VERSION}"
-if ["${ES_VERSION}" = "7.0.0"]; then
+if [ "${ES_VERSION}" == "7.0.0" ]; then
 	ES_DOWNLOAD_URL="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}-linux-x86_64.tar.gz"
 	ES_FLAGS="-Ediscovery.type=single-node"
 else
