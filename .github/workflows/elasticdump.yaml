@@ -7,10 +7,15 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      matrix:
-        node-version: [10.x]
-        # os: [ubuntu-latest, windows-latest, macOS-latest]
-        es-version: [1.5.0,2.3.4,5.6.4,6.0.0,7.0.0]
+      matrix: 
+        es-version: 
+          # - "1.5.0"
+          - "2.3.4"
+          - "5.6.4"
+          # - "6.0.0"
+          - "7.0.0"
+        node-version: 
+          - 10.x
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
