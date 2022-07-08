@@ -131,6 +131,7 @@ const defaults = {
   csvDiscardUnmappedColumns: false,
   csvQuoteChar: '"',
   csvEscapeChar: '"',
+  csvIncludeEndRowDelimiter: false,
 
   // opensearch compatability
   'force-os-version': '7.10.2'
