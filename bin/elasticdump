@@ -81,6 +81,7 @@ const defaults = {
   retryDelayBase: 0,
   retryDelay: 5000,
   parseExtraFields: '',
+  bulkAction: 'index',
   fileSize: -1,
   maxRows: -1,
   cert: null,
