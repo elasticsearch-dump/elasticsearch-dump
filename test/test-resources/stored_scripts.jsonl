@@ -1,0 +1,1 @@
+"{\"stored_scripts\":[{\"_id\":\"calculate-score\",\"found\":true,\"script\":{\"lang\":\"painless\",\"source\":\"Math.log(_score * 2) + params['my_modifier']\"}},{\"_id\":\"calculate-score2\",\"found\":true,\"script\":{\"lang\":\"painless\",\"source\":\"Math.log(_score * 2) + params['my_modifier']\"}}]}"
