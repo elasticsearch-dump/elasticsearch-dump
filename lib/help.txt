@@ -74,6 +74,12 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Add custom headers to Elastisearch requests (helpful when
                     your Elasticsearch instance sits behind a proxy)
                     (default: '{"User-Agent": "elasticdump"}')
+--esCompress
+                    if true, add an Accept-Encoding header to request compressed content encodings from the server (if not already present)
+                    and decode supported content encodings in the response.
+                    Note: Automatic decoding of the response content is performed on the body data returned through request
+                    (both through the request stream and passed to the callback function) but is not performed on the response stream
+                    (available from the response event) which is the unmodified http.IncomingMessage object which may contain compressed data.
 --params
                     Add custom parameters to Elastisearch requests uri. Helpful when you for example
                     want to use elasticsearch preference

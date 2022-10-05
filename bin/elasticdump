@@ -23,6 +23,7 @@ const defaults = {
   output: null,
   'output-index': null,
   noRefresh: false,
+  esCompress: false,
   inputTransport: null,
   outputTransport: null,
   searchBody: null,

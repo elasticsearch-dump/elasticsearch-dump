@@ -350,6 +350,13 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: '{"User-Agent": "elasticdump"}')
                     Type/direction based headers are supported .i.e. input-headers/output-headers 
                     (these will only be added based on the current flow type input/output)
+--esCompress
+                    if true, add an Accept-Encoding header to request compressed content encodings from the server (if not already present) 
+                    and decode supported content encodings in the response. 
+                    Note: Automatic decoding of the response content is performed on the body data returned through request 
+                    (both through the request stream and passed to the callback function) but is not performed on the response stream 
+                    (available from the response event) which is the unmodified http.IncomingMessage object which may contain compressed data. 
+                    See example below.
 --params
                     Add custom parameters to Elastisearch requests uri. Helpful when you for example
                     want to use elasticsearch preference
