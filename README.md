@@ -372,6 +372,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --ignore-errors
                     Will continue the read/write loop on write error
                     (default: false)
+--ignore-es-write-errors
+                    Will continue the read/write loop on a write error from elasticsearch
+                    (default: true)
 --scrollId
                     The last scroll Id returned from elasticsearch. 
                     This will allow dumps to be resumed used the last scroll Id &

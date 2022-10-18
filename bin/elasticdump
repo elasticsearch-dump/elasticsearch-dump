@@ -38,6 +38,7 @@ const defaults = {
   jsonLines: false,
   format: '',
   'ignore-errors': false,
+  'ignore-es-write-errors': true,
   'support-big-int': false,
   'big-int-fields': '',
   scrollId: null,
