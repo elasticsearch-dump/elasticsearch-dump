@@ -321,7 +321,11 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --delete
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
-                    (default: false)
+                    (default: false)     
+--delete-with-routing
+                    Passes the routing query-param to the delete function
+                    used to route operations to a specific shard.
+                    (default: false)               
 --searchBody
                     Preform a partial extract based on search results
                     when ES is the input, default values are
