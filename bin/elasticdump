@@ -18,6 +18,7 @@ const defaults = {
   type: 'data',
   delete: false,
   'delete-with-routing': false,
+  'skip-existing': false,
   maxSockets: null,
   input: null,
   'input-index': null,
