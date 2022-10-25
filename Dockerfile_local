@@ -4,11 +4,14 @@ ENV NODE_ENV production
 WORKDIR /app
 
 COPY . .
+
+RUN apt-get -y update && \
+    apt-get -y install wget &&  \
+    wget https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_amd64.deb && \
+    dpkg -i dumb-init_*.deb
+
 RUN npm install --production -g
 
-RUN rm /usr/local/bin/docker-entrypoint.sh && \
-  ln -s /app/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 CMD ["elasticdump"]
