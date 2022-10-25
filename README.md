@@ -325,7 +325,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --delete-with-routing
                     Passes the routing query-param to the delete function
                     used to route operations to a specific shard.
-                    (default: false)               
+                    (default: false)          
+--skip-existing
+                    Skips resource_already_exists_exception when enabled and exit with success
+                    (default: false)      
 --searchBody
                     Preform a partial extract based on search results
                     when ES is the input, default values are
