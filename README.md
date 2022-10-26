@@ -283,26 +283,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --size
                     How many objects to retrieve
                     (default: -1 -> no limit)
---concurrency
-                    The maximum number of requests the can be made concurrently to a specified transport.
-                    (default: 1)       
---concurrencyInterval
-                    The length of time in milliseconds in which up to <intervalCap> requests can be made
-                    before the interval request count resets. Must be finite.
-                    (default: 5000)       
---intervalCap
-                    The maximum number of transport requests that can be made within a given <concurrencyInterval>.
-                    (default: 5)
---carryoverConcurrencyCount
-                    If true, any incomplete requests from a <concurrencyInterval> will be carried over to
-                    the next interval, effectively reducing the number of new requests that can be created
-                    in that next interval.  If false, up to <intervalCap> requests can be created in the
-                    next interval regardless of the number of incomplete requests from the previous interval.
-                    (default: true)                                                                                       
---throttleInterval
-                    Delay in milliseconds between getting data from an inputTransport and sending it to an
-                    outputTransport.
-                     (default: 1)
 --debug
                     Display the elasticsearch commands being used
                     (default: false)
