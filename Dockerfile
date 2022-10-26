@@ -11,6 +11,8 @@ RUN apt-get -y update && \
 
 RUN npm install elasticdump@${ES_DUMP_VER} -g
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+COPY docker-entrypoint.sh /usr/local/bin/
 
-CMD ["elasticdump"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+CMD ["/usr/bin/dumb-init", "elasticdump"]
