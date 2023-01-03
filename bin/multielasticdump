@@ -22,6 +22,8 @@ const versionCheck = require(path.join(__dirname, '..', 'lib', 'version-check.js
 const AWS = require('aws-sdk')
 const initAws = require(path.join(__dirname, '..', 'lib', 'init-aws.js'))
 const requestUtils = require(path.join(__dirname, '..', 'lib', 'request.js'))
+const aws4signer = require(path.join(__dirname, '..', 'lib', 'aws4signer.js'))
+const util = require('util');
 
 const options = {}
 let matchedIndexes = []
@@ -272,29 +274,40 @@ const elasticRequest = (params, callback) => {
     Object.assign(req, requestUtils.applySSL(['cert', 'key', 'pass', 'ca'], { parent: { options } }))
   }
 
-  args.log('debug', `${params.method} ${params.path}`)
-  request(req, (err, response) => {
-    if (err) {
-      args.log('err', err)
-      process.exit(1)
+  util.callbackify(
+    async () => {
+      return await aws4signer(req, {options: options})
     }
-    args.log('debug', `${params.method} ${params.path} -> ${response.statusCode} ${response.statusMessage}`)
-    if (response.statusCode >= 400 && !params.ignoreErrors) {
-      process.exit(1)
-    }
-    response = JSON.parse(response.body)
-    if ('error' in response && !params.ignoreErrors) {
-      args.log('err', response.error.reason)
-      process.exit(1)
-    }
+  )(
+    (err, ret) => {
+      if (err) {
+        args.log('err', err)
+        process.exit(1)
+      }
+      args.log('debug', `${params.method} ${params.path}`)
+      request(req, (err, response) => {
+        if (err) {
+          args.log('err', err)
+          process.exit(1)
+        }
+        args.log('debug', `${params.method} ${params.path} -> ${response.statusCode} ${response.statusMessage}`)
+        if (response.statusCode >= 400 && !params.ignoreErrors) {
+          process.exit(1)
+        }
+        response = JSON.parse(response.body)
+        if ('error' in response && !params.ignoreErrors) {
+          args.log('err', response.error.reason)
+          process.exit(1)
+        }
 
-    if (callback) {
-      callback(response)
-    }
+        if (callback) {
+          callback(response)
+        }
+      })
   })
 }
 
-const deleteIndexes = (indexes) => {
+const deleteIndexes = async (indexes, callback) => {
   const req = {
     method: 'DELETE',
     url: options.output,
@@ -302,7 +315,7 @@ const deleteIndexes = (indexes) => {
     ignoreErrors: true
   }
 
-  elasticRequest(req)
+  elasticRequest(req, callback)
 }
 
 if (!options.input) { throw new Error('--input is required') }
@@ -353,11 +366,17 @@ if (options.direction === 'load') {
       .filter(item => matchRegExp.test(item))
     matchedIndexes = _.uniq(matchedIndexes)
     args.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
-    if (options.delete) {
-      deleteIndexes(matchedIndexes)
+
+    const next = () => {
+      loadWork()
     }
 
-    loadWork()
+    if (options.delete) {
+      deleteIndexes(matchedIndexes, next)
+    } else {
+      next()
+    }
+
   })
 }
 
