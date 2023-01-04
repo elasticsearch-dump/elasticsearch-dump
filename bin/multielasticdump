@@ -307,7 +307,7 @@ const elasticRequest = (params, callback) => {
   })
 }
 
-const deleteIndexes = async (indexes, callback) => {
+const deleteIndexes = (indexes, callback) => {
   const req = {
     method: 'DELETE',
     url: options.output,
