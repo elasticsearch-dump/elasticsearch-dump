@@ -23,7 +23,7 @@ const AWS = require('aws-sdk')
 const initAws = require(path.join(__dirname, '..', 'lib', 'init-aws.js'))
 const requestUtils = require(path.join(__dirname, '..', 'lib', 'request.js'))
 const aws4signer = require(path.join(__dirname, '..', 'lib', 'aws4signer.js'))
-const util = require('util');
+const util = require('util')
 
 const options = {}
 let matchedIndexes = []
@@ -247,7 +247,7 @@ const elasticRequest = (params, callback) => {
   _.defaults(params, {
     method: 'GET',
     ignoreErrors: false,
-    qs: {},
+    qs: {}
   })
 
   let baseUrl = params.url
@@ -278,7 +278,7 @@ const elasticRequest = (params, callback) => {
 
   util.callbackify(
     async () => {
-      return await aws4signer(req, {options: options})
+      return await aws4signer(req, { options })
     }
   )(
     (err, ret) => {
@@ -306,7 +306,7 @@ const elasticRequest = (params, callback) => {
           callback(response)
         }
       })
-  })
+    })
 }
 
 const deleteIndexes = (indexes, callback) => {
@@ -315,7 +315,7 @@ const deleteIndexes = (indexes, callback) => {
     url: options.output,
     path: indexes.join(','),
     ignoreErrors: false,
-    qs: { ignore_unavailable: true },
+    qs: { ignore_unavailable: true }
   }
 
   elasticRequest(req, callback)
@@ -379,7 +379,6 @@ if (options.direction === 'load') {
     } else {
       next()
     }
-
   })
 }
 
