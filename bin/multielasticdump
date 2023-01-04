@@ -246,7 +246,8 @@ const listFiles = (dir, callback) => {
 const elasticRequest = (params, callback) => {
   _.defaults(params, {
     method: 'GET',
-    ignoreErrors: false
+    ignoreErrors: false,
+    qs: {},
   })
 
   let baseUrl = params.url
@@ -255,6 +256,7 @@ const elasticRequest = (params, callback) => {
   }
   const reqUrl = new URL(baseUrl)
   reqUrl.pathname = params.path
+  reqUrl.search = new URLSearchParams(params.qs).toString()
 
   const req = {
     url: url.format(reqUrl),
@@ -312,7 +314,8 @@ const deleteIndexes = (indexes, callback) => {
     method: 'DELETE',
     url: options.output,
     path: indexes.join(','),
-    ignoreErrors: true
+    ignoreErrors: false,
+    qs: { ignore_unavailable: true },
   }
 
   elasticRequest(req, callback)
