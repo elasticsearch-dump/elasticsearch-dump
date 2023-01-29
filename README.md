@@ -375,7 +375,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
                     
 --maxSockets
-                    How many simultaneous HTTP requests can we process make?
+                    How many simultaneous HTTP requests can the process make?
                     (default:
                       5 [node <= v0.10.x] /
                       Infinity [node >= v0.11.x] )
@@ -384,7 +384,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     a request to respond before aborting the request. Passed
                     directly to the request library. Mostly used when you don't
                     care too much if you lose some data when importing
-                    but rather have speed.
+                    but would rather have speed.
 --offset
                     Integer containing the number of rows you wish to skip
                     ahead from the input transport.  When importing a large
@@ -396,19 +396,19 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     dump is initially created, there's no real way to
                     guarantee that the skipped rows have already been
                     written/parsed.  This is more of an option for when
-                    you want to get most data as possible in the index
+                    you want to get as much data as possible in the index
                     without concern for losing some rows in the process,
                     similar to the `timeout` option.
                     (default: 0)
 --noRefresh
                     Disable input index refresh.
                     Positive:
-                      1. Much increase index speed
+                      1. Much increased index speed
                       2. Much less hardware requirements
                     Negative:
                       1. Recently added data may not be indexed
                     Recommended using with big data indexing,
-                    where speed and system health in a higher priority
+                    where speed and system health is a higher priority
                     than recently added data.
 --inputTransport
                     Provide a custom js file to use as the input transport
@@ -428,8 +428,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     May be used multiple times.
                     Additionally, transform may be performed by a module. See [Module Transform](#module-transform) below.
 --awsChain
-                    Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) location and ordering for resolving credentials including environment variables, config files, EC2 and ECS metadata locations
-                    _Recommended option for use with AWS_
                     Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) 
                     location and ordering for resolving credentials including environment variables, 
                     config files, EC2 and ECS metadata locations _Recommended option for use with AWS_
@@ -461,7 +459,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --support-big-int   
                     Support big integer numbers
 --big-int-fields   
-                    Sepcifies a comma-seperated list of fields that should be checked for big-int support
+                    Specifies a comma-seperated list of fields that should be checked for big-int support
                     (default '')
 --retryAttempts  
                     Integer indicating the number of times a request should be automatically re-attempted before failing
@@ -487,7 +485,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     
                     e.g. 10mb / 1gb / 1tb
                     Partitioning helps to alleviate overflow/out of memory exceptions by efficiently segmenting files
-                    into smaller chunks that then be merged if needs be.
+                    into smaller chunks that then can be merged if needs be.
 --fsCompress
                     gzip data before sending output to file.
                     On import the command is used to inflate a gzipped file
@@ -498,7 +496,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --s3Region
                     AWS region
 --s3Endpoint        
-                    AWS endpoint can be used for AWS compatible backends such as
+                    AWS endpoint that can be used for AWS compatible backends such as
                     OpenStack Swift and OpenStack Ceph
 --s3SSLEnabled      
                     Use SSL to connect to AWS [default true]
@@ -594,7 +592,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default : false)   
 --csvHandleNestedData        
                     Set to true to handle nested JSON/CSV data. 
-                    NB : This is a very optioninated implementaton !
+                    NB : This is a very opinionated implementaton !
                     (default : false)
 --csvIdColumn        
                     Name of the column to extract the record identifier (id) from
@@ -674,7 +672,7 @@ i.e analyzer,alias types are ignored by default
 
 `--includeType` allows a type to be included in the dump/load. Six options are supported - `data,mapping,analyzer,alias,settings,template`. 
 
-`ignoreChildError` allows multi-elasticdump to continue if a child throws an error.
+`--ignoreChildError` allows multi-elasticdump to continue if a child throws an error.
 
 
 New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
@@ -749,7 +747,7 @@ An example template for modifying dates using a simple templating engine is avai
 
 ## How Elasticdump handles Nested Data in CSV
 
-Elasticdump is capable of reading/writing nested data, but in a *_opinionated way*. This is to reduce complexity while parsing/saving CSVs
+Elasticdump is capable of reading/writing nested data, but in an *_opinionated way*. This is to reduce complexity while parsing/saving CSVs
 The format flattens all nesting to a single level (an example of this is shown below)
 
 ```json
