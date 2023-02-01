@@ -819,7 +819,7 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - [Moving Elasticsearch Indexes with Elasticdump](https://apassionatechie.wordpress.com/2019/07/03/moving-elasticsearch-indexes-with-elasticdump/)
 - [Elasticsearch backup and restore](https://www.netvizura.com/blog/elasticsearch-backup-and-restore)
 - [Guide to Elasticdump - Moving and Saving Elasticsearch Indices](https://stackabuse.com/guide-to-elasticdump-moving-and-saving-elasticsearch-indices/)
-
+- [Use elasticsearch-dump to migrate data](https://www.alibabacloud.com/help/en/elasticsearch/latest/elasticsearch-dump-use)
 
 
 Inspired by https://github.com/crate/elasticsearch-inout-plugin and https://github.com/jprante/elasticsearch-knapsack
