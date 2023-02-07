@@ -57,6 +57,8 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Add custom headers to Elastisearch requests (helpful when
                     your Elasticsearch instance sits behind a proxy)
                     (default: '{"User-Agent": "elasticdump"}')
+                    Type/direction based headers are supported .i.e. input-headers/output-headers
+                    (these will only be added based on the current flow type input/output)
 --esCompress
                     if true, add an Accept-Encoding header to request compressed content encodings from the server (if not already present)
                     and decode supported content encodings in the response.
@@ -66,6 +68,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --params
                     Add custom parameters to Elastisearch requests uri. Helpful when you for example
                     want to use elasticsearch preference
+
+                    --input-params is a specific params extension that can be used when fetching data with the scroll api
+                    --output-params is a specific params extension that can be used when indexing data with the bulk index api
+                    NB : These were added to avoid param pollution problems which occur when an input param is used in an output source
                     (default: null)
 --searchBody
                     Preform a partial extract based on search results
