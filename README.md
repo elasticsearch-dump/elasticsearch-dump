@@ -551,6 +551,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --versionType
                     Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
                     NB : Type validation is handled by the bulk endpoint and not by elasticsearch-dump
+--csvConfigs
+                    Set all fast-csv configurations
+                    A escaped JSON string or file can be supplied. File location must be prefixed with the @ symbol
+                    (default: null)
 --csvDelimiter        
                     The delimiter that will separate columns.
                     (default : ',')
