@@ -563,6 +563,38 @@ describe('ELASTICDUMP', () => {
       })
     })
 
+    it('can set and get whole index', function (done) {
+      this.timeout(testTimeout)
+      const options = {
+        limit: 100,
+        offset: 0,
+        debug: false,
+        type: 'index',
+        input: baseUrl + '/source_index',
+        output: baseUrl + '/destination_index',
+        scrollTime: '10m'
+      }
+
+      const dumper = new Elasticdump(options.input, options.output, options)
+
+      dumper.dump(() => {
+        const url = baseUrl + '/destination_index/_search'
+        request.get(url, (err, response, body) => {
+          should.not.exist(err)
+          body = JSON.parse(body)
+          getTotal(body).should.equal(0)
+          const url = baseUrl + '/destination_index/'
+          request.get(url, (err, response, body) => {
+            should.not.exist(err)
+            body = JSON.parse(body)
+            body.destination_index.settings.index.analysis.analyzer.content.type.should.equal('custom')
+            jq.value(body, 'destination_index.mappings..properties.key.type').should.be.oneOf(['string', 'text'])
+            done()
+          })
+        })
+      })
+    })
+
     it('can set and get template', function (done) {
       this.timeout(testTimeout)
 
