@@ -451,7 +451,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreIndex) return done()
-    args.log('info', `dumping ${input} to ${outputAnalyzer}`)
+    args.log('info', `dumping ${input} to ${outputIndex}`)
 
     const analyzerChild = _fork([
       '--type=index',
@@ -503,7 +503,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreAlias) return done()
-    args.log('info', `analyzer ${input} to ${outputAlias}`)
+    args.log('info', `alias ${input} to ${outputAlias}`)
 
     const aliasChild = _fork([
       '--type=alias',
