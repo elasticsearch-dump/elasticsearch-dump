@@ -56,6 +56,7 @@ const defaults = {
   ignoreSettings: false,
   ignoreTemplate: false,
   ignoreAlias: true,
+  ignoreIndex: true,
   ignoreType: [],
   includeType: null,
   interval: 1000,
@@ -200,6 +201,7 @@ const generatePath = (direction, index, order) => {
   return {
     [`${order}`]: `${options[order]}/${encodeURIComponent(index).toLowerCase()}`,
     [`${direction}Data`]: `${options[direction]}/${index}.${fileExt}`,
+    [`${direction}Index`]: `${options[direction]}/${index}.index.${fileExt}`,
     [`${direction}Mapping`]: `${options[direction]}/${index}.mapping.${fileExt}`,
     [`${direction}Alias`]: `${options[direction]}/${index}.alias.${fileExt}`,
     [`${direction}Analyzer`]: `${options[direction]}/${index}.analyzer.${fileExt}`,
@@ -359,6 +361,7 @@ if (options.direction === 'load') {
     }
     // args.log('info', data);
     matchedIndexes = data.map(value => value
+      .replace(`.index.${fileExt}`, '')
       .replace(`.mapping.${fileExt}`, '')
       .replace(`.analyzer.${fileExt}`, '')
       .replace(`.alias.${fileExt}`, '')
@@ -424,6 +427,7 @@ const dump = () => {
   const {
     input,
     outputData,
+    outputIndex,
     outputMapping,
     outputAnalyzer,
     outputAlias,
@@ -444,6 +448,19 @@ const dump = () => {
     ])
 
     attachListeners(templateChild, done)
+  })
+
+  jobs.push(done => {
+    if (options.ignoreIndex) return done()
+    args.log('info', `dumping ${input} to ${outputIndex}`)
+
+    const analyzerChild = _fork([
+      '--type=index',
+      `--input=${input}`,
+      `--output=${outputIndex}`
+    ])
+
+    attachListeners(analyzerChild, done)
   })
 
   jobs.push(done => {
@@ -487,7 +504,7 @@ const dump = () => {
 
   jobs.push(done => {
     if (options.ignoreAlias) return done()
-    args.log('info', `analyzer ${input} to ${outputAlias}`)
+    args.log('info', `alias ${input} to ${outputAlias}`)
 
     const aliasChild = _fork([
       '--type=alias',
@@ -561,6 +578,7 @@ const load = () => {
   const {
     output,
     inputData,
+    inputIndex,
     inputMapping,
     inputAnalyzer,
     inputAlias,
@@ -580,13 +598,20 @@ const load = () => {
       `--output=${output}`
     ])
 
-    templateChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => args.log('error', error))
+    attachListeners(templateChild, done)
+  })
+
+  jobs.push(done => {
+    if (options.ignoreIndex) return done()
+    args.log('info', `indexing ${inputIndex} to ${output}`)
+
+    const indexChild = _fork([
+      '--type=index',
+      `--input=${inputIndex}`,
+      `--output=${output}`
+    ])
+
+    attachListeners(indexChild, done)
   })
 
   jobs.push(done => {

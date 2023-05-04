@@ -291,7 +291,7 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     (default: false)
 --type
                     What are we exporting?
-                    (default: data, options: [settings, analyzer, data, mapping, policy, alias, template, component_template, index_template])
+                    (default: data, options: [index, settings, analyzer, data, mapping, policy, alias, template, component_template, index_template])
 --filterSystemTemplates
                     Whether to remove metrics-*-* and logs-*-* system templates 
                     (default: true])
