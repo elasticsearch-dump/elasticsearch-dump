@@ -361,6 +361,7 @@ if (options.direction === 'load') {
     }
     // args.log('info', data);
     matchedIndexes = data.map(value => value
+      .replace(`.index.${fileExt}`, '')
       .replace(`.mapping.${fileExt}`, '')
       .replace(`.analyzer.${fileExt}`, '')
       .replace(`.alias.${fileExt}`, '')
@@ -577,6 +578,7 @@ const load = () => {
   const {
     output,
     inputData,
+    inputIndex,
     inputMapping,
     inputAnalyzer,
     inputAlias,
@@ -596,13 +598,20 @@ const load = () => {
       `--output=${output}`
     ])
 
-    templateChild.on('close', code => {
-      if (code !== 0) {
-        return done(new Error('CHILD PROCESS EXITED WITH ERROR.  Stopping process'))
-      } else {
-        return done()
-      }
-    }).on('error', error => args.log('error', error))
+    attachListeners(templateChild, done)
+  })
+
+  jobs.push(done => {
+    if (options.ignoreIndex) return done()
+    args.log('info', `indexing ${inputIndex} to ${output}`)
+
+    const indexChild = _fork([
+      '--type=index',
+      `--input=${inputIndex}`,
+      `--output=${output}`
+    ])
+
+    attachListeners(indexChild, done)
   })
 
   jobs.push(done => {
