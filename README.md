@@ -1,7 +1,7 @@
 elasticdump
 ==================
 
-Tools for moving and saving indices.
+Tools for moving and saving indices from Elasticsearch and OpenSearch
 
 ![picture](https://raw.github.com/elasticsearch-dump/elasticsearch-dump/master/elasticdump.jpg)
 
@@ -46,7 +46,7 @@ elasticdump
 
 Elasticdump works by sending an `input` to an `output`. Both can be either an elasticsearch URL or a File.
 
-Elasticsearch:
+Elasticsearch/OpenSearch:
 - format:  `{protocol}://{host}:{port}/{index}`
 - example: `http://127.0.0.1:9200/my_index`
 
@@ -183,11 +183,11 @@ elasticdump \
 
 ### Non-Standard Install
 
-If Elasticsearch is not being served from the root directory the `--input-index` and
+If Elasticsearch/OpenSearch is not being served from the root directory the `--input-index` and
 `--output-index` are required. If they are not provided, the additional sub-directories will
 be parsed for index and type.
 
-Elasticsearch:
+Elasticsearch/OpenSearch:
 - format:  `{protocol}://{host}:{port}/{sub}/{directory...}`
 - example: `http://127.0.0.1:9200/api/search`
 
