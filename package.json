@@ -46,7 +46,7 @@
     "requestretry": "^7.1.0",
     "s3-stream-upload": "2.0.2",
     "s3urls": "^1.5.2",
-    "semver": "5.7.1",
+    "semver": "5.7.2",
     "socks5-http-client": "^1.0.4",
     "socks5-https-client": "^1.2.1"
   },
