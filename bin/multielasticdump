@@ -271,7 +271,7 @@ const elasticRequest = (params, callback) => {
     }, JSON.parse(options.headers) || {})
   }
 
-  const type = options.direction === 'dump' ? 'output' : 'input'
+  const type = options.direction === 'dump' ? 'input' : 'output'
 
   if (options.tlsAuth) {
     Object.assign(req,
