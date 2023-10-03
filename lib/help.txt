@@ -36,6 +36,10 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --type
                     What are we exporting?
                     (default: data, options: [index, settings, analyzer, data, mapping, policy, alias, template, component_template, index_template])
+--bulkAction
+                    Sets the operation type to be used when preparing the request body to be sent to elastic search.
+                    For more info - https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
+                    (default: index, options: [index, update, delete, create)
 --filterSystemTemplates
                     Whether to remove metrics-*-* and logs-*-* system templates
                     (default: true])
