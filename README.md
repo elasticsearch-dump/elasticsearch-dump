@@ -292,6 +292,9 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --type
                     What are we exporting?
                     (default: data, options: [index, settings, analyzer, data, mapping, policy, alias, template, component_template, index_template])
+--bulkAction
+                    Action to send to the Bulk API
+                    (default: index, options: [index, update, delete, create)
 --filterSystemTemplates
                     Whether to remove metrics-*-* and logs-*-* system templates 
                     (default: true])
