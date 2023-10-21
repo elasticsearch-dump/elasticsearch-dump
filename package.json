@@ -27,7 +27,7 @@
     "node": ">=10.0.0"
   },
   "dependencies": {
-    "@search-dump/jsonstream": "^1.4.0",
+    "JSONStream": "npm:@search-dump/jsonstream@^1.4.0",
     "async": "^2.6.4",
     "aws-sdk": "2.1472.0",
     "aws4": "^1.12.0",
