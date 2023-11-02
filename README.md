@@ -263,132 +263,220 @@ version: %%version%%
 
 Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 
---input
-                    Source location (required)
---input-index
-                    Source index and type
-                    (default: all, example: index/type)
---output
-                    Destination location (required)
---output-index
-                    Destination index and type
-                    (default: all, example: index/type)
---overwrite
-                    Overwrite output file if it exists
-                    (default: false)                    
---limit
-                    How many objects to move in batch per operation
-                    limit is approximate for file streams
-                    (default: 100)
---size
-                    How many objects to retrieve
-                    (default: -1 -> no limit)
---debug
-                    Display the elasticsearch commands being used
-                    (default: false)
---quiet
-                    Suppress all messages except for errors
-                    (default: false)
---type
-                    What are we exporting?
-                    (default: data, options: [index, settings, analyzer, data, mapping, policy, alias, template, component_template, index_template])
+--big-int-fields
+                    Specifies a comma-seperated list of fields that should be checked for big-int support
+                    (default '')
+
 --bulkAction
                     Sets the operation type to be used when preparing the request body to be sent to elastic search.
                     For more info - https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
                     (default: index, options: [index, update, delete, create)
---filterSystemTemplates
-                    Whether to remove metrics-*-* and logs-*-* system templates 
-                    (default: true])
---templateRegex
-                    Regex used to filter templates before passing to the output transport 
-                    (default: ((metrics|logs|\\..+)(-.+)?)
+
+--ca, --input-ca, --output-ca
+                    CA certificate. Use --ca if source and destination are identical.
+                    Otherwise, use the one prefixed with --input or --output as needed.
+
+--cert, --input-cert, --output-cert
+                    Client certificate file. Use --cert if source and destination are identical.
+                    Otherwise, use the one prefixed with --input or --output as needed.
+
+--csvConfigs
+                    Set all fast-csv configurations
+                    A escaped JSON string or file can be supplied. File location must be prefixed with the @ symbol
+                    (default: null)
+
+--csvCustomHeaders  A comma-seperated listed of values that will be used as headers for your data. This param must
+                    be used in conjunction with `csvRenameHeaders`
+                    (default : null)
+
+--csvDelimiter
+                    The delimiter that will separate columns.
+                    (default : ',')
+
+--csvFirstRowAsHeaders
+                    If set to true the first row will be treated as the headers.
+                    (default : true)
+
+--csvHandleNestedData
+                    Set to true to handle nested JSON/CSV data.
+                    NB : This is a very opinionated implementaton !
+                    (default : false)
+
+--csvIdColumn
+                    Name of the column to extract the record identifier (id) from
+                    When exporting to CSV this column can be used to override the default id (@id) column name
+                    (default : null)
+
+--csvIgnoreAutoColumns
+                    Set to true to prevent the following columns @id, @index, @type from being written to the output file
+                    (default : false)
+
+--csvIgnoreEmpty
+                    Set to true to ignore empty rows.
+                    (default : false)
+
+--csvIncludeEndRowDelimiter
+                    Set to true to include a row delimiter at the end of the csv
+                    (default : false)
+
+--csvIndexColumn
+                    Name of the column to extract the record index from
+                    When exporting to CSV this column can be used to override the default index (@index) column name
+                    (default : null)
+
+--csvLTrim
+                    Set to true to left trim all columns.
+                    (default : false)
+
+--csvMaxRows
+                    If number is > 0 then only the specified number of rows will be parsed.(e.g. 100 would return the first 100 rows of data)
+                    (default : 0)
+
+--csvRTrim
+                    Set to true to right trim all columns.
+                    (default : false)
+
+--csvRenameHeaders
+                    If you want the first line of the file to be removed and replaced by the one provided in the `csvCustomHeaders` option
+                    (default : true)
+
+--csvSkipLines
+                    If number is > 0 the specified number of lines will be skipped.
+                    (default : 0)
+
+--csvSkipRows
+                    If number is > 0 then the specified number of parsed rows will be skipped
+                    NB:  (If the first row is treated as headers, they aren't a part of the count)
+                    (default : 0)
+
+--csvTrim
+                    Set to true to trim all white space from columns.
+                    (default : false)
+
+--csvTypeColumn
+                    Name of the column to extract the record type from
+                    When exporting to CSV this column can be used to override the default type (@type) column name
+                    (default : null)
+
+--csvWriteHeaders   Determines if headers should be written to the csv file.
+                    (default : true)
+
+--customBackoff
+                    Activate custom customBackoff function. (s3)
+
+--debug
+                    Display the elasticsearch commands being used
+                    (default: false)
+
 --delete
                     Delete documents one-by-one from the input as they are
                     moved.  Will not delete the source index
-                    (default: false)     
+                    (default: false)
+
 --delete-with-routing
                     Passes the routing query-param to the delete function
                     used to route operations to a specific shard.
-                    (default: false)          
---skip-existing
-                    Skips resource_already_exists_exception when enabled and exit with success
-                    (default: false)      
---searchBody
-                    Preform a partial extract based on search results
-                    when ES is the input, default values are
-                      if ES > 5
-                        `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
-                      else
-                        `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
-                    [As of 6.68.0] If the searchBody is preceded by a @ symbol, elasticdump will perform a file lookup
-                    in the location specified. NB: File must contain valid JSON
---searchWithTemplate
-                    Enable to use Search Template when using --searchBody
-                    If using Search Template then searchBody has to consist of "id" field and "params" objects
-                    If "size" field is defined within Search Template, it will be overridden by --size parameter
-                    See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html for 
-                    further information
                     (default: false)
---searchBodyTemplate
-                    A method/function which can be called to the searchBody
-                        doc.searchBody = { query: { match_all: {} }, stored_fields: [], _source: true };
-                    May be used multiple times.
-                    Additionally, searchBodyTemplate may be performed by a module. See [searchBody Template](#search-template) below.
+
+--esCompress
+                    if true, add an Accept-Encoding header to request compressed content encodings from the server (if not already present)
+                    and decode supported content encodings in the response.
+                    Note: Automatic decoding of the response content is performed on the body data returned through request
+                    (both through the request stream and passed to the callback function) but is not performed on the response stream
+                    (available from the response event) which is the unmodified http.IncomingMessage object which may contain compressed data.
+                    See example below.
+
+--fileSize
+                    supports file splitting.  This value must be a string supported by the **bytes** module.
+                    The following abbreviations must be used to signify size in terms of units
+                    b for bytes
+                    kb for kilobytes
+                    mb for megabytes
+                    gb for gigabytes
+                    tb for terabytes
+                    e.g. 10mb / 1gb / 1tb
+                    Partitioning helps to alleviate overflow/out of memory exceptions by efficiently segmenting files
+                    into smaller chunks that then can be merged if needs be.
+
+--filterSystemTemplates
+                    Whether to remove metrics-*-* and logs-*-* system templates
+                    (default: true])
+
+--force-os-version
+                    Forces the OpenSearch version used by elasticsearch-dump.
+                    (default: 7.10.2)
+
+--fsCompress
+                    gzip data before sending output to file.
+                    On import the command is used to inflate a gzipped file
+
+--handleVersion
+                    Tells elastisearch transport to handle the `_version` field if present in the dataset
+                    (default : false)
+
 --headers
                     Add custom headers to Elastisearch requests (helpful when
                     your Elasticsearch instance sits behind a proxy)
                     (default: '{"User-Agent": "elasticdump"}')
-                    Type/direction based headers are supported .i.e. input-headers/output-headers 
+                    Type/direction based headers are supported .i.e. input-headers/output-headers
                     (these will only be added based on the current flow type input/output)
---esCompress
-                    if true, add an Accept-Encoding header to request compressed content encodings from the server (if not already present) 
-                    and decode supported content encodings in the response. 
-                    Note: Automatic decoding of the response content is performed on the body data returned through request 
-                    (both through the request stream and passed to the callback function) but is not performed on the response stream 
-                    (available from the response event) which is the unmodified http.IncomingMessage object which may contain compressed data. 
-                    See example below.
---params
-                    Add custom parameters to Elastisearch requests uri. Helpful when you for example
-                    want to use elasticsearch preference
-                    
-                    --input-params is a specific params extension that can be used when fetching data with the scroll api
-                    --output-params is a specific params extension that can be used when indexing data with the bulk index api
-                    NB : These were added to avoid param pollution problems which occur when an input param is used in an output source
-                    (default: null)
---sourceOnly
-                    Output only the json contained within the document _source
-                    Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
-                    sourceOnly: {SOURCE}
-                    (default: false)
+
+--help
+                    This page
+
 --ignore-errors
                     Will continue the read/write loop on write error
                     (default: false)
+
 --ignore-es-write-errors
                     Will continue the read/write loop on a write error from elasticsearch
                     (default: true)
---scrollId
-                    The last scroll Id returned from elasticsearch. 
-                    This will allow dumps to be resumed used the last scroll Id &
-                    `scrollTime` has not expired.
---scrollTime
-                    Time the nodes will hold the requested search in order.
-                    (default: 10m)
-                    
---scroll-with-post
-                    Use a HTTP POST method to perform scrolling instead of the default GET
-                    (default: false)
-                    
+
+--input
+                    Source location (required)
+
+--input-index
+                    Source index and type
+                    (default: all, example: index/type)
+
+--inputSocksPort, --outputSocksPort
+                    Socks5 host port
+
+--inputSocksProxy, --outputSocksProxy
+                    Socks5 host address
+
+--inputTransport
+                    Provide a custom js file to use as the input transport
+
+--key, --input-key, --output-key
+                    Private key file. Use --key if source and destination are identical.
+                    Otherwise, use the one prefixed with --input or --output as needed.
+
+--limit
+                    How many objects to move in batch per operation
+                    limit is approximate for file streams
+                    (default: 100)
+
+--maxRows
+                    supports file splitting.  Files are split by the number of rows specified
+
 --maxSockets
                     How many simultaneous HTTP requests can the process make?
                     (default:
                       5 [node <= v0.10.x] /
                       Infinity [node >= v0.11.x] )
---timeout
-                    Integer containing the number of milliseconds to wait for
-                    a request to respond before aborting the request. Passed
-                    directly to the request library. Mostly used when you don't
-                    care too much if you lose some data when importing
-                    but would rather have speed.
+
+--noRefresh
+                    Disable input index refresh.
+                    Positive:
+                      1. Much increased index speed
+                      2. Much less hardware requirements
+                    Negative:
+                      1. Recently added data may not be indexed
+                    Recommended using with big data indexing,
+                    where speed and system health is a higher priority
+                    than recently added data.
+
 --offset
                     Integer containing the number of rows you wish to skip
                     ahead from the input transport.  When importing a large
@@ -404,24 +492,126 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     without concern for losing some rows in the process,
                     similar to the `timeout` option.
                     (default: 0)
---noRefresh
-                    Disable input index refresh.
-                    Positive:
-                      1. Much increased index speed
-                      2. Much less hardware requirements
-                    Negative:
-                      1. Recently added data may not be indexed
-                    Recommended using with big data indexing,
-                    where speed and system health is a higher priority
-                    than recently added data.
---inputTransport
-                    Provide a custom js file to use as the input transport
+
+--output
+                    Destination location (required)
+
+--output-index
+                    Destination index and type
+                    (default: all, example: index/type)
+
 --outputTransport
                     Provide a custom js file to use as the output transport
+
+--overwrite
+                    Overwrite output file if it exists
+                    (default: false)
+
+--params
+                    Add custom parameters to Elastisearch requests uri. Helpful when you for example
+                    want to use elasticsearch preference
+                    --input-params is a specific params extension that can be used when fetching data with the scroll api
+                    --output-params is a specific params extension that can be used when indexing data with the bulk index api
+                    NB : These were added to avoid param pollution problems which occur when an input param is used in an output source
+                    (default: null)
+
+--parseExtraFields
+                    Comma-separated list of meta-fields to be parsed
+
+--pass, --input-pass, --output-pass
+                    Pass phrase for the private key. Use --pass if source and destination are identical.
+                    Otherwise, use the one prefixed with --input or --output as needed.
+
+--quiet
+                    Suppress all messages except for errors
+                    (default: false)
+
+--retryAttempts
+                    Integer indicating the number of times a request should be automatically re-attempted before failing
+                    when a connection fails with one of the following errors `ECONNRESET`, `ENOTFOUND`, `ESOCKETTIMEDOUT`,
+                    ETIMEDOUT`, `ECONNREFUSED`, `EHOSTUNREACH`, `EPIPE`, `EAI_AGAIN`
+                    (default: 0)
+
+--retryDelay
+                    Integer indicating the back-off/break period between retry attempts (milliseconds)
+                    (default : 5000)
+
+--retryDelayBase
+                    The base number of milliseconds to use in the exponential backoff for operation retries. (s3)
+
+--scroll-with-post
+                    Use a HTTP POST method to perform scrolling instead of the default GET
+                    (default: false)
+
+--scrollId
+                    The last scroll Id returned from elasticsearch.
+                    This will allow dumps to be resumed used the last scroll Id &
+                    `scrollTime` has not expired.
+
+--scrollTime
+                    Time the nodes will hold the requested search in order.
+                    (default: 10m)
+
+--searchBody
+                    Preform a partial extract based on search results
+                    when ES is the input, default values are
+                      if ES > 5
+                        `'{"query": { "match_all": {} }, "stored_fields": ["*"], "_source": true }'`
+                      else
+                        `'{"query": { "match_all": {} }, "fields": ["*"], "_source": true }'`
+                    [As of 6.68.0] If the searchBody is preceded by a @ symbol, elasticdump will perform a file lookup
+                    in the location specified. NB: File must contain valid JSON
+
+--searchBodyTemplate
+                    A method/function which can be called to the searchBody
+                        doc.searchBody = { query: { match_all: {} }, stored_fields: [], _source: true };
+                    May be used multiple times.
+                    Additionally, searchBodyTemplate may be performed by a module. See [searchBody Template](#search-template) below.
+
+--searchWithTemplate
+                    Enable to use Search Template when using --searchBody
+                    If using Search Template then searchBody has to consist of "id" field and "params" objects
+                    If "size" field is defined within Search Template, it will be overridden by --size parameter
+                    See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html for
+                    further information
+                    (default: false)
+
+--size
+                    How many objects to retrieve
+                    (default: -1 -> no limit)
+
+--skip-existing
+                    Skips resource_already_exists_exception when enabled and exit with success
+                    (default: false)
+
+--sourceOnly
+                    Output only the json contained within the document _source
+                    Normal: {"_index":"","_type":"","_id":"", "_source":{SOURCE}}
+                    sourceOnly: {SOURCE}
+                    (default: false)
+
+--support-big-int
+                    Support big integer numbers
+
+--templateRegex
+                    Regex used to filter templates before passing to the output transport
+                    (default: ((metrics|logs|\..+)(-.+)?)
+
+--timeout
+                    Integer containing the number of milliseconds to wait for
+                    a request to respond before aborting the request. Passed
+                    directly to the request library. Mostly used when you don't
+                    care too much if you lose some data when importing
+                    but would rather have speed.
+
+--tlsAuth
+                    Enable TLS X509 client authentication
+
 --toLog
                     When using a custom outputTransport, should log lines
                     be appended to the output stream?
                     (default: true, except for `$`)
+
 --transform
                     A method/function which can be called to modify documents
                     before writing to a destination. A global variable 'doc'
@@ -431,197 +621,99 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                         doc._source["f2"] = doc._source.f1 * 2;
                     May be used multiple times.
                     Additionally, transform may be performed by a module. See [Module Transform](#module-transform) below.
---awsChain
-                    Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/) 
-                    location and ordering for resolving credentials including environment variables, 
-                    config files, EC2 and ECS metadata locations _Recommended option for use with AWS_
---awsAccessKeyId
---awsSecretAccessKey
+
+--type
+                    What are we exporting?
+                    (default: data, options: [index, settings, analyzer, data, mapping, policy, alias, template, component_template, index_template])
+
+--versionType
+                    Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
+                    NB : Type validation is handled by the bulk endpoint and not by elasticsearch-dump
+
+
+
+AWS specific options
+--------------------
+--awsAccessKeyId and --awsSecretAccessKey
                     When using Amazon Elasticsearch Service protected by
                     AWS Identity and Access Management (IAM), provide
                     your Access Key ID and Secret Access Key.
                     --sessionToken can also be optionally provided if using temporary credentials
+
+--awsChain
+                    Use [standard](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/)
+                    location and ordering for resolving credentials including environment variables,
+                    config files, EC2 and ECS metadata locations _Recommended option for use with AWS_
+
+--awsIniFileName
+                    Override the default aws ini file name when using --awsIniFileProfile
+                    Filename is relative to ~/.aws/
+                    (default: config)
+
 --awsIniFileProfile
                     Alternative to --awsAccessKeyId and --awsSecretAccessKey,
                     loads credentials from a specified profile in aws ini file.
                     For greater flexibility, consider using --awsChain
                     and setting AWS_PROFILE and AWS_CONFIG_FILE
                     environment variables to override defaults if needed
---awsIniFileName
-                    Override the default aws ini file name when using --awsIniFileProfile
-                    Filename is relative to ~/.aws/
-                    (default: config)
---awsService
-                    Sets the AWS service that the signature will be generated for
-                    (default: calculated from hostname or host)
+
 --awsRegion
                     Sets the AWS region that the signature will be generated for
                     (default: calculated from hostname or host)
+
+--awsService
+                    Sets the AWS service that the signature will be generated for
+                    (default: calculated from hostname or host)
+
 --awsUrlRegex
                     Overrides the default regular expression that is used to validate AWS urls that should be signed
                     (default: ^https?:\/\/.*\.amazonaws\.com.*$)
---support-big-int   
-                    Support big integer numbers
---big-int-fields   
-                    Specifies a comma-seperated list of fields that should be checked for big-int support
-                    (default '')
---retryAttempts  
-                    Integer indicating the number of times a request should be automatically re-attempted before failing
-                    when a connection fails with one of the following errors `ECONNRESET`, `ENOTFOUND`, `ESOCKETTIMEDOUT`,
-                    ETIMEDOUT`, `ECONNREFUSED`, `EHOSTUNREACH`, `EPIPE`, `EAI_AGAIN`
-                    (default: 0)
-                    
---retryDelay   
-                    Integer indicating the back-off/break period between retry attempts (milliseconds)
-                    (default : 5000)            
---parseExtraFields
-                    Comma-separated list of meta-fields to be parsed  
---maxRows
-                    supports file splitting.  Files are split by the number of rows specified
---fileSize
-                    supports file splitting.  This value must be a string supported by the **bytes** module.     
-                    The following abbreviations must be used to signify size in terms of units         
-                    b for bytes
-                    kb for kilobytes
-                    mb for megabytes
-                    gb for gigabytes
-                    tb for terabytes
-                    
-                    e.g. 10mb / 1gb / 1tb
-                    Partitioning helps to alleviate overflow/out of memory exceptions by efficiently segmenting files
-                    into smaller chunks that then can be merged if needs be.
---fsCompress
-                    gzip data before sending output to file.
-                    On import the command is used to inflate a gzipped file
---s3AccessKeyId
-                    AWS access key ID
---s3SecretAccessKey
-                    AWS secret access key
---s3Region
-                    AWS region
---s3Endpoint        
-                    AWS endpoint that can be used for AWS compatible backends such as
-                    OpenStack Swift and OpenStack Ceph
---s3SSLEnabled      
-                    Use SSL to connect to AWS [default true]
-                    
---s3ForcePathStyle  Force path style URLs for S3 objects [default false]
-                    
---s3Compress
-                    gzip data before sending to s3  
---s3ServerSideEncryption
-                    Enables encrypted uploads
---s3SSEKMSKeyId
-                    KMS Id to be used with aws:kms uploads                    
+
 --s3ACL
                     S3 ACL: private | public-read | public-read-write | authenticated-read | aws-exec-read |
                     bucket-owner-read | bucket-owner-full-control [default private]
---s3StorageClass
-                    Set the Storage Class used for s3
-                    (default: STANDARD)   
---s3Options
-                    Set all s3 parameters shown here https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#createMultipartUpload-property
-                    A escaped JSON string or file can be supplied. File location must be prefixed with the @ symbol
-                    (default: null)
+
+--s3AccessKeyId
+                    AWS access key ID
+
+--s3Compress
+                    gzip data before sending to s3
+
 --s3Configs
                     Set all s3 constructor configurations
                     A escaped JSON string or file can be supplied. File location must be prefixed with the @ symbol
                     (default: null)
---retryDelayBase
-                    The base number of milliseconds to use in the exponential backoff for operation retries. (s3)
---customBackoff
-                    Activate custom customBackoff function. (s3)
---tlsAuth
-                    Enable TLS X509 client authentication
---cert, --input-cert, --output-cert
-                    Client certificate file. Use --cert if source and destination are identical.
-                    Otherwise, use the one prefixed with --input or --output as needed.
---key, --input-key, --output-key
-                    Private key file. Use --key if source and destination are identical.
-                    Otherwise, use the one prefixed with --input or --output as needed.
---pass, --input-pass, --output-pass
-                    Pass phrase for the private key. Use --pass if source and destination are identical.
-                    Otherwise, use the one prefixed with --input or --output as needed.
---ca, --input-ca, --output-ca
-                    CA certificate. Use --ca if source and destination are identical.
-                    Otherwise, use the one prefixed with --input or --output as needed.
---inputSocksProxy, --outputSocksProxy
-                    Socks5 host address
---inputSocksPort, --outputSocksPort
-                    Socks5 host port
---handleVersion
-                    Tells elastisearch transport to handle the `_version` field if present in the dataset
-                    (default : false)
---versionType
-                    Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
-                    NB : Type validation is handled by the bulk endpoint and not by elasticsearch-dump
---csvConfigs
-                    Set all fast-csv configurations
+
+--s3Endpoint
+                    AWS endpoint that can be used for AWS compatible backends such as
+                    OpenStack Swift and OpenStack Ceph
+
+--s3ForcePathStyle
+                    Force path style URLs for S3 objects [default false]
+
+--s3Options
+                    Set all s3 parameters shown here https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#createMultipartUpload-property
                     A escaped JSON string or file can be supplied. File location must be prefixed with the @ symbol
                     (default: null)
---csvDelimiter        
-                    The delimiter that will separate columns.
-                    (default : ',')
---csvFirstRowAsHeaders        
-                    If set to true the first row will be treated as the headers.
-                    (default : true)
---csvRenameHeaders        
-                    If you want the first line of the file to be removed and replaced by the one provided in the `csvCustomHeaders` option
-                    (default : true)
---csvCustomHeaders  A comma-seperated listed of values that will be used as headers for your data. This param must
-                    be used in conjunction with `csvRenameHeaders`
-                    (default : null)
---csvWriteHeaders   Determines if headers should be written to the csv file.
-                    (default : true)
---csvIgnoreEmpty        
-                    Set to true to ignore empty rows. 
-                    (default : false)
---csvIgnoreAutoColumns        
-                    Set to true to prevent the following columns @id, @index, @type from being written to the output file
-                    (default : false)
---csvSkipLines        
-                    If number is > 0 the specified number of lines will be skipped.
-                    (default : 0)
---csvSkipRows        
-                    If number is > 0 then the specified number of parsed rows will be skipped
-                    NB:  (If the first row is treated as headers, they aren't a part of the count)
-                    (default : 0)
---csvMaxRows        
-                    If number is > 0 then only the specified number of rows will be parsed.(e.g. 100 would return the first 100 rows of data)
-                    (default : 0)
---csvTrim        
-                    Set to true to trim all white space from columns.
-                    (default : false)
---csvRTrim        
-                    Set to true to right trim all columns.
-                    (default : false)
---csvLTrim        
-                    Set to true to left trim all columns.
-                    (default : false)   
---csvHandleNestedData        
-                    Set to true to handle nested JSON/CSV data. 
-                    NB : This is a very opinionated implementaton !
-                    (default : false)
---csvIdColumn        
-                    Name of the column to extract the record identifier (id) from
-                    When exporting to CSV this column can be used to override the default id (@id) column name
-                    (default : null)   
---csvIndexColumn        
-                    Name of the column to extract the record index from
-                    When exporting to CSV this column can be used to override the default index (@index) column name
-                    (default : null)
---csvTypeColumn        
-                    Name of the column to extract the record type from
-                    When exporting to CSV this column can be used to override the default type (@type) column name
-                    (default : null)   
---csvIncludeEndRowDelimiter        
-                    Set to true to include a row delimiter at the end of the csv
-                    (default : false)
---force-os-version   
-                    Forces the OpenSearch version used by elasticsearch-dump.
-                    (default: 7.10.2)                       
---help
-                    This page   
+
+--s3Region
+                    AWS region
+
+--s3SSEKMSKeyId
+                    KMS Id to be used with aws:kms uploads
+
+--s3SSLEnabled
+                    Use SSL to connect to AWS [default true]
+
+--s3SecretAccessKey
+                    AWS secret access key
+
+--s3ServerSideEncryption
+                    Enables encrypted uploads
+
+--s3StorageClass
+                    Set the Storage Class used for s3
+                    (default: STANDARD)
 ```
 
 ## Elasticsearch's Scroll API
