@@ -149,6 +149,17 @@ versionCheck()
 const args = new ArgParser({ options, parseJSONOpts: true })
 args.parse(argv, defaults)
 
+if (argv.debug === true) {
+  process
+    .on('unhandledRejection', (reason, p) => {
+      console.error(reason, 'Unhandled Rejection at Promise', p)
+    })
+    .on('uncaughtException', err => {
+      console.error(err, 'Uncaught Exception thrown')
+      process.exit(1)
+    })
+}
+
 if (argv.help === true) {
   let helpText = require('fs').readFileSync(path.join(__dirname, '..', 'lib', 'help.txt'))
   helpText = helpText.toString()
