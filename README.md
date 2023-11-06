@@ -263,6 +263,25 @@ version: %%version%%
 
 Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 
+Core options
+--------------------
+--input
+                    Source location (required)
+
+--input-index
+                    Source index and type
+                    (default: all, example: index/type)
+
+--output
+                    Destination location (required)
+
+--output-index
+                    Destination index and type
+                    (default: all, example: index/type)
+
+
+Options
+--------------------
 --big-int-fields
                     Specifies a comma-seperated list of fields that should be checked for big-int support
                     (default '')
@@ -432,13 +451,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     Will continue the read/write loop on a write error from elasticsearch
                     (default: true)
 
---input
-                    Source location (required)
-
---input-index
-                    Source index and type
-                    (default: all, example: index/type)
-
 --inputSocksPort, --outputSocksPort
                     Socks5 host port
 
@@ -492,13 +504,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
                     without concern for losing some rows in the process,
                     similar to the `timeout` option.
                     (default: 0)
-
---output
-                    Destination location (required)
-
---output-index
-                    Destination index and type
-                    (default: all, example: index/type)
 
 --outputTransport
                     Provide a custom js file to use as the output transport
@@ -629,7 +634,6 @@ Usage: elasticdump --input SOURCE --output DESTINATION [OPTIONS]
 --versionType
                     Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
                     NB : Type validation is handled by the bulk endpoint and not by elasticsearch-dump
-
 
 
 AWS specific options
