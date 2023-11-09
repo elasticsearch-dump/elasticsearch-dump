@@ -36,6 +36,7 @@ const defaults = {
   debug: true,
   parallel: os.cpus().length,
   match: '^.*$',
+  matchType: 'alias',
   order: 'asc',
   input: null,
   output: null,
@@ -339,17 +340,44 @@ if (options.direction === 'dump') {
     path: '/_aliases'
   }
 
-  elasticRequest(req, (response) => {
-    let indexes = response
-    if (!Array.isArray(response)) {
-      indexes = Object.keys(response)
-    }
-    matchedIndexes = indexes.filter(index => {
-      const aliases = Object.keys(response[index].aliases || {})
-      return matchRegExp.test(index) || aliases.some(alias => matchRegExp.test(alias))
-    })
-    matchedIndexes = _.orderBy(matchedIndexes, _.identity, [options.order])
+  const pathEnum = {
+    alias: '/_aliases',
+    datastream: '/_data_stream'
+  }
 
+  async.map(_.chain(options.matchType).split(',').uniq().value(), (type, callback) => {
+    let matchedIndices = []
+    req.path = pathEnum[type]
+    if (req.path === undefined) {
+      return callback(new Error(`invalid matchType ${type}`))
+    }
+
+    elasticRequest(req, (response) => {
+      switch (type) {
+        case 'alias': {
+          let indexes = response
+          if (!Array.isArray(response)) {
+            indexes = Object.keys(response)
+          }
+          matchedIndices = indexes.filter(index => {
+            const aliases = Object.keys(response[index].aliases || {})
+            return matchRegExp.test(index) || aliases.some(alias => matchRegExp.test(alias))
+          })
+          break
+        }
+        case 'datastream': {
+          matchedIndices = response.data_streams.filter(stream => matchRegExp.test(stream.name)).map(stream => stream.name)
+          break
+        }
+      }
+      callback(null, matchedIndices)
+    })
+  }, (err, results) => {
+    if (err) {
+      args.log('err', err)
+      process.exit(1)
+    }
+    matchedIndexes = _.chain(results).flatten().orderBy(_.identity, [options.order]).value()
     dumpWork()
   })
 }
