@@ -743,6 +743,7 @@ The limited option set includes:
 
 - `parallel`:   `os.cpus()`,
 - `match`:      `'^.*$'`,
+- `matchType`:      `alias`,
 - `order`:      `'asc'`,
 - `input`:      `null`,
 - `output`:     `null`,
@@ -777,6 +778,8 @@ i.e analyzer,alias types are ignored by default
 `--includeType` allows a type to be included in the dump/load. Six options are supported - `data,mapping,analyzer,alias,settings,template`. 
 
 `--ignoreChildError` allows multi-elasticdump to continue if a child throws an error.
+
+`--matchType`  allows multi-elasticdump to fetch indices from the specified elasticsearch endpoint. Two options are supported - `alias,datastream`
 
 
 New options, `--suffix` allows you to add a suffix to the index name being created e.g. `es6-${index}` and
