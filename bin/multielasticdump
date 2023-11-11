@@ -335,11 +335,6 @@ const matchRegExp = new RegExp(options.match, 'i')
 if (options.direction === 'dump') {
   validateDirectory(options, 'output')
 
-  const req = {
-    url: options.input,
-    path: '/_aliases'
-  }
-
   const pathEnum = {
     alias: '/_aliases',
     datastream: '/_data_stream'
@@ -347,12 +342,11 @@ if (options.direction === 'dump') {
 
   async.map(_.chain(options.matchType).split(',').uniq().value(), (type, callback) => {
     let matchedIndices = []
-    req.path = pathEnum[type]
-    if (req.path === undefined) {
+    if (pathEnum[type] === undefined) {
       return callback(new Error(`invalid matchType ${type}`))
     }
 
-    elasticRequest(req, (response) => {
+    elasticRequest({ url: options.input, path: pathEnum[type] }, (response) => {
       switch (type) {
         case 'alias': {
           let indexes = response
