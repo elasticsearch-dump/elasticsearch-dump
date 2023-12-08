@@ -20,6 +20,7 @@ const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 const addAuth = require(path.join(__dirname, '..', 'lib', 'add-auth.js'))
 const versionCheck = require(path.join(__dirname, '..', 'lib', 'version-check.js'))
 const AWS = require('aws-sdk')
+require('aws-sdk/lib/maintenance_mode_message').suppress = true;
 const initAws = require(path.join(__dirname, '..', 'lib', 'init-aws.js'))
 const requestUtils = require(path.join(__dirname, '..', 'lib', 'request.js'))
 const aws4signer = require(path.join(__dirname, '..', 'lib', 'aws4signer.js'))
