@@ -61,6 +61,7 @@ const defaults = {
   awsUrlRegex: null,
   s3AccessKeyId: null,
   s3SecretAccessKey: null,
+  s3SessionToken: null,
   s3Region: null,
   s3Endpoint: null,
   s3SSLEnabled: true,
@@ -142,7 +143,9 @@ const defaults = {
   csvIncludeEndRowDelimiter: false,
 
   // opensearch compatability
-  'force-os-version': '7.10.2'
+  'force-os-version': '7.10.2',
+  // opensearch serverless
+  openSearchServerless: false,
 }
 const options = {}
 
@@ -150,7 +153,6 @@ versionCheck()
 
 const args = new ArgParser({ options, parseJSONOpts: true })
 args.parse(argv, defaults)
-
 if (argv.debug === true) {
   process
     .on('unhandledRejection', (reason, p) => {
@@ -174,7 +176,6 @@ if (argv.help === true) {
     console.error(`File \`${options.output}\` already exists, quitting`)
     process.exit(1)
   }
-
   const dumper = new Elasticdump(options)
 
   dumper.on('log', function (message) { args.log('log', message) })
