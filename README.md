@@ -635,6 +635,9 @@ Options
                     Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
                     NB : Type validation is handled by the bulk endpoint and not by elasticsearch-dump
 
+--openSearchServerless
+                    Set to true to run dump from AWS OpenSearch serverless collection.
+                    (default : false)
 
 AWS specific options
 --------------------
@@ -679,6 +682,9 @@ AWS specific options
 
 --s3AccessKeyId
                     AWS access key ID
+
+--s3SessionToken
+                    AWS session token in case of using temporary credentials
 
 --s3Compress
                     gzip data before sending to s3
@@ -916,7 +922,7 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - Elasticdump v6.68.0 added support for specifying a file containing the searchBody
 - Elasticdump v6.85.0 added support for ignoring auto columns in CSV
 - Elasticdump v6.86.0 added support for searchBodyTemplate which allows the searchBody to be transformed
-
+- Elasticdump v6.110.1 added support for AWS OpenSearch serverless collection. Note: by default, [AWS OpenSearch serverless does not support `/_search?scroll` API and PUT `_bulk`](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations). As a workaround, the dump is implemented using `_search` and POST `_bulk` API only. This may affect the performance of the dump. 
   
 
 ## Articles on Elasticdump
