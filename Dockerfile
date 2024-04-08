@@ -1,4 +1,4 @@
-FROM node:14-buster-slim
+FROM node:20-bookworm-slim
 LABEL maintainer="ferronrsmith@gmail.com"
 ARG ES_DUMP_VER
 ARG TARGETPLATFORM
