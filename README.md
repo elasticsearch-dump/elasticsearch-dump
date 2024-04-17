@@ -836,7 +836,7 @@ When specifying the `searchBodyTemplate` option, prefix the value with `@` (a cu
 Uses a pseudo-URL format to specify arguments to the module as follows. Given:
 
 ```bash
-elasticdump --searchBodyTemplate='@./temapltes/my-teamplate?param1=value&param2=another-value'
+elasticdump --searchBodyTemplate='@./templates/my-template?param1=value&param2=another-value'
 ```
 
 with a module at `./transforms/my-transform.js` with the following:
@@ -848,7 +848,7 @@ module.exports = function(doc, options) {
 };
 ```
 
-will load module `./temapltes/my-teamplate.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
+will load module `./templates/my-template.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
 
 An example template for modifying dates using a simple templating engine is available in the `templates` folder.
 
