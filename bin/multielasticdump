@@ -173,7 +173,8 @@ const commonParams = [
   `--quiet=${options.quiet}`,
   `--prefix=${options.prefix}`,
   `--suffix=${options.suffix}`,
-  `--scroll-with-post=${options['scroll-with-post']}`
+  `--scroll-with-post=${options['scroll-with-post']}`,
+  `--skip-existing=${options['skip-existing']}`
 ]
 
 const fileExt = options.fsCompress ? 'json.gz' : 'json'
