@@ -27,6 +27,7 @@
     "node": ">=10.0.0"
   },
   "dependencies": {
+    "JSONStream": "npm:@search-dump/jsonstream@^1.4.0",
     "async": "^2.6.4",
     "aws-sdk": "2.1472.0",
     "aws4": "^1.12.0",
@@ -37,7 +38,6 @@
     "fast-csv": "4.3.6",
     "http-status": "^1.5.1",
     "ini": "^2.0.0",
-    "JSONStream": "npm:@search-dump/jsonstream@^1.4.0",
     "lodash": "^4.17.21",
     "lossless-json": "^1.0.5",
     "minimist": "^1.2.8",
@@ -47,8 +47,7 @@
     "s3-stream-upload": "2.0.2",
     "s3urls": "^1.5.2",
     "semver": "7.5.4",
-    "socks5-http-client": "^1.0.4",
-    "socks5-https-client": "^1.2.1"
+    "socks-proxy-agent": "^7.0.0"
   },
   "devDependencies": {
     "jsonpath": "^1.1.1",

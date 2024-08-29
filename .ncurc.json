@@ -5,6 +5,7 @@
     "big.js",
     "mocha",
     "p-queue",
-    "should"
+    "should",
+    "socks-proxy-agent"
   ]
 }
