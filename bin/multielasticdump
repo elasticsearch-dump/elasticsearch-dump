@@ -32,6 +32,7 @@ let working = 0
 let complete = 0
 let indexCounter = 0
 let workTimeout
+const supportedTypes = ['index', 'mapping', 'analyzer', 'alias', 'settings', 'template']
 
 const defaults = {
   debug: true,
@@ -151,7 +152,6 @@ const commonParams = [
   `--intervalCap=${options.intervalCap}`,
   `--concurrencyInterval=${options.concurrencyInterval}`,
   `--overwrite=${options.overwrite}`,
-  `--fsCompress=${options.fsCompress}`,
   `--awsChain=${options.awsChain}`,
   `--awsAccessKeyId=${options.awsAccessKeyId}`,
   `--awsSecretAccessKey=${options.awsSecretAccessKey}`,
@@ -159,7 +159,6 @@ const commonParams = [
   `--awsService=${options.awsService}`,
   `--awsRegion=${options.awsRegion}`,
   `--awsUrlRegex=${options.awsUrlRegex}`,
-  `--fileSize=${options.fileSize}`,
   `--s3AccessKeyId=${options.s3AccessKeyId}`,
   `--s3SecretAccessKey=${options.s3SecretAccessKey}`,
   `--s3Region=${options.s3Region}`,
@@ -205,16 +204,15 @@ const validateDirectory = (options, field) => {
 }
 
 const generatePath = (direction, index, order) => {
-  return {
+  const paths = {
     [`${order}`]: `${options[order]}/${encodeURIComponent(index).toLowerCase()}`,
-    [`${direction}Data`]: `${options[direction]}/${index}.${fileExt}`,
-    [`${direction}Index`]: `${options[direction]}/${index}.index.${fileExt}`,
-    [`${direction}Mapping`]: `${options[direction]}/${index}.mapping.${fileExt}`,
-    [`${direction}Alias`]: `${options[direction]}/${index}.alias.${fileExt}`,
-    [`${direction}Analyzer`]: `${options[direction]}/${index}.analyzer.${fileExt}`,
-    [`${direction}Settings`]: `${options[direction]}/${index}.settings.${fileExt}`,
-    [`${direction}Template`]: `${options[direction]}/${index}.template.${fileExt}`
+    [`${direction}Data`]: `${options[direction]}/${index}.${fileExt}`
   }
+  supportedTypes.forEach(path => {
+    paths[`${direction}${_.startCase(path)}`] = `${options[direction]}/${path}.index.json`
+  })
+
+  return paths
 }
 
 const _fork = (params = [], file = 'elasticdump') => {
@@ -389,12 +387,7 @@ if (options.direction === 'load') {
     }
     // args.log('info', data);
     matchedIndexes = data.map(value => value
-      .replace(`.index.${fileExt}`, '')
-      .replace(`.mapping.${fileExt}`, '')
-      .replace(`.analyzer.${fileExt}`, '')
-      .replace(`.alias.${fileExt}`, '')
-      .replace(`.settings.${fileExt}`, '')
-      .replace(`.template.${fileExt}`, '')
+      .replace(new RegExp(`.(${supportedTypes.join('|')}).json`), '')
       .replace(`.${fileExt}`, '')
       .replace('/', ''))
       .filter(item => matchRegExp.test(item))
@@ -716,6 +709,8 @@ const load = () => {
       `--limit=${options.limit}`,
       `--offset=${options.offset}`,
       `--size=${options.size}`,
+      `--fileSize=${options.fileSize}`,
+      `--fsCompress=${options.fsCompress}`,
       `--support-big-int=${options['support-big-int']}`,
       `--big-int-fields=${options['big-int-fields']}`
     ].concat(_transform))
