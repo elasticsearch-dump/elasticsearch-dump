@@ -151,6 +151,7 @@ const commonParams = [
   `--carryoverConcurrencyCount=${options.carryoverConcurrencyCount}`,
   `--intervalCap=${options.intervalCap}`,
   `--concurrencyInterval=${options.concurrencyInterval}`,
+  `--fsCompress=${options.fsCompress}`,
   `--overwrite=${options.overwrite}`,
   `--awsChain=${options.awsChain}`,
   `--awsAccessKeyId=${options.awsAccessKeyId}`,
@@ -208,8 +209,8 @@ const generatePath = (direction, index, order) => {
     [`${order}`]: `${options[order]}/${encodeURIComponent(index).toLowerCase()}`,
     [`${direction}Data`]: `${options[direction]}/${index}.${fileExt}`
   }
-  supportedTypes.forEach(path => {
-    paths[`${direction}${_.startCase(path)}`] = `${options[direction]}/${path}.index.json`
+  supportedTypes.forEach(type => {
+    paths[`${direction}${_.startCase(type)}`] = `${options[direction]}/${index}.${type}.${fileExt}`
   })
 
   return paths
@@ -387,7 +388,7 @@ if (options.direction === 'load') {
     }
     // args.log('info', data);
     matchedIndexes = data.map(value => value
-      .replace(new RegExp(`.(${supportedTypes.join('|')}).json`), '')
+      .replace(new RegExp(`.(${supportedTypes.join('|')}).${fileExt}`), '')
       .replace(`.${fileExt}`, '')
       .replace('/', ''))
       .filter(item => matchRegExp.test(item))
@@ -710,7 +711,6 @@ const load = () => {
       `--offset=${options.offset}`,
       `--size=${options.size}`,
       `--fileSize=${options.fileSize}`,
-      `--fsCompress=${options.fsCompress}`,
       `--support-big-int=${options['support-big-int']}`,
       `--big-int-fields=${options['big-int-fields']}`
     ].concat(_transform))
