@@ -25,6 +25,7 @@ const initAws = require(path.join(__dirname, '..', 'lib', 'init-aws.js'))
 const requestUtils = require(path.join(__dirname, '..', 'lib', 'request.js'))
 const aws4signer = require(path.join(__dirname, '..', 'lib', 'aws4signer.js'))
 const util = require('util')
+const zlib = require('zlib')
 
 const options = {}
 let matchedIndexes = []
@@ -90,6 +91,7 @@ const defaults = {
   concurrencyInterval: 5000,
   overwrite: false,
   fsCompress: false,
+  compressionLevel: zlib.Z_DEFAULT_COMPRESSION,
   awsChain: false,
   awsAccessKeyId: null,
   awsSecretAccessKey: null,
@@ -152,6 +154,7 @@ const commonParams = [
   `--intervalCap=${options.intervalCap}`,
   `--concurrencyInterval=${options.concurrencyInterval}`,
   `--fsCompress=${options.fsCompress}`,
+  `--compressionLevel=${options.compressionLevel}`,
   `--overwrite=${options.overwrite}`,
   `--awsChain=${options.awsChain}`,
   `--awsAccessKeyId=${options.awsAccessKeyId}`,

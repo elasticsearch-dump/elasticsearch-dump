@@ -428,6 +428,10 @@ Options
 --fsCompress
                     gzip data before sending output to file.
                     On import the command is used to inflate a gzipped file
+                    
+--compressionLevel
+                    The level of zlib compression to apply to responses.
+                    defaults to zlib.Z_DEFAULT_COMPRESSION
 
 --handleVersion
                     Tells elastisearch transport to handle the `_version` field if present in the dataset
