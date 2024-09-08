@@ -2,6 +2,7 @@
 
 const argv = require('minimist')(process.argv)
 const path = require('path')
+const zlib = require('zlib')
 const fs = require('fs')
 const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 const packageData = require(path.join(__dirname, '..', 'package.json'))
@@ -73,6 +74,7 @@ const defaults = {
   s3Options: null,
   s3Configs: null,
   fsCompress: false,
+  compressionLevel: zlib.Z_DEFAULT_COMPRESSION,
   awsIniFileName: null,
   sessionToken: null,
   transform: null,
