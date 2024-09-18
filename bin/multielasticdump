@@ -69,6 +69,9 @@ const defaults = {
   suffix: '',
   transform: null,
   headers: null,
+  params: null,
+  'input-params': null,
+  'output-params': null,
   searchBody: null,
   searchWithTemplate: null,
   cert: null,
@@ -177,7 +180,10 @@ const commonParams = [
   `--prefix=${options.prefix}`,
   `--suffix=${options.suffix}`,
   `--scroll-with-post=${options['scroll-with-post']}`,
-  `--skip-existing=${options['skip-existing']}`
+  `--skip-existing=${options['skip-existing']}`,
+  `--params=${options.params}`,
+  `--input-params=${options['input-params']}`,
+  `--output-params=${options['output-params']}`
 ]
 
 const fileExt = options.fsCompress ? 'json.gz' : 'json'
