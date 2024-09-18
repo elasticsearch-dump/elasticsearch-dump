@@ -835,7 +835,7 @@ module.exports = function(doc, options) {
 };
 ```
 
-will load module `./transforms/my-transform.js', and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
+will load module `./transforms/my-transform.js`, and execute the function with `doc` and `options` = `{"param1": "value", "param2": "another-value"}`.
 
 An example transform for anonymizing data on-the-fly can be found in the `transforms` folder.
 
