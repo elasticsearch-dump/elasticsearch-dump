@@ -397,7 +397,7 @@ if (options.direction === 'load') {
     }
     // args.log('info', data);
     matchedIndexes = data.map(value => value
-      .replace(new RegExp(`.(${supportedTypes.join('|')}).${fileExt}`), '')
+      .replace(new RegExp(`\\.(${supportedTypes.join('|')})\\.${fileExt}`), '')
       .replace(`.${fileExt}`, '')
       .replace('/', ''))
       .filter(item => matchRegExp.test(item))
