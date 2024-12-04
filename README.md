@@ -817,6 +817,35 @@ multielasticdump \
   --output=/tmp/es_backup
 ```
 
+## Custom Matcher - MultiElasticDump
+
+The default matcher for `multielasticdump` is regex based and won't handle complex conditions or business rules.
+Support was added for defining custom matchers.
+
+When specifying the `customMatcher` option, prefix the value with `@` (a curl convention) to load matcher file
+
+
+ ```bash
+ multielasticdump \
+  --direction=dump \
+  --customMatcher='@./customMatcher/backup.js'\
+  --input=http://production.es.com:9200 \
+  --ignoreType='mapping,settings,template' \
+  --output=/tmp/es_backup
+```
+
+The only requirement for this module is that it must define a test function.
+
+```javascript
+module.exports = {
+  test: function (indexName) {
+    // determine if the index should be loaded/dumped.
+    // must return a boolen(true/false)
+  }
+};
+```
+
+
 ## Module Transform
 
 When specifying the `transform` option, prefix the value with `@` (a curl convention) to load the top-level function which is called with the document and the parsed arguments to the module.
