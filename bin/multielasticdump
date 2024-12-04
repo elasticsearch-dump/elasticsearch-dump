@@ -113,7 +113,8 @@ const defaults = {
   s3ServerSideEncryption: null,
   s3SSEKMSKeyId: null,
   s3ACL: null,
-  quiet: false
+  quiet: false,
+  customMatcher: null
 }
 
 versionCheck()
@@ -344,6 +345,12 @@ args.log('info', `We are performing : ${options.direction}`)
 args.log('info', `options: ${JSON.stringify(options)}`)
 
 const matchRegExp = new RegExp(options.match, 'i')
+let matchFunction = matchRegExp
+if (options.customMatcher && options.customMatcher[0] === '@') {
+  const filePath = options.customMatcher.slice(1)
+  const resolvedFilePath = path.resolve(process.cwd(), filePath)
+  matchFunction = require(resolvedFilePath)
+}
 if (options.direction === 'dump') {
   validateDirectory(options, 'output')
 
@@ -367,12 +374,12 @@ if (options.direction === 'dump') {
           }
           matchedIndices = indexes.filter(index => {
             const aliases = Object.keys(response[index].aliases || {})
-            return matchRegExp.test(index) || aliases.some(alias => matchRegExp.test(alias))
+            return matchFunction.test(index) || aliases.some(alias => matchFunction.test(alias))
           })
           break
         }
         case 'datastream': {
-          matchedIndices = response.data_streams.filter(stream => matchRegExp.test(stream.name)).map(stream => stream.name)
+          matchedIndices = response.data_streams.filter(stream => matchFunction.test(stream.name)).map(stream => stream.name)
           break
         }
       }
@@ -400,7 +407,7 @@ if (options.direction === 'load') {
       .replace(new RegExp(`\\.(${supportedTypes.join('|')})\\.${fileExt}`), '')
       .replace(`.${fileExt}`, '')
       .replace('/', ''))
-      .filter(item => matchRegExp.test(item))
+      .filter(item => matchFunction.test(item))
     matchedIndexes = _.uniq(matchedIndexes)
     args.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
