@@ -29,11 +29,13 @@ const zlib = require('zlib')
 
 const options = {}
 let matchedIndexes = []
+const matchSplitIndexes = []
 let working = 0
 let complete = 0
 let indexCounter = 0
 let workTimeout
 const supportedTypes = ['index', 'mapping', 'analyzer', 'alias', 'settings', 'template']
+const SPLIT_COMPRESSION_REGEX = new RegExp(`(\\.)?(${supportedTypes.join('|')})?\\.(split-\\d+)(\\.json)?(\\.gz)?.*`)
 
 const defaults = {
   debug: true,
@@ -214,7 +216,20 @@ const validateDirectory = (options, field) => {
   }
 }
 
+const generateSplitPath = (direction, index, order, data) => {
+  const paths = {
+    [`${order}`]: `${options[order]}/${encodeURIComponent(data[0].index).toLowerCase()}`
+  }
+  data.forEach(i => {
+    paths[`${direction}${_.startCase(i.type || 'data')}`] = `${options[direction]}/${i.path}`
+  })
+  return paths
+}
+
 const generatePath = (direction, index, order) => {
+  const match = matchSplitIndexes.filter(obj => obj.splitIndex === index)
+  if (match.length > 0) { return generateSplitPath(direction, index, order, match) }
+
   const paths = {
     [`${order}`]: `${options[order]}/${encodeURIComponent(index).toLowerCase()}`,
     [`${direction}Data`]: `${options[direction]}/${index}.${fileExt}`
@@ -339,6 +354,22 @@ const deleteIndexes = (indexes, callback) => {
   elasticRequest(req, callback)
 }
 
+const filterSplitCompression = (path) => {
+  const [_, __, type, split, json, gz] = SPLIT_COMPRESSION_REGEX.exec(path)
+  const index = path.replace(SPLIT_COMPRESSION_REGEX, '')
+  return {
+    _,
+    __,
+    path,
+    index,
+    split,
+    splitIndex: `${index}.${split}`,
+    type,
+    json,
+    gz
+  }
+}
+
 if (!options.input) { throw new Error('--input is required') }
 if (!options.output) { throw new Error('--output is required') }
 args.log('info', `We are performing : ${options.direction}`)
@@ -402,12 +433,20 @@ if (options.direction === 'load') {
       args.log('error', err)
       throw new Error('Something went wrong reading the list of files')
     }
-    // args.log('info', data);
-    matchedIndexes = data.map(value => value
-      .replace(new RegExp(`\\.(${supportedTypes.join('|')})\\.${fileExt}`), '')
-      .replace(`.${fileExt}`, '')
-      .replace('/', ''))
-      .filter(item => matchFunction.test(item))
+    matchedIndexes = data.map(value => {
+      if (SPLIT_COMPRESSION_REGEX.test(value)) {
+        const result = filterSplitCompression(value)
+        matchSplitIndexes.push(result)
+        return result.splitIndex
+      } else {
+        return value
+          .replace(new RegExp(`\\.(${supportedTypes.join('|')})\\.${fileExt}`), '')
+          .replace(`.${fileExt}`, '')
+          .replace()
+          .replace('/', '')
+      }
+    }).filter(item => matchFunction.test(item))
+
     matchedIndexes = _.uniq(matchedIndexes)
     args.log('info', `list of indexes${JSON.stringify(matchedIndexes)}`)
 
