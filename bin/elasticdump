@@ -146,7 +146,11 @@ const defaults = {
   // opensearch compatability
   'force-os-version': '7.10.2',
   // opensearch serverless
-  openSearchServerless: false
+  openSearchServerless: false,
+  // search_after support
+  searchAfter: false,
+  pit: false,
+  pitKeepAlive: '5m'
 }
 const options = {}
 
