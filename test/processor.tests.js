@@ -317,9 +317,17 @@ describe('TransportProcessor', () => {
         simulateWriteError: 1
       })
 
+      // Add error event listener to prevent crash
+      let errorCount = 0
+      transport.on('error', () => {
+        // Error is expected in this test
+        errorCount++
+      })
+
       const totalWrites = await transport._loop(1, 0, 0)
 
       // Should complete despite error
+      errorCount.should.equal(1)
       totalWrites.should.equal(1)
       transport.outputData.should.have.length(1)
       transport.outputData[0].should.have.property('value', 'test2')
