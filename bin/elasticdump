@@ -4,12 +4,29 @@ const argv = require('minimist')(process.argv)
 const path = require('path')
 const zlib = require('zlib')
 const fs = require('fs')
+const v8 = require('v8')
 const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
 const packageData = require(path.join(__dirname, '..', 'package.json'))
 const { isUrl } = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
 const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 const versionCheck = require(path.join(__dirname, '..', 'lib', 'version-check.js'))
 require('aws-sdk/lib/maintenance_mode_message').suppress = true
+
+console.log(`Node.js version: ${process.version}`);
+console.log(`PID: ${process.pid}`);
+
+const createHeapSnapshot = () => {
+  const filename = `pid-${process.pid}-${new Date().toISOString()}.heapsnapshot`;
+  const filenameWithPath = path.join(process.cwd(), filename);
+
+  console.log(`\n\n\nwriting heapsnapshot: ${filenameWithPath}\n\n\n`)
+
+  // Create the memory snapshot
+  // https://dev.to/bengl/node-js-heap-dumps-in-2021-5akm
+  // https://microsoft.github.io/PowerBI-JavaScript/modules/_node_modules__types_node_v8_d_._v8_.html#getheapsnapshot
+  v8.writeHeapSnapshot(filenameWithPath);
+};
+process.on('SIGUSR2', createHeapSnapshot);
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 const defaults = {
