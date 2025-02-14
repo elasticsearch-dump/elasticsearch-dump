@@ -14,7 +14,7 @@ const baseUrl = 'http://127.0.0.1:9200'
 
 const seeds = {}
 const seedSize = 500
-const testTimeout = seedSize * 40
+const testTimeout = seedSize * 25
 let i = 0
 let indexesExistingBeforeSuite = 0
 
