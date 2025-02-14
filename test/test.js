@@ -814,7 +814,8 @@ describe('ELASTICDUMP', () => {
 
       const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(() => {
+      dumper.dump((error) => {
+        should.not.exist(error)
         const raw = fs.readFileSync('/tmp/es_out.json')
         const lineCount = String(raw).split('\n').length
         lineCount.should.equal(seedSize + 1)
@@ -842,7 +843,8 @@ describe('ELASTICDUMP', () => {
 
       const dumper = new Elasticdump(options.input, options.output, options)
 
-      dumper.dump(() => {
+      dumper.dump((error) => {
+        should.not.exist(error)
         const raw = fs.readFileSync('/tmp/out.sourceOnly')
         const lines = String(raw).split('\n')
         lines.length.should.equal(seedSize + 1)
