@@ -273,11 +273,7 @@ describe('TransportProcessor', () => {
       transport.outputData[0].should.have.property('modified', true)
     })
 
-    // 2025-02-13 - Does not work
-    // - If reader calls `callback(err)` then __looper crashes on deref of undefined `data`
-    // - If reader calls `callback(null, [])` then __looper ends because data.length === 0 is the end condition
-    // - This really could not work with ignoring errors unless data is also returned with the error, always
-    it.skip('should respect ignore-errors option for read errors', async () => {
+    it('should stop for read errors', async () => {
       const inputData = [
         { id: 1, value: 'test1' },
         { id: 2, value: 'test2' }
@@ -285,6 +281,7 @@ describe('TransportProcessor', () => {
 
       const transport = new MockTransport({
         inputData,
+        // Can't ignore a read error
         'ignore-errors': true,
         simulateReadError: 1
       })
@@ -296,16 +293,20 @@ describe('TransportProcessor', () => {
         errorCount++
       })
 
-      const totalWrites = await transport._loop(1, 0, 0)
+      let transportError
+      try {
+        await transport._loop(1, 0, 0)
+      } catch (error) {
+        transportError = error
+      }
 
       // Should complete despite error on first read
+      transportError.message.should.equal('Simulated read error')
       errorCount.should.equal(1)
-      totalWrites.should.equal(1)
-      transport.outputData.should.have.length(1)
-      transport.outputData[0].should.have.property('modified', true)
+      transport.outputData.should.have.length(0)
     })
 
-    it('should respect ignore-errors option for write errors', async () => {
+    it('should continue with ignore-errors: true option for write errors', async () => {
       const inputData = [
         { id: 1, value: 'test1' },
         { id: 2, value: 'test2' }
@@ -318,19 +319,51 @@ describe('TransportProcessor', () => {
       })
 
       // Add error event listener to prevent crash
-      let errorCount = 0
+      let emitErrorCount = 0
       transport.on('error', () => {
         // Error is expected in this test
-        errorCount++
+        emitErrorCount++
       })
 
       const totalWrites = await transport._loop(1, 0, 0)
 
       // Should complete despite error
-      errorCount.should.equal(1)
+      emitErrorCount.should.equal(1)
       totalWrites.should.equal(1)
       transport.outputData.should.have.length(1)
       transport.outputData[0].should.have.property('value', 'test2')
+    })
+
+    it('should stop with ignore-errors: false option for write errors', async () => {
+      const inputData = [
+        { id: 1, value: 'test1' },
+        { id: 2, value: 'test2' }
+      ]
+
+      const transport = new MockTransport({
+        inputData,
+        'ignore-errors': false,
+        simulateWriteError: 1
+      })
+
+      // Add error event listener to prevent crash
+      let emitErrorCount = 0
+      transport.on('error', () => {
+        // Error is expected in this test
+        emitErrorCount++
+      })
+
+      let loopError = false
+      try {
+        await transport._loop(1, 0, 0)
+      } catch {
+        loopError = true
+      }
+
+      // Should complete despite error
+      loopError.should.equal(true)
+      emitErrorCount.should.equal(1)
+      transport.outputData.should.have.length(0)
     })
 
     it('should handle throttle interval', async () => {
