@@ -196,7 +196,7 @@ describe('TransportProcessor', () => {
 
   describe('offsetGenerator', () => {
     // This will be used in p-map-iterable version
-    it.skip('should generate increasing offsets', async () => {
+    it('should generate increasing offsets', async () => {
       const generator = processor.offsetGenerator(10, 0)
       const results = []
       for await (const offset of generator) {
