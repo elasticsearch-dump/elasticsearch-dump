@@ -1,7 +1,6 @@
 const should = require('should')
 const { s3: S3Client } = require('../../lib/transports/s3')
 const utils = require('../utils')
-const EventEmitter = require('events')
 const zlib = require('zlib')
 
 describe('S3 Transport', function () {
@@ -40,13 +39,12 @@ describe('S3 Transport', function () {
         { id: 2, name: 'test2' }
       ]
 
-      // Create EventEmitter for logging
-      const emitter = new EventEmitter()
-      mockParent.emit = (event, message) => emitter.emit(event, message)
+      transport.set(testData, 0, 0, (err, count) => {
+        should.not.exist(err)
+        count.should.equal(2)
+        transport.set([], 0, 0, (err) => {
+          should.not.exist(err)
 
-      // Listen for upload completion
-      emitter.on('log', (message) => {
-        if (message.includes(`Uploaded ${FILE}`)) {
           utils.getObject(mockS3, BUCKET, FILE).then(data => {
             should.exist(data)
 
@@ -57,14 +55,6 @@ describe('S3 Transport', function () {
             content[1].should.deepEqual({ id: 2, name: 'test2' })
             done()
           }).catch(done)
-        }
-      })
-
-      transport.set(testData, 0, 0, (err, count) => {
-        should.not.exist(err)
-        count.should.equal(2)
-        transport.set([], 0, 0, (err) => {
-          should.not.exist(err)
         })
       })
     })
@@ -73,13 +63,12 @@ describe('S3 Transport', function () {
       mockParent.options.s3Compress = true
       const testData = [{ id: 1, compressed: true }]
 
-      // Create EventEmitter for logging
-      const emitter = new EventEmitter()
-      mockParent.emit = (event, message) => emitter.emit(event, message)
+      transport.set(testData, 0, 0, (err, count) => {
+        should.not.exist(err)
+        count.should.equal(1)
+        transport.set([], 0, 0, (err) => {
+          should.not.exist(err)
 
-      // Listen for upload completion
-      emitter.on('log', (message) => {
-        if (message.includes(`Uploaded ${FILE}`)) {
           utils.getObject(mockS3, BUCKET, FILE).then(data => {
             should.exist(data)
 
@@ -91,14 +80,55 @@ describe('S3 Transport', function () {
               done()
             })
           }).catch(done)
-        }
+        })
       })
+    })
+
+    it('should handle split streams', function (done) {
+      // Enable stream splitting
+      mockParent.options.fileSize = 1024 // 1KB max file size
+      transport.shouldSplit = true
+      const testData = Array(10).fill().map((_, i) => ({
+        id: i,
+        data: 'x'.repeat(200) // Create large enough data to trigger split
+      }))
+
+      let filesUploaded = 0
+      const expectedFiles = []
+
+      mockParent.emit = (event, message) => {
+        if (event === 'log' && message.includes('Uploaded')) {
+          filesUploaded++
+          expectedFiles.push(message.split('Uploaded ')[1])
+
+          if (filesUploaded === 10) {
+            // Verify all split files
+            Promise.all(expectedFiles.map(file =>
+              utils.getObject(mockS3, BUCKET, file)
+            ))
+              .then(results => {
+                results.forEach(data => {
+                  should.exist(data)
+                  const content = utils.convertJsonLinesToArray(data.Body.toString())
+                  content.should.be.an.Array()
+                  content.length.should.be.above(0)
+                  content[0].should.have.property('id')
+                  content[0].should.have.property('data')
+                })
+                done()
+              })
+              .catch(done)
+          }
+        }
+      }
 
       transport.set(testData, 0, 0, (err, count) => {
         should.not.exist(err)
-        count.should.equal(1)
+        count.should.equal(testData.length)
+
         transport.set([], 0, 0, (err) => {
           should.not.exist(err)
+          transport.shouldSplit.should.be.true()
         })
       })
     })
