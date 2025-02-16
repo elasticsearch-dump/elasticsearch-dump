@@ -327,9 +327,17 @@ describe('TransportProcessor', () => {
         emitErrorCount++
       })
 
-      const totalWrites = await transport._loop(1, 0, 0)
+      let loopError = false
+      let totalWrites = 0
+      try {
+        totalWrites = await transport._loop(1, 0, 0)
+      } catch {
+        // Should not throw
+        loopError = true
+      }
 
       // Should complete despite error
+      loopError.should.equal(false)
       emitErrorCount.should.equal(1)
       totalWrites.should.equal(1)
       transport.outputData.should.have.length(1)
