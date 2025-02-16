@@ -419,5 +419,45 @@ describe('TransportProcessor', () => {
       writes.should.eql([1, 1, 0])
       transport.outputData.should.have.length(2)
     })
+
+    it('should ensure zero-length write happens last with high concurrency', async () => {
+      // Create enough data to trigger multiple concurrent writes
+      const inputData = Array.from({ length: 200 }, (_, i) => ({
+        id: i + 1,
+        value: `test${i + 1}`
+      }))
+
+      const writeOrder = []
+      const transport = new MockTransport({
+        inputData,
+        concurrency: 10 // Set high concurrency to test race condition
+      })
+
+      // Track write order with timestamps
+      const originalSet = transport.set.bind(transport)
+      transport.set = async (data, limit, offset) => {
+        // Add small random delay to ensure writes can complete out of order
+        await sleep(Math.random() * 50)
+        // Add write info with timestamp
+        writeOrder.push({
+          length: data.length,
+          time: Date.now()
+        })
+        return originalSet(data, limit, offset)
+      }
+
+      await transport._loop(10, 0, 0)
+
+      // Verify total output
+      transport.outputData.should.have.length(200)
+
+      // The last write should be the zero-length write
+      writeOrder[writeOrder.length - 1].length.should.equal(0)
+
+      // All other writes should be non-zero
+      writeOrder.slice(0, -1).forEach(write => {
+        write.length.should.not.equal(0)
+      })
+    })
   })
 })
