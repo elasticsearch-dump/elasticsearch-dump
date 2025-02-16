@@ -2,6 +2,7 @@ const should = require('should')
 const { s3: S3Client } = require('../../lib/transports/s3')
 const utils = require('../utils')
 const zlib = require('zlib')
+const streamSplitter = require('../../lib/splitters/streamSplitter')
 
 describe('S3 Transport', function () {
   let transport
@@ -129,6 +130,45 @@ describe('S3 Transport', function () {
         transport.set([], 0, 0, (err) => {
           should.not.exist(err)
           transport.shouldSplit.should.be.true()
+        })
+      })
+    })
+
+    it('should handle split streams v2', function (done) {
+      // Enable stream splitting
+      mockParent.options.fileSize = 1024 // 1KB max file size
+      transport.shouldSplit = true
+      const testData = Array(10).fill().map((_, i) => ({
+        id: i,
+        data: 'x'.repeat(200) // Create large enough data to trigger split
+      }))
+
+      // let filesUploaded = 0
+      const expectedFiles = Array(10).fill().map((_, i) => (streamSplitter.generateFilePath(FILE, i, false)))
+
+      transport.set(testData, 0, 0, (err, count) => {
+        should.not.exist(err)
+        count.should.equal(testData.length)
+
+        transport.set([], 0, 0, (err) => {
+          should.not.exist(err)
+          transport.shouldSplit.should.be.true()
+
+          Promise.all(expectedFiles.map(file =>
+            utils.getObject(mockS3, BUCKET, file)
+          ))
+            .then(results => {
+              results.forEach(data => {
+                should.exist(data)
+                const content = utils.convertJsonLinesToArray(data.Body.toString())
+                content.should.be.an.Array()
+                content.length.should.be.above(0)
+                content[0].should.have.property('id')
+                content[0].should.have.property('data')
+              })
+              done()
+            })
+            .catch(done)
         })
       })
     })
