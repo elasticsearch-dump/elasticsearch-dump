@@ -384,5 +384,30 @@ describe('TransportProcessor', () => {
       duration.should.be.aboveOrEqual(100)
       transport.outputData.should.have.length(2)
     })
+
+    it('should make final zero-length write when processing completes', async () => {
+      const inputData = [
+        { id: 1, value: 'test1' },
+        { id: 2, value: 'test2' }
+      ]
+
+      const writes = []
+      const transport = new MockTransport({
+        inputData
+      })
+
+      // Track all writes including their length
+      const originalSet = transport.set.bind(transport)
+      transport.set = async (data, limit, offset) => {
+        writes.push(data.length)
+        return originalSet(data, limit, offset)
+      }
+
+      await transport._loop(1, 0, 0)
+
+      // Verify writes including final zero-length write
+      writes.should.eql([1, 1, 0])
+      transport.outputData.should.have.length(2)
+    })
   })
 })
