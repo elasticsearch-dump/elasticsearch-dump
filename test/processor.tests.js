@@ -1,6 +1,9 @@
 const TransportProcessor = require('../lib/processor')
 const path = require('path')
 require('should')
+const { promisify } = require('util')
+
+const sleep = promisify(setTimeout)
 
 class MockTransport extends TransportProcessor {
   constructor (options = {}) {
@@ -10,22 +13,21 @@ class MockTransport extends TransportProcessor {
     this.outputData = []
     this.currentIndex = 0
     this.modifiers = []
+  }
 
-    // Mock input transport with get method
-    this.input = {
-      get: (limit, offset, callback) => {
-        if (this.options.simulateReadError) {
-          if (typeof this.options.simulateReadError === 'number') {
-            this.options.simulateReadError--
-          }
-          return setTimeout(() => callback(new Error('Simulated read error'), []), 0) // Simulate async error
-        }
-        const start = offset
-        const end = Math.min(start + limit, this.inputData.length)
-        const data = this.inputData.slice(start, end)
-        setTimeout(() => callback(null, data), 0) // Simulate async
+  async get (limit, offset) {
+    if (this.options.simulateReadError) {
+      if (typeof this.options.simulateReadError === 'number') {
+        this.options.simulateReadError--
       }
+      await sleep(0)
+      throw new Error('Simulated read error')
     }
+    const start = offset
+    const end = Math.min(start + limit, this.inputData.length)
+    const data = this.inputData.slice(start, end)
+    await sleep(0) // Simulate async
+    return data
   }
 
   // Mock output transport with set method
