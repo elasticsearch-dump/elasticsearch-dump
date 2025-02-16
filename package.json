@@ -54,7 +54,7 @@
     "jsonpath": "^1.1.1",
     "mocha": "^6.2.2",
     "should": "^13.2.3",
-    "standard": "^17.1.0"
+    "standard": "^16.0.4"
   },
   "standard": {
     "globals": [
