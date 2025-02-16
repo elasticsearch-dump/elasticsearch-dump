@@ -643,6 +643,20 @@ Options
                     Set to true to run dump from AWS OpenSearch serverless collection.
                     (default : false)
 
+--searchAfter
+                    Set to true to use dump with Elasticsearch search_after. Requires ES version 7.17.0 or higher
+                    (default: false)
+
+--pit               
+                    Set to true to enabled PIT (Point in time support). Please READ the documentation for the requirements on how to use this
+                    (default : false)
+--pitKeepAlive      
+                    Set the keepAlive time for the pit
+                    (default : 5m)
+--heapSnapshot      
+                    Set to true to enable a snapshot to be taken. This is for debugging purposes ONLY ! requires node >12
+                    (default : false)
+
 AWS specific options
 --------------------
 --awsAccessKeyId and --awsSecretAccessKey
@@ -956,13 +970,13 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - Elasticdump v6.85.0 added support for ignoring auto columns in CSV
 - Elasticdump v6.86.0 added support for searchBodyTemplate which allows the searchBody to be transformed
 - Elasticdump v6.110.1 added support for AWS OpenSearch serverless collection. Note: by default, [AWS OpenSearch serverless does not support `/_search?scroll` API and PUT `_bulk`](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations). As a workaround, the dump is implemented using `_search` and POST `_bulk` API only. This may affect the performance of the dump. 
-  
+- Elasticdump v6.112.0 added support for setting gzip compression level
+- Elasticdump v6.115.0 added support for custom matchers
+- Elasticdump v6.117.0 added support for elasticsearch search_after and pit
 
 ## Articles on Elasticdump
 - [A practical Guide to working with Elasticdump](https://blog.logrocket.com/a-practical-guide-to-working-with-elasticdump/)
-- [Elasticdump to Backup & Restore Indexes](https://fitdevops.in/elasticdump-to-backup-restore-indexes/)
 - [Moving Elasticsearch Indexes with Elasticdump](https://apassionatechie.wordpress.com/2019/07/03/moving-elasticsearch-indexes-with-elasticdump/)
-- [Elasticsearch backup and restore](https://www.netvizura.com/blog/elasticsearch-backup-and-restore)
 - [Guide to Elasticdump - Moving and Saving Elasticsearch Indices](https://stackabuse.com/guide-to-elasticdump-moving-and-saving-elasticsearch-indices/)
 - [Use elasticsearch-dump to migrate data](https://www.alibabacloud.com/help/en/elasticsearch/latest/elasticsearch-dump-use)
 

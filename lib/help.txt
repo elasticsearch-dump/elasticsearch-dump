@@ -378,6 +378,20 @@ Options
                     Elasticsearch versioning types. Should be `internal`, `external`, `external_gte`, `force`.
                     NB : Type validation is handled by the bulk endpoint and not by elasticsearch-dump
 
+--searchAfter
+                    Set to true to use dump with Elasticsearch search_after. Requires ES version 7.17.0 or higher
+                    (default: false)
+
+--pit               
+                    Set to true to enabled PIT (Point in time support). Please READ the documentation for the requirements on how to use this
+                    (default : false)
+--pitKeepAlive      
+                    Set the keepAlive time for the pit
+                    (default : 5m)
+--heapSnapshot      
+                    Set to true to enable a snapshot to be taken. This is for debugging purposes ONLY ! requires node >12
+                    (default : false)
+
 
 AWS specific options
 --------------------
