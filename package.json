@@ -27,6 +27,7 @@
     "node": ">=10.0.0"
   },
   "dependencies": {
+    "@shutterstock/p-map-iterable": "^1.1.2",
     "async": "^2.6.4",
     "aws-sdk": "2.1472.0",
     "aws4": "^1.12.0",
