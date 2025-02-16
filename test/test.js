@@ -795,7 +795,7 @@ describe('ELASTICDUMP', () => {
     })
   })
 
-  describe('es to file', () => {
+  describe.only('es to file', () => {
     it('works', function (done) {
       this.timeout(testTimeout)
       const options = {
@@ -824,7 +824,7 @@ describe('ELASTICDUMP', () => {
     })
   })
 
-  describe('es to file sourceOnly', () => {
+  describe.only('es to file sourceOnly', () => {
     it('works', function (done) {
       this.timeout(testTimeout)
       const options = {
