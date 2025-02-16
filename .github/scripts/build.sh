@@ -25,4 +25,10 @@ export ES_JAVA_OPTS="-Xms512m -Xmx512m"
 # ES needs some time to start
 wget -q --waitretry=1 --retry-connrefused -T 240 -O - http://127.0.0.1:9200
 
-npm test
+# Run tests multiple times - do not merge
+for i in {1..1000}
+do
+  echo "Test iteration $i/1000"
+	npx mocha test/test.js
+  # npm test
+done
