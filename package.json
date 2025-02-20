@@ -35,7 +35,7 @@
     "bytes": "^3.1.2",
     "delay": "^5.0.0",
     "extends-classes": "1.0.5",
-    "fast-csv": "4.3.6",
+    "fast-csv": "5.0.2",
     "http-status": "^1.5.1",
     "ini": "^2.0.0",
     "JSONStream": "npm:@search-dump/jsonstream@^1.4.0",
