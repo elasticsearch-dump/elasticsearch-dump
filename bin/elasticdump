@@ -10,7 +10,10 @@ const { isUrl } = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
 const ArgParser = require(path.join(__dirname, '..', 'lib', 'argv.js'))
 const versionCheck = require(path.join(__dirname, '..', 'lib', 'version-check.js'))
 const createSnapshot = require(path.join(__dirname, '..', 'lib', 'heap-snapshot.js'))
+const { registerGracefulShutdown } = require('../lib/shutdown')
 require('aws-sdk/lib/maintenance_mode_message').suppress = true
+
+registerGracefulShutdown()
 
 // For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
 const defaults = {
