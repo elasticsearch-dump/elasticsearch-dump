@@ -11,6 +11,7 @@ const async = require('async')
 const _ = require('lodash')
 const jq = require('jsonpath')
 const baseUrl = 'http://127.0.0.1:9200'
+const baseUrlWithAuth = 'http://admin:password@127.0.0.1:9200'
 
 const seeds = {}
 const seedSize = 500
@@ -1116,5 +1117,53 @@ describe('ELASTICDUMP', () => {
 
   describe('stdin to es', () => {
     it('works')
+  })
+})
+
+describe('ELASTICDUMP_*_USERNAME and ELASTICDUMP_*_PASSWORD', () => {
+  const Elasticsearch = require(path.join(__dirname, '../lib/transports', 'elasticsearch')).elasticsearch
+  const parent = {
+    options: {
+      searchBody: {},
+      scrollTime: '1m'
+    },
+    emit: (level, msg) => {
+      console[level](msg)
+    }
+  }
+  const opts = {
+    type: 'input',
+    index: 'source_index'
+  }
+  let envCache
+
+  before((done) => {
+    envCache = process.env
+    process.env.ELASTICDUMP_INPUT_USERNAME = 'user2'
+    process.env.ELASTICDUMP_INPUT_PASSWORD = 'password2'
+    done()
+  })
+
+  after((done) => {
+    process.env = envCache
+    done()
+  })
+
+  it('does not apply if auth already exists', function (done) {
+    this.timeout(testTimeout)
+    const es = new Elasticsearch(parent, baseUrlWithAuth, opts)
+    es.getData(1, 0, (_, responseBody, response) => {
+      response.req._headers.authorization.should.equal('Basic YWRtaW46cGFzc3dvcmQ=')
+      done()
+    })
+  })
+
+  it('does apply if auth does not already exist', function (done) {
+    this.timeout(testTimeout)
+    const es = new Elasticsearch(parent, baseUrl, opts)
+    es.getData(1, 0, (_, responseBody, response) => {
+      response.req._headers.authorization.should.equal('Basic dXNlcjI6cGFzc3dvcmQy')
+      done()
+    })
   })
 })

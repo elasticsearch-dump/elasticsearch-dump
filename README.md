@@ -954,7 +954,7 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - If the path to our elasticsearch installation is in a sub-directory, the index and type must be provided with a separate argument (`--input="http://localhost:9200/sub/directory --input-index=index/type"`).Using `--input-index=/` will include all indices and types.
 - We can use the `put` method to write objects.  This means new objects will be created and old objects with the same ID be updated
 - The `file` transport will not overwrite any existing files by default, it will throw an exception if the file already exists. You can make use of `--overwrite` instead.
-- If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index`
+- If you need basic http auth, you can use it like this: `--input=http://name:password@production.es.com:9200/my_index` or by setting the `ELASTICDUMP_INPUT_USERNAME` and `ELASTICDUMP_INPUT_PASSWORD` environment variables. For output URLs, `ELASTICDUMP_OUTPUT_USERNAME` and `ELASTICDUMP_OUTPUT_PASSWORD` may be used.
 - If you choose a stdio output (`--output=$`), you can also request a more human-readable output with `--format=human`
 - If you choose a stdio output (`--output=$`), all logging output will be suppressed
 - If you are using Elasticsearch version 6.0.0 or higher the `offset` parameter is no longer allowed in the scrollContext
