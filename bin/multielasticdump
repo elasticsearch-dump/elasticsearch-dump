@@ -283,7 +283,10 @@ const elasticRequest = (params, callback) => {
     qs: {}
   })
 
-  let baseUrl = addAuth(params.url, options.httpAuthFile)
+  let baseUrl = params.url
+  if (options.httpAuthFile) {
+    baseUrl = addAuth(params.url, options.httpAuthFile)
+  }
   const reqUrl = new URL(baseUrl)
   reqUrl.pathname = params.path
   reqUrl.search = new URLSearchParams(params.qs).toString()
