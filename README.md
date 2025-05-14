@@ -640,7 +640,8 @@ Options
                     NB : Type validation is handled by the bulk endpoint and not by elasticsearch-dump
 
 --openSearchServerless
-                    Set to true to run dump from AWS OpenSearch serverless collection.
+                    Set to true to force elasticsearch-dump think the connected cluster is on AWS OpenSearch Serverless
+                    elasticsearch-dump will detect cluster flavor automatically. This flag isn't needed usually.
                     (default : false)
 
 --searchAfter
