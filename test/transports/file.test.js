@@ -21,7 +21,8 @@ describe('File Transport', function () {
       {
         options: {
           overwrite: true,
-          fsCompress: false
+          fsCompress: false,
+          output: testFile
         },
         emit: () => {}
       },
@@ -134,6 +135,121 @@ describe('File Transport', function () {
           })
         })
         .catch(done)
+    })
+  })
+
+  describe('stream handling with split', function () {
+    it('should handle split streams', function (done) {
+      // Enable stream splitting with small file size
+      transport.parent.options.fileSize = '100b' // Small size to force splits
+      transport.parent.options.output = testFile
+      transport.shouldSplit = true
+
+      // Create test data large enough to cause splits
+      const testData = Array(10).fill().map((_, i) => ({
+        _index: 'source_index',
+        _type: 'seeds',
+        _id: i,
+        _score: 1,
+        _source: {
+          key: `key-${i}`,
+          value: 'x'.repeat(50) // Add padding to force splits
+        }
+      }))
+
+      let filesCreated = []
+      // transport.streamSplitter.on('results', (files) => {
+      //   filesCreated = files
+      // })
+
+      // Write data
+      transport.set(testData, 0, 0, (err) => {
+        should.not.exist(err)
+
+        filesCreated = transport.streamSplitter.streamList.map(stream => Object.keys(stream)[0])
+
+        // Close stream
+        transport.set([], 0, 0, (err) => {
+          should.not.exist(err)
+          should.not.exist(transport.stream)
+
+          // Verify multiple files were created
+          filesCreated.length.should.be.above(1)
+
+          // Verify each file
+          const verifications = filesCreated.map((file, index) => {
+            return new Promise((resolve, reject) => {
+              fs.readFile(file, 'utf8', (err, content) => {
+                if (err) return reject(err)
+
+                // Each file should have CSV headers
+                const data = JSON.parse(content.trim())
+                data._id.should.equal(index)
+                data._source.key.should.equal(`key-${index}`)
+                resolve()
+              })
+            })
+          })
+
+          Promise.all(verifications)
+            .then(() => done())
+            .catch(done)
+            .finally(() => {
+              filesCreated.map(file => fs.unlinkSync(file))
+            })
+        })
+      })
+    })
+
+    it('should handle compressed split streams', function (done) {
+      transport.parent.options.fileSize = '100b'
+      transport.parent.options.fsCompress = true
+      transport.shouldSplit = true
+      transport.streamSplitter.compress = true
+
+      const testData = Array(5).fill().map((_, i) => ({
+        id: i,
+        data: 'x'.repeat(50)
+      }))
+
+      let filesCreated = []
+
+      transport.set(testData, 0, 0, (err) => {
+        should.not.exist(err)
+
+        filesCreated = transport.streamSplitter.streamList.map(stream => Object.keys(stream)[0])
+
+        transport.set([], 0, 0, (err) => {
+          should.not.exist(err)
+          should.not.exist(transport.stream)
+
+          // Verify compressed split files
+          const verifications = filesCreated.map((file, index) => {
+            return new Promise((resolve, reject) => {
+              const chunks = []
+              fs.createReadStream(file)
+                .pipe(zlib.createGunzip())
+                .on('data', chunk => chunks.push(chunk))
+                .on('end', () => {
+                  const content = Buffer.concat(chunks).toString()
+
+                  const data = JSON.parse(content)
+                  data.id.should.equal(index)
+
+                  resolve()
+                })
+                .on('error', reject)
+            })
+          })
+
+          Promise.all(verifications)
+            .then(() => done())
+            .catch(done)
+            .finally(() => {
+              filesCreated.map(file => fs.unlinkSync(file))
+            })
+        })
+      })
     })
   })
 })
