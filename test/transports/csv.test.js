@@ -150,7 +150,7 @@ describe('CSV Transport', function () {
     transport.set(testData, 0, 0, (err) => {
       should.not.exist(err)
 
-      filesCreated = transport.streamSplitter.streamList.map(stream => stream.path)
+      filesCreated = transport.streamSplitter.streamList.map(stream => Object.keys(stream)[0])
 
       // Close stream
       transport.set([], 0, 0, (err) => {
@@ -203,7 +203,7 @@ describe('CSV Transport', function () {
     transport.set(testData, 0, 0, (err) => {
       should.not.exist(err)
 
-      filesCreated = transport.streamSplitter.streamList.map(stream => stream.path)
+      filesCreated = transport.streamSplitter.streamList.map(stream => Object.keys(stream)[0])
 
       transport.set([], 0, 0, (err) => {
         should.not.exist(err)
