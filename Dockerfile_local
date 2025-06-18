@@ -1,19 +1,19 @@
 FROM node:20-bookworm-slim
 LABEL maintainer="ferronrsmith@gmail.com"
-ENV NODE_ENV=production
+ENV NODE_ENV production
 WORKDIR /app
 
 COPY . .
 
-RUN npm install --production --legacy-peer-deps
+RUN apt-get -y update && \
+    apt-get -y install wget &&  \
+    wget https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_amd64.deb && \
+    dpkg -i dumb-init_*.deb
 
-# Overwrite the entrypoint script used in the base image
+RUN npm install --production -g
+
 COPY docker-entrypoint.sh /usr/local/bin/
 
-# This is already set in the base image
-# ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
 
-# This will get `elasticump` and `multielasticdump` in the PATH
-RUN npm link
-
-CMD ["elasticdump"]
+CMD ["/usr/bin/dumb-init", "elasticdump"]

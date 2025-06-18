@@ -1,6 +1,3 @@
-# Git Repo
-.git
-
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 # Logs
@@ -42,8 +39,3 @@ build/
 dist/
 test/
 .github
-
-# Docker files
-.dockerignore
-Dockerfile*
-docker-compose*
