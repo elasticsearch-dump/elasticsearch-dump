@@ -5,3 +5,5 @@ node_modules/*
 # Intellij
 .idea/
 .fleet/
+
+docs/
