@@ -32,7 +32,9 @@
     "diff": ">3.5.1",
     "debug": ">3.2.6",
     "ip-address": ">10.0.10",
-    "underscore": ">1.13.7"
+    "underscore": ">1.13.7",
+    "uuid": ">11.1.1",
+    "qs": ">6.15.3"
   },
   "dependencies": {
     "@shutterstock/p-map-iterable": "^1.1.2",
