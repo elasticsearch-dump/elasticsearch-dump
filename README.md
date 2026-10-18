@@ -964,7 +964,7 @@ because of its simplicity. This detection is disabled by default, to enable use 
 - ES 5.x.x ignores offset (from) parameter in the search body. All records will be returned
 - ES 6.x.x [from](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/breaking-changes-6.0.html#_scroll) parameter can no longer be used in the search request body when initiating a scroll
 -  Index templates has been deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.
-- Ensure JSON in the searchBody properly escaped to avoid parsing issues : https://www.freeformatter.com/json-escape.html
+- Ensure JSON in the searchBody is properly escaped to avoid parsing issues: [JSON Escape](https://jsonviewertool.com/json-escape)
 - Dropped support for Node.JS 8 in Elasticdump v6.32.0. Node.JS 10+ is now required.
 - Elasticdump v6.42.0 added support for CSV import/export using the [fast-csv](https://c2fo.io/fast-csv/) library 
 - Elasticdump v6.68.0 added support for specifying a file containing the searchBody
